@@ -2,7 +2,7 @@ import React from 'react';
 
 const CrearTramites = () => {
     return (
-       <h1>Hola 2</h1>
+       <h1>Crear Trámite</h1>
     );
 };
 

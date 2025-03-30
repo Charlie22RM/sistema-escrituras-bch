@@ -2,7 +2,7 @@ import React from 'react';
 
 const ConsultarTramites = () => {
     return (
-       <h1>Hola 4</h1>
+       <h1>Consultar Trámite</h1>
     );
 };
 

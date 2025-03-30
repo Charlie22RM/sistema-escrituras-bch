@@ -10,13 +10,8 @@ const AppRouter = () => {
         <Routes>
             <Route path="/" element={<Login />} />
 
-            {/* Rutas para Admin */}
-            <Route path="/admininstrador/*" element={<AdminRoutes />} />
-
-            {/* Rutas para Usuario Normal */}
+            <Route path="/administrador/*" element={<AdminRoutes />} /> 
             <Route path="/operador/*" element={<OperadorRoutes />} />
-
-            {/* Rutas para Banco */}
             <Route path="/cliente/*" element={<ClienteRoutes />} />
         </Routes>
     );

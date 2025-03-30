@@ -2,8 +2,8 @@ import React from 'react';
 
 const Login = () => {
     return (
-      <h1>Hola login</h1>
+      <h1>Inicio de Sesión</h1>
     );
 };
 
-export default Login;  // Asegúrate de que esté exportando 'Login' por defecto.
+export default Login;

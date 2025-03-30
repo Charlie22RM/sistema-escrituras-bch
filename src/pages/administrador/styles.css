@@ -1,0 +1,105 @@
+body, html {
+  margin: 0;
+  padding: 0;
+}
+
+/* ================== SIDEBAR ================== */
+.main-container {
+  display: flex;
+}
+
+.sidebar {
+  width: 200px;
+  background-color: #D32F2F;
+  color: white;
+  height: 100vh;
+  position: fixed;
+  top: 0;
+  left: 0;
+  padding-top: 60px;
+  display: flex;
+  flex-direction: column;
+  gap: 0px;
+}
+
+.sidebar-item {
+  padding: 15px 15px 15px 20px; 
+  cursor: pointer;
+  transition: background-color 0.3s;
+  display: flex;
+  align-items: center;  
+  justify-content: flex-start; 
+  gap: 10px; 
+  text-align: left; 
+}
+
+.sidebar-item:hover {
+  background-color: #d37070;
+}
+
+.content {
+  flex-grow: 1;
+  transition: margin-left 0.3s;
+}
+
+.content-shifted {
+  margin-left: 200px;
+}
+
+/* ================== NAVBAR ================== */
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #D32F2F;
+  padding: 10px 20px;
+  color: white;
+  width: 100%;
+  height: 60px;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 1000;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+}
+
+
+.navbar-left, .navbar-right {
+  display: flex;
+  align-items: center;
+}
+
+.navbar-item {
+  margin: 0 15px;
+  cursor: pointer;
+}
+
+/* ================== DROPDOWN MENU ================== */
+.dropdown-menu {
+  position: absolute;
+  top: 60px;
+  right: 0px;
+  background-color: white;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  overflow: hidden;
+  z-index: 1001;
+}
+
+.dropdown-item {
+  padding: 10px 20px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.dropdown-item:hover {
+  background-color: #f0f0f0;
+}
+
+.main-content {
+  padding: 20px;
+  margin-top: 60px; /* Asegura que el contenido no se solape con el navbar */
+  width: 100%;
+}
