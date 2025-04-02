@@ -9,12 +9,14 @@ import { FloatLabel } from "primereact/floatlabel";
 import { login } from "../../services/AuthService";
 import "./Login.css";
 import { Toast } from "primereact/toast";
-import { useDispatch, useSelector } from 'react-redux';
-import { setToken } from "../../redux/authSlice";
+import { useDispatch } from 'react-redux';
+import { setLogin} from "../../redux/authSlice";
+import { useNavigate } from "react-router-dom";
 
 const Login = () => {
   const dispatch = useDispatch();
   const toast = useRef(null);
+  const navigateTo = useNavigate();
 
   const formik = useFormik({
     initialValues: {
@@ -44,7 +46,28 @@ const Login = () => {
         detail: "Inicio de sesión exitoso",
         life: 3000, // El mensaje durará 3 segundos
       });
-      dispatch(setToken(response.data.access_token)); 
+      const payload = {
+        token: response.data.access_token,
+        userId: response.data.user.id,
+        perfilId: response.data.user.rol_id,
+      };
+      dispatch(setLogin(payload)); 
+      const perfilId = parseInt(response.data.user.rol_id);
+
+      switch (perfilId) {
+        case 1:
+          navigateTo("/administrador/");
+          break;
+        case 2:
+          navigateTo("/operador/");
+          break;
+        case 3:
+          navigateTo("/cliente/");
+          break;
+        default:
+          navigateTo("/");
+      }
+
     } catch (error) {
       console.error("Error en el login:", error);
       if (error.statusCode == 404) {

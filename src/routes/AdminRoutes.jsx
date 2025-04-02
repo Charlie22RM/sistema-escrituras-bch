@@ -20,7 +20,7 @@ import ConsultarTramites from '../pages/administrador/tramites/ConsultarTramites
 import CrearTramites from '../pages/administrador/tramites/CrearTramites';
 import EditarTramites from '../pages/administrador/tramites/EditarTramites';
 import Parametros from '../pages/administrador/Parametros';
-
+import { Navigate } from 'react-router-dom';
 
 const AdminRoutes = () => {
     return (
@@ -45,6 +45,7 @@ const AdminRoutes = () => {
             <Route path="crear-tramite" element={<CrearTramites />} />
             <Route path="editar-tramite" element={<EditarTramites />} />
             <Route path="config" element={<Parametros />} />
+            <Route path="*" element={<Navigate to="/administrador/" replace />} />
         </Routes>
     );
 };
