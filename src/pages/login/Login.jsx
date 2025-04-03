@@ -24,7 +24,7 @@ const Login = () => {
     validationSchema: Yup.object({
       email: Yup.string()
         .email("Correo tiene un formato inválido")
-        .required("El correo es obligatorio"),
+        .required("El correo electrónico es obligatorio"),
       password: Yup.string().required("La contraseña es obligatoria"),
     }),
     onSubmit: (values) => {
@@ -109,7 +109,7 @@ const Login = () => {
                 onBlur={formik.handleBlur}
                 style={{ minWidth: "100%" }}
               />
-              <label htmlFor="email">Correo</label>
+              <label htmlFor="email">Correo Electrónico</label>
             </FloatLabel>
           </div>
           {formik.touched.email && formik.errors.email && (
@@ -143,7 +143,7 @@ const Login = () => {
           )}
 
           {/* Botón de Login */}
-          <Button label="Iniciar Sesión" type="submit" className="w-full" />
+          <Button label="Iniciar Sesión" type="submit" className="p-button-success w-full" />
         </form>
       </div>
     </div>

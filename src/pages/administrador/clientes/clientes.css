@@ -1,0 +1,50 @@
+/* Asegura que el contenedor tenga espacio entre el buscador y el botón */
+.search-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+  }
+  
+  /* Estilo del input para hacerlo más ancho */
+  .search-input {
+    height: 2.5rem;
+    width: 200px; /* Aumentamos el ancho del input */
+  }
+  
+  /* Estilo del botón para hacerlo más ancho */
+  .create-client-btn {
+    height: 2.5rem;
+    width: 200px; /* Aumentamos el ancho del botón */
+    margin-left: 1rem; /* Agrega un pequeño espacio entre el botón y el input */
+  }
+  
+  /* Título de la sección */
+.section-title {
+  font-size: 2rem;
+  font-weight: bold;
+  margin-bottom: 1rem;
+  text-align: center;
+  color: #606060;
+}
+
+/* Estilo para la tabla, reducir el tamaño general */
+.p-datatable {
+  font-size: 0.85rem; /* Reducir el tamaño de la fuente */
+}
+
+/* Reducir el tamaño de las celdas */
+.p-datatable .p-column-body {
+  padding: 0.5rem; /* Reducir el padding dentro de las celdas */
+}
+
+/* Reducir el alto de las filas */
+.p-datatable .p-datatable-tbody > tr > td {
+  height: 2.5rem; /* Reducir la altura de las filas */
+}
+
+/* Estilo para los botones dentro de la tabla */
+.p-button-sm {
+    padding: 0.4rem 0.6rem; /* Reducir el tamaño del padding */
+}
+

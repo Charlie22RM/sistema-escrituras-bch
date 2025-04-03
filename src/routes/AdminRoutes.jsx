@@ -1,6 +1,6 @@
 import React from 'react';
 import { Routes, Route } from 'react-router-dom';
-import Principal from '../pages/administrador/Principal';
+import Principal from '../pages/administrador/Principal'; // Asegúrate de importar Principal aquí
 import ConsultarUsuarios from '../pages/administrador/usuarios/ConsultarUsuarios';
 import CrearUsuarios from '../pages/administrador/usuarios/CrearUsuarios';
 import EditarUsuarios from '../pages/administrador/usuarios/EditarUsuarios';
@@ -20,31 +20,33 @@ import ConsultarTramites from '../pages/administrador/tramites/ConsultarTramites
 import CrearTramites from '../pages/administrador/tramites/CrearTramites';
 import EditarTramites from '../pages/administrador/tramites/EditarTramites';
 import Parametros from '../pages/administrador/Parametros';
-
+import CambioContrasena from '../components/CambioContrasena';
 
 const AdminRoutes = () => {
     return (
         <Routes>
-            <Route path="/" element={<Principal />} />
-            <Route path="consultar-usuario" element={<ConsultarUsuarios />} />
-            <Route path="crear-usuario" element={<CrearUsuarios />} />
-            <Route path="editar-usuario" element={<EditarUsuarios />} />
-            <Route path="consultar-cliente" element={<ConsultarClientes />} />
-            <Route path="crear-cliente" element={<CrearClientes />} />
-            <Route path="editar-cliente" element={<EditarClientes />} />
-            <Route path="consultar-canton" element={<ConsultarCantones />} />
-            <Route path="crear-canton" element={<CrearCantones />} />
-            <Route path="editar-canton" element={<EditarCantones />} />
-            <Route path="consultar-inmobiliaria" element={<ConsultarInmobiliarias />} />
-            <Route path="crear-inmobiliaria" element={<CrearInmobiliarias />} />
-            <Route path="editar-inmobiliaria" element={<EditarInmobiliarias />} />
-            <Route path="consultar-ciudadela" element={<ConsultarCiudadelas />} />
-            <Route path="crear-ciudadela" element={<CrearCiudadelas />} />
-            <Route path="editar-ciudadela" element={<EditarCiudadelas />} />
-            <Route path="consultar-tramite" element={<ConsultarTramites />} />
-            <Route path="crear-tramite" element={<CrearTramites />} />
-            <Route path="editar-tramite" element={<EditarTramites />} />
-            <Route path="config" element={<Parametros />} />
+            <Route path="/" element={<Principal />}>
+                <Route index element={<ConsultarTramites />} />
+                <Route path="consultar-usuario" element={<ConsultarUsuarios />} />
+                <Route path="crear-usuario" element={<CrearUsuarios />} />
+                <Route path="editar-usuario" element={<EditarUsuarios />} />
+                <Route path="consultar-cliente" element={<ConsultarClientes />} />
+                <Route path="crear-cliente" element={<CrearClientes />} />
+                <Route path="editar-cliente/:id" element={<EditarClientes />} />
+                <Route path="consultar-canton" element={<ConsultarCantones />} />
+                <Route path="crear-canton" element={<CrearCantones />} />
+                <Route path="editar-canton" element={<EditarCantones />} />
+                <Route path="consultar-inmobiliaria" element={<ConsultarInmobiliarias />} />
+                <Route path="crear-inmobiliaria" element={<CrearInmobiliarias />} />
+                <Route path="editar-inmobiliaria" element={<EditarInmobiliarias />} />
+                <Route path="consultar-ciudadela" element={<ConsultarCiudadelas />} />
+                <Route path="crear-ciudadela" element={<CrearCiudadelas />} />
+                <Route path="editar-ciudadela" element={<EditarCiudadelas />} />
+                <Route path="crear-tramite" element={<CrearTramites />} />
+                <Route path="editar-tramite" element={<EditarTramites />} />
+                <Route path="config" element={<Parametros />} />
+                <Route path="cambio-contrasena" element={<CambioContrasena />} />
+            </Route>
         </Routes>
     );
 };
