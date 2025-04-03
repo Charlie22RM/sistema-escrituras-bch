@@ -1,7 +1,7 @@
 import React,{useRef} from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { Navigate, Outlet, useLocation } from "react-router-dom";
-import jwtDecode from "jwt-decode";
+//import jwtDecode from "jwt-decode";
 import { Toast } from "primereact/toast";
 
 
@@ -10,7 +10,7 @@ const ProtectedRoute = ({ allowedRoles, redirectTo = "/" }) => {
   const toast = useRef(null);
   const location = useLocation();
   const dispatch = useDispatch();
-
+/*
   const verifyToken = (token) => {
     try {
       const decoded = jwtDecode(token);
@@ -22,7 +22,7 @@ const ProtectedRoute = ({ allowedRoles, redirectTo = "/" }) => {
       return false;
     }
   };
-
+*/
   if (!token) {
     console.log("No hay token, redirigiendo a login");
     return <Navigate to={redirectTo} state={{ from: location }} replace />;
