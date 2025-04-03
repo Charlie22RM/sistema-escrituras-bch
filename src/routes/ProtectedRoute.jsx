@@ -3,7 +3,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { Navigate, Outlet, useLocation } from "react-router-dom";
 import jwtDecode from "jwt-decode";
 import { Toast } from "primereact/toast";
-import { useRef } from "react";
+
 
 const ProtectedRoute = ({ allowedRoles, redirectTo = "/" }) => {
   const { token, perfilId } = useSelector((state) => state.auth);
