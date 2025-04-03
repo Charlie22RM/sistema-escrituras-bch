@@ -1,6 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate, Outlet } from 'react-router-dom';
 import './styles.css';
+import ConsultarTramites from './tramites/ConsultarTramites';
+import { useDispatch } from 'react-redux';
+import { clearLogout } from '../../redux/authSlice';
 
 const Principal = () => {
   const [isDropdownVisible, setIsDropdownVisible] = useState(false);
@@ -10,6 +13,7 @@ const Principal = () => {
   const toggleButtonRef = useRef(null);
   const userButtonRef = useRef(null);
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const toggleDropdown = () => {
     setIsDropdownVisible(prev => !prev);
@@ -35,6 +39,7 @@ const Principal = () => {
 
   const handleOptionLogout = (option) => {
     if (option === 'logout') {
+      dispatch(clearLogout());
       navigate('/');
     }
     setIsDropdownVisible(false);

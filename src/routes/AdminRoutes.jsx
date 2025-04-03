@@ -21,6 +21,7 @@ import CrearTramites from '../pages/administrador/tramites/CrearTramites';
 import EditarTramites from '../pages/administrador/tramites/EditarTramites';
 import Parametros from '../pages/administrador/Parametros';
 import CambioContrasena from '../components/CambioContrasena';
+import { Navigate } from 'react-router-dom';
 
 const AdminRoutes = () => {
     return (
@@ -46,6 +47,7 @@ const AdminRoutes = () => {
                 <Route path="editar-tramite" element={<EditarTramites />} />
                 <Route path="config" element={<Parametros />} />
                 <Route path="cambio-contrasena" element={<CambioContrasena />} />
+                <Route path="*" element={<Navigate to="/administrador/" replace />} />
             </Route>
         </Routes>
     );
