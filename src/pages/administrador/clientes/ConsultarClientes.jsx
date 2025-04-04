@@ -8,6 +8,10 @@ import { InputText } from 'primereact/inputtext';
 import { ProgressSpinner } from 'primereact/progressspinner';
 import { Toast } from 'primereact/toast';
 import './clientes.css'
+import { useDispatch } from 'react-redux';
+import { clearLogout } from '../../../redux/authSlice';
+import ClienteService from '../../../services/ClienteService';
+
 
 const ConsultarClientes = () => {
   const [clientes, setClientes] = useState([]);
@@ -15,13 +19,32 @@ const ConsultarClientes = () => {
   const [search, setSearch] = useState('');
   const navigate = useNavigate();
   const toast = useRef(null);
+  const dispatch = useDispatch();
+  const clienteService = ClienteService();
 
   useEffect(() => {
     const fetchClientes = async () => {
       try {
-        const response = await axios.get('http://localhost:3000/clientes');
+        const response = await clienteService.getClientes();
         setClientes(response.data);
       } catch (error) {
+        
+        if(error.status == 401){
+          
+          toast.current.show({
+            severity: 'warn',
+            summary: 'Advertencia',
+            detail: 'No tienes permiso para acceder a esta sección.',
+            life: 5000,
+          });
+          
+          setTimeout(() => {
+            dispatch(clearLogout());
+            navigate('/'); // Redirigir al login después de 1 segundo
+          }, 5000);
+          return;
+        }
+        console.error('Error al cargar los clientes:', error);
         toast.current.show({
           severity: 'error',
           summary: 'Error',
@@ -29,7 +52,8 @@ const ConsultarClientes = () => {
           life: 5000,
         });
       } finally {
-        setTimeout(() => setLoading(false), 1000);
+        setLoading(false);
+        //setTimeout(() => setLoading(false), 1000);
       }
     };
 
