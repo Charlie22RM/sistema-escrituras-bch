@@ -1,116 +1,143 @@
 import React, { useEffect, useState, useRef } from 'react';
+import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
 import { Button } from 'primereact/button';
 import { Column } from 'primereact/column';
+import { ConfirmDialog, confirmDialog } from 'primereact/confirmdialog';
 import { DataTable } from 'primereact/datatable';
 import { InputText } from 'primereact/inputtext';
 import { ProgressSpinner } from 'primereact/progressspinner';
 import { Toast } from 'primereact/toast';
-import './clientes.css'
-import { useDispatch } from 'react-redux';
 import { clearLogout } from '../../../redux/authSlice';
 import ClienteService from '../../../services/ClienteService';
-
+import './clientes.css'
 
 const ConsultarClientes = () => {
+  // Estados locales para almacenar clientes, estado de carga y búsqueda
   const [clientes, setClientes] = useState([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
+
+  // Variables de navegación y referencia a toast para mostrar mensajes
   const navigate = useNavigate();
   const toast = useRef(null);
+
+  // Dispatcher de Redux para realizar acciones
   const dispatch = useDispatch();
+
+  // Servicio que interactúa con la API de clientes
   const clienteService = ClienteService();
 
+  // Efecto que se ejecuta al cargar el componente para obtener los clientes
   useEffect(() => {
+    // Función para obtener los clientes desde la API
     const fetchClientes = async () => {
       try {
         const response = await clienteService.getClientes();
         setClientes(response.data);
       } catch (error) {
-        
-        if(error.status == 401){
-          
+        // Manejo de errores cuando el usuario no tiene permisos o el servidor falla
+        if (error.response && error.response.status === 401) {
           toast.current.show({
             severity: 'warn',
             summary: 'Advertencia',
             detail: 'No tienes permiso para acceder a esta sección.',
             life: 5000,
           });
-          
+
           setTimeout(() => {
             dispatch(clearLogout());
-            navigate('/'); // Redirigir al login después de 1 segundo
+            navigate('/');
           }, 5000);
-          return;
+        } else {
+          console.error('Error al cargar los clientes:', error);
+          toast.current.show({
+            severity: 'error',
+            summary: 'Error',
+            detail: 'No se pudo cargar los clientes.',
+            life: 5000,
+          });
         }
-        console.error('Error al cargar los clientes:', error);
-        toast.current.show({
-          severity: 'error',
-          summary: 'Error',
-          detail: 'No se pudo cargar los clientes.',
-          life: 5000,
-        });
       } finally {
         setLoading(false);
-        //setTimeout(() => setLoading(false), 1000);
       }
     };
 
+    // Llamada para obtener los clientes
     fetchClientes();
-  }, []);
+  }, [clienteService, dispatch, navigate]);
 
+  // Función para manejar la edición de un cliente
   const handleEdit = (id) => {
     navigate(`/administrador/editar-cliente/${id}`);
   };
 
-  const handleDelete = async (id) => {
-    try {
-      await axios.delete(`http://localhost:3000/clientes/${id}`);
-      setClientes(clientes.filter(cliente => cliente.id !== id));
-      toast.current.show({
-        severity: 'success',
-        summary: 'Éxito',
-        detail: 'Cliente eliminado correctamente',
-        life: 3000,
-      });
-    } catch (error) {
-      toast.current.show({
-        severity: 'error',
-        summary: 'Error',
-        detail: 'No se pudo eliminar el cliente.',
-        life: 5000,
-      });
-    }
+  // Función para manejar la eliminación de un cliente
+  const handleDelete = (id) => {
+    confirmDialog({
+      message: '¿Estás seguro de que quieres eliminar este cliente?',
+      header: 'Confirmación de eliminación',
+      icon: 'pi pi-exclamation-triangle',
+      acceptLabel: 'Eliminar',
+      rejectLabel: 'Cancelar',
+      acceptClassName: 'p-button-danger',
+      accept: async () => {
+        try {
+          // Eliminación del cliente en la API
+          await clienteService.deleteCliente(id);
+          setClientes(clientes.filter(cliente => cliente.id !== id));
+          toast.current.show({
+            severity: 'success',
+            summary: 'Éxito',
+            detail: 'Cliente eliminado correctamente',
+            life: 3000,
+          });
+        } catch (error) {
+          toast.current.show({
+            severity: 'error',
+            summary: 'Error',
+            detail: 'No se pudo eliminar el cliente.',
+            life: 5000,
+          });
+        }
+      },
+      reject: () => {
+        toast.current.show({
+          severity: 'warn',
+          summary: 'Acción cancelada',
+          detail: 'No se eliminó el cliente.',
+          life: 3000,
+        });
+      }
+    });
   };
 
+  // Función para manejar la búsqueda de clientes
   const handleSearch = (e) => {
     setSearch(e.target.value);
   };
 
-  // Filtrar clientes por nombre, teléfono o email
-  const filteredClientes = clientes.filter(cliente => 
-    cliente.nombre.toLowerCase().includes(search.toLowerCase()) || 
-    cliente.telefono?.toLowerCase().includes(search.toLowerCase()) || 
+  // Filtra los clientes basándose en el valor de búsqueda
+  const filteredClientes = clientes.filter(cliente =>
+    cliente.nombre.toLowerCase().includes(search.toLowerCase()) ||
+    cliente.telefono?.toLowerCase().includes(search.toLowerCase()) ||
     cliente.email?.toLowerCase().includes(search.toLowerCase())
   );
 
   return (
     <div className="p-4">
       <Toast ref={toast} />
-      
-      {/* Título de la sección */}
+
       <h2 className="section-title">Gestión de Clientes</h2>
 
-      {/* Contenedor flex con clases CSS personalizadas */}
       <div className="search-container">
-        <InputText 
-          value={search} 
-          onChange={handleSearch} 
-          placeholder="Buscar Cliente..." 
+        <InputText
+          value={search}
+          onChange={handleSearch}
+          placeholder="Buscar Cliente..."
           className="p-inputtext-sm search-input"
         />
-        
+
         <Button
           label="Crear Cliente"
           icon="pi pi-plus"
@@ -150,6 +177,7 @@ const ConsultarClientes = () => {
           />
         </DataTable>
       )}
+      <ConfirmDialog />
     </div>
   );
 };
