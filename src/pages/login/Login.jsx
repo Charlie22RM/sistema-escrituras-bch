@@ -6,7 +6,7 @@ import { Password } from "primereact/password";
 import { Button } from "primereact/button";
 import { Avatar } from "primereact/avatar";
 import { FloatLabel } from "primereact/floatlabel";
-import { login } from "../../services/AuthService";
+import AuthService from "../../services/AuthService";
 import "./Login.css";
 import { Toast } from "primereact/toast";
 import { useDispatch } from 'react-redux';
@@ -17,6 +17,7 @@ const Login = () => {
   const dispatch = useDispatch();
   const toast = useRef(null);
   const navigateTo = useNavigate();
+  const authService = AuthService();
 
   const formik = useFormik({
     initialValues: {
@@ -37,7 +38,7 @@ const Login = () => {
 
   const handleLogin = async (values) => {
     try {
-      const response = await login(values.email, values.password);
+      const response = await authService.login(values.email, values.password);
       console.log("Login exitoso:", response);
       // Aquí puedes redirigir al usuario a otra página o realizar otras acciones
       toast.current.show({

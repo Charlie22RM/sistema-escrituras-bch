@@ -280,6 +280,7 @@ const ConsultarClientes = () => {
   };
 
   // Manejo de búsqueda
+  
   const handleSearch = (e) => {
     const value = e.target.value;
     setSearch(value);
@@ -304,43 +305,35 @@ const ConsultarClientes = () => {
   };
 
   const handleDelete = async (id) => {
-    confirmDialog({
-      message: '¿Estás seguro de que quieres eliminar este cliente?',
-      header: 'Confirmación de eliminación',
-      icon: 'pi pi-exclamation-triangle',
-      acceptLabel: 'Eliminar',
-      rejectLabel: 'Cancelar',
-      acceptClassName: 'p-button-danger',
-      accept: async () => {
-        try {
-          await clienteService.deleteCliente(id);
-          // Recargar los datos manteniendo la paginación actual
-          loadClientes(lazyState.page, lazyState.rows, search);
-          toast.current.show({
-            severity: 'success',
-            summary: 'Éxito',
-            detail: 'Cliente eliminado correctamente',
-            life: 3000,
-          });
-        } catch (error) {
-          toast.current.show({
-            severity: 'error',
-            summary: 'Error',
-            detail: 'No se pudo eliminar el cliente.',
-            life: 5000,
-          });
-        }
-      },
-      reject: () => {
-        toast.current.show({
-          severity: 'warn',
-          summary: 'Acción cancelada',
-          detail: 'No se eliminó el cliente.',
-          life: 3000,
-        });
-      }
-    });
+    try {
+      await axios.delete(`http://localhost:3000/clientes/${id}`);
+      setClientes(clientes.filter(cliente => cliente.id !== id));
+      toast.current.show({
+        severity: 'success',
+        summary: 'Éxito',
+        detail: 'Cliente eliminado correctamente',
+        life: 3000,
+      });
+    } catch (error) {
+      toast.current.show({
+        severity: 'error',
+        summary: 'Error',
+        detail: 'No se pudo eliminar el cliente.',
+        life: 5000,
+      });
+    }
   };
+
+  const handleSearch = (e) => {
+    setSearch(e.target.value);
+  };
+
+  // Filtrar clientes por nombre, teléfono o email
+  const filteredClientes = clientes.filter(cliente => 
+    cliente.nombre.toLowerCase().includes(search.toLowerCase()) || 
+    cliente.telefono?.toLowerCase().includes(search.toLowerCase()) || 
+    cliente.email?.toLowerCase().includes(search.toLowerCase())
+  );
 
   return (
     <div className="p-4">
