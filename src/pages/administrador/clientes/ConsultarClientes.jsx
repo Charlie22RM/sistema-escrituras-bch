@@ -315,6 +315,7 @@ const ConsultarClientes = () => {
         life: 3000,
       });
     } catch (error) {
+      //error 401
       toast.current.show({
         severity: 'error',
         summary: 'Error',
