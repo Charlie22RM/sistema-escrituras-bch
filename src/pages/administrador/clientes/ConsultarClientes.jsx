@@ -325,10 +325,6 @@ const ConsultarClientes = () => {
     }
   };
 
-  const handleSearch = (e) => {
-    setSearch(e.target.value);
-  };
-
   // Filtrar clientes por nombre, teléfono o email
   const filteredClientes = clientes.filter(cliente => 
     cliente.nombre.toLowerCase().includes(search.toLowerCase()) || 
