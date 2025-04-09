@@ -1,6 +1,6 @@
 import React from 'react';
 import { Routes, Route } from 'react-router-dom';
-import Principal from '../pages/administrador/Principal'; // Asegúrate de importar Principal aquí
+import Principal from '../pages/administrador/Principal';
 import ConsultarUsuarios from '../pages/administrador/usuarios/ConsultarUsuarios';
 import CrearUsuarios from '../pages/administrador/usuarios/CrearUsuarios';
 import EditarUsuarios from '../pages/administrador/usuarios/EditarUsuarios';

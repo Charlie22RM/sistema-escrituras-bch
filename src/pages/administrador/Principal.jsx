@@ -1,28 +1,34 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { useNavigate, Outlet } from 'react-router-dom';
-import './styles.css';
-import ConsultarTramites from './tramites/ConsultarTramites';
 import { useDispatch } from 'react-redux';
+import { useNavigate, Outlet } from 'react-router-dom';
 import { clearLogout } from '../../redux/authSlice';
+import './styles.css';
 
 const Principal = () => {
+  // Estados para manejar visibilidad del dropdown y sidebar
   const [isDropdownVisible, setIsDropdownVisible] = useState(false);
   const [isSidebarVisible, setIsSidebarVisible] = useState(false);
+
+  // Refs para detectar clics fuera de los componentes
   const dropdownRef = useRef(null);
   const sidebarRef = useRef(null);
   const toggleButtonRef = useRef(null);
   const userButtonRef = useRef(null);
-  const navigate = useNavigate();
-  const dispatch = useDispatch();
 
+  const navigate = useNavigate(); // Hook para redirección
+  const dispatch = useDispatch(); // Hook para acciones Redux
+
+  // Alternar visibilidad del menú desplegable (dropdown)
   const toggleDropdown = () => {
     setIsDropdownVisible(prev => !prev);
   };
 
+  // Alternar visibilidad del menú lateral (sidebar)
   const toggleSidebar = () => {
     setIsSidebarVisible(prev => !prev);
   };
 
+  // Manejar opción de configuración
   const handleOptionConfig = (option) => {
     if (option === 'config') {
       navigate('./config');
@@ -30,6 +36,7 @@ const Principal = () => {
     setIsDropdownVisible(false);
   };
 
+  // Manejar opción de cambio de contraseña
   const handleOptionCambCont = (option) => {
     if (option === 'cambCont') {
       navigate('./cambio-contrasena');
@@ -37,16 +44,19 @@ const Principal = () => {
     setIsDropdownVisible(false);
   };
 
+  // Manejar opción de cerrar sesión
   const handleOptionLogout = (option) => {
     if (option === 'logout') {
-      dispatch(clearLogout());
-      navigate('/');
+      dispatch(clearLogout()); // Limpia el estado de autenticación
+      navigate('/'); // Redirige al login
     }
     setIsDropdownVisible(false);
   };
 
+  // Efecto para cerrar el dropdown o sidebar si se hace clic fuera
   useEffect(() => {
     const handleClickOutside = (event) => {
+      // Cierra el dropdown si se hace clic fuera de él
       if (
         dropdownRef.current &&
         !dropdownRef.current.contains(event.target) &&
@@ -55,6 +65,7 @@ const Principal = () => {
         setIsDropdownVisible(false);
       }
 
+      // Cierra el sidebar si se hace clic fuera de él
       if (
         sidebarRef.current &&
         !sidebarRef.current.contains(event.target) &&
@@ -64,8 +75,10 @@ const Principal = () => {
       }
     };
 
+    // Agrega el evento al montar el componente
     document.addEventListener('mousedown', handleClickOutside);
 
+    // Limpia el evento al desmontar
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
@@ -73,7 +86,7 @@ const Principal = () => {
 
   return (
     <div className="main-container">
-      {/* Sidebar - Ahora siempre oculto por defecto */}
+      {/* Sidebar con navegación - visible solo si isSidebarVisible es true */}
       <div className={`sidebar ${isSidebarVisible ? 'sidebar-visible' : ''}`} ref={sidebarRef}>
         <div className="sidebar-item" onClick={() => navigate('/administrador')}>
           <i className="pi pi-clipboard"></i> Trámites
@@ -95,8 +108,9 @@ const Principal = () => {
         </div>
       </div>
 
+      {/* Contenedor principal del contenido */}
       <div className={`content ${isSidebarVisible ? 'content-shifted' : ''}`}>
-        {/* Navbar */}
+        {/* Navbar superior */}
         <div className="navbar">
           <div className="navbar-left">
             <div
@@ -104,7 +118,7 @@ const Principal = () => {
               onClick={toggleSidebar}
               ref={toggleButtonRef}
             >
-              <i className="pi pi-bars"></i>
+              <i className="pi pi-bars"></i> {/* Icono de menú */}
             </div>
           </div>
           <div className="navbar-right">
@@ -113,12 +127,12 @@ const Principal = () => {
               onClick={toggleDropdown}
               ref={userButtonRef}
             >
-              <i className="pi pi-user"></i>
+              <i className="pi pi-user"></i> {/* Icono de usuario */}
             </div>
           </div>
         </div>
 
-        {/* Dropdown Menu */}
+        {/* Menú desplegable del usuario (Configuración, Cambio de contraseña, Logout) */}
         {isDropdownVisible && (
           <div className="dropdown-menu" ref={dropdownRef}>
             <div className="dropdown-item" onClick={() => handleOptionConfig('config')}>
@@ -133,7 +147,7 @@ const Principal = () => {
           </div>
         )}
 
-        {/* Contenido principal */}
+        {/* Aquí se renderiza el contenido hijo usando Outlet de React Router */}
         <div className="main-content">
           <Outlet />
         </div>

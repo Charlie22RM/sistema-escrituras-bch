@@ -9,14 +9,14 @@
   /* Estilo del input para hacerlo más ancho */
   .search-input {
     height: 2.5rem;
-    width: 200px; /* Aumentamos el ancho del input */
+    width: 200px;
   }
   
   /* Estilo del botón para hacerlo más ancho */
   .create-client-btn {
     height: 2.5rem;
-    width: 200px; /* Aumentamos el ancho del botón */
-    margin-left: 1rem; /* Agrega un pequeño espacio entre el botón y el input */
+    width: 200px; 
+    margin-left: 1rem; 
   }
   
   /* Título de la sección */
