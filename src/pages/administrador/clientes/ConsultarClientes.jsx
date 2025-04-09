@@ -159,7 +159,7 @@ const ConsultarClientes = () => {
         <InputText
           value={search}
           onChange={handleSearch}
-          placeholder="Buscar Cliente..."
+          placeholder="Buscar Cliente"
           className="p-inputtext-sm search-input"
         />
 
@@ -191,28 +191,28 @@ const ConsultarClientes = () => {
           className="p-datatable-striped"
           emptyMessage="No se encontraron clientes"
         >
-          <Column field="nombre" header="Nombre" sortable />
-          <Column field="telefono" header="Teléfono" sortable />
-          <Column field="email" header="Email" sortable />
-          <Column field="direccion" header="Dirección" sortable />
+          <Column field="nombre" header="Nombre" />
+          <Column field="telefono" header="Teléfono" />
+          <Column field="email" header="Correo Electrónico" />
+          <Column field="direccion" header="Dirección" />
           <Column
             body={(rowData) => (
               <div>
                 <Button
                   icon="pi pi-pencil"
-                  rounded text raised
+                  rounded text
                   severity="success"
                   onClick={() => handleEdit(rowData.id)}
                 />
                 <Button
                   icon="pi pi-trash"
-                  rounded text raised
+                  rounded text
                   severity="danger"
                   onClick={() => handleDelete(rowData.id)}
                 />
               </div>
             )}
-            header="Acciones"
+            header="Funciones"
           />
         </DataTable>
       )}
