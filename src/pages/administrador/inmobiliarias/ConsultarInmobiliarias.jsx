@@ -1,8 +1,219 @@
-import React from 'react';
+import React, { useEffect, useState, useRef } from 'react';
+import { useDispatch } from 'react-redux';
+import InmobiliariaService from '../../../services/InmobiliariaService';
+import { Button } from 'primereact/button';
+import { Column } from 'primereact/column';
+import { ConfirmDialog, confirmDialog } from 'primereact/confirmdialog';
+import { DataTable } from 'primereact/datatable';
+import { InputText } from 'primereact/inputtext';
+import { ProgressSpinner } from 'primereact/progressspinner';
+import { Toast } from 'primereact/toast';
+import { useNavigate } from 'react-router-dom';
+import { clearLogout } from '../../../redux/authSlice';
+import './inmobiliarias.css';
 
 const ConsultarInmobiliarias = () => {
+  // Estados principales para manejar los datos de inmobiliarias, paginación, búsqueda, carga y total de registros
+  const [inmobiliarias, setInmobiliarias] = useState([]);
+  const [lazyState, setLazyState] = useState({
+    first: 0,     // Índice del primer registro a mostrar
+    rows: 10,     // Cantidad de registros por página
+    page: 1       // Página actual (1-indexed)
+  });
+  const [loading, setLoading] = useState(true); // Indica si los datos están cargando
+  const [totalRecords, setTotalRecords] = useState(0); // Total de inmobiliarias disponibles en el servidor
+  const [search, setSearch] = useState(''); // Término de búsqueda ingresado por el usuario
+
+  // Inicialización de servicios y utilidades de navegación, dispatch y toast
+  const inmobiliariaService = InmobiliariaService();
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const toast = useRef(null);
+
+  /**
+   * Función que carga los inmobiliarias desde el servicio, ya sea todos o filtrados por búsqueda.
+   * @param {number} page Página actual
+   * @param {number} limit Número de registros por página
+   * @param {string} searchQuery Término de búsqueda
+   */
+  const loadInmobiliarias = async (page, limit, searchQuery = '') => {
+    setLoading(true);
+    try {
+      let response;
+      if (searchQuery) {
+        response = await inmobiliariaService.searchInmobiliarias(searchQuery, page, limit);
+      } else {
+        response = await inmobiliariaService.getInmobiliarias(page, limit);
+      }
+      setInmobiliarias(response.data);
+      setTotalRecords(response.total);
+    } catch (error) {
+      handleError(error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  /**
+   * Maneja los errores provenientes del backend, especialmente los de autorización (401).
+   * Desconecta al usuario si no tiene permisos.
+   */
+  const handleError = (error) => {
+    if (error.response && error.response.status === 401) {
+      toast.current.show({
+        severity: 'warn',
+        summary: 'Advertencia',
+        detail: 'No tienes permiso para acceder a esta sección.',
+        life: 5000,
+      });
+      setTimeout(() => {
+        dispatch(clearLogout());
+        navigate('/');
+      }, 5000);
+    } else {
+      console.error('Error al cargar las inmobiliarias:', error);
+      toast.current.show({
+        severity: 'error',
+        summary: 'Error',
+        detail: 'No se pudo cargar las inmobiliarias.',
+        life: 5000,
+      });
+    }
+  };
+
+  // Carga los inmobiliarias cada vez que cambian la página, número de filas o término de búsqueda
+  useEffect(() => {
+    loadInmobiliarias(lazyState.page, lazyState.rows, search);
+  }, [lazyState.page, lazyState.rows, search]);
+
+  /**
+   * Actualiza el estado de paginación cuando el usuario cambia de página en la tabla
+   * @param {object} event Evento emitido por el DataTable
+   */
+  const onPageChange = (event) => {
+    setLazyState({
+      ...lazyState,
+      first: event.first,
+      rows: event.rows,
+      page: event.page + 1, // PrimeReact indexa desde 0, pero tu API parece usar 1-indexed
+    });
+  };
+
+  /**
+   * Maneja los cambios en el campo de búsqueda, reiniciando la paginación al primer registro
+   * @param {object} e Evento del input
+   */
+  const handleSearch = (e) => {
+    const value = e.target.value;
+    setSearch(value);
+    setLazyState({
+      ...lazyState,
+      first: 0,
+      page: 1,
+    });
+  };
+
+  // Redirige al formulario de edición con el ID del inmobiliaria seleccionado
+  const handleEdit = (id) => {
+    navigate(`/administrador/editar-inmobiliaria/${id}`);
+  };
+
+  /**
+   * Muestra un cuadro de confirmación antes de eliminar un inmobiliaria
+   * Si se confirma, se llama al servicio y se actualiza el estado local
+   * @param {number} id ID del inmobiliaria a eliminar
+   */
+  const handleDelete = (id) => {
+    confirmDialog({
+      message: '¿Estás seguro de que deseas eliminar esta inmobiliaria?',
+      header: 'Confirmar eliminación',
+      icon: 'pi pi-exclamation-triangle',
+      acceptLabel: 'Sí',
+      rejectLabel: 'No',
+      acceptClassName: 'p-button-danger',
+      accept: async () => {
+        try {
+          await inmobiliariaService.deleteInmobiliaria(id);
+          setInmobiliarias(prev => prev.filter(inmobiliaria => inmobiliaria.id !== id));
+          toast.current.show({
+            severity: 'success',
+            summary: 'Éxito',
+            detail: 'Inmobiliaria eliminada correctamente',
+            life: 3000,
+          });
+        } catch (error) {
+          handleError(error);
+        }
+      },
+    });
+  };
+
   return (
-    <h1>ConsultarInmobiliarias</h1>
+    <div className="p-4">
+      <Toast ref={toast} />
+      <ConfirmDialog />
+      <h2 className="section-title">Gestión de Inmobiliarias</h2>
+
+      {/* Barra de búsqueda y botón para crear inmobiliaria */}
+      <div className="search-container">
+        <InputText
+          value={search}
+          onChange={handleSearch}
+          placeholder="Buscar Inmobiliaria"
+          className="p-inputtext-sm search-input"
+        />
+
+        <Button
+          label="Crear Inmobiliaria"
+          icon="pi pi-plus"
+          className="p-button-sm p-button-success create-client-btn"
+          onClick={() => navigate('/administrador/crear-inmobiliaria')}
+        />
+      </div>
+
+      {/* Spinner de carga mientras se obtienen los datos */}
+      {loading ? (
+        <div className="flex justify-content-center">
+          <ProgressSpinner />
+        </div>
+      ) : (
+        // Tabla de inmobiliarias con paginación, ordenamiento y acciones
+        <DataTable
+          value={inmobiliarias}
+          lazy
+          paginator
+          first={lazyState.first}
+          rows={lazyState.rows}
+          totalRecords={totalRecords}
+          onPage={onPageChange}
+          loading={loading}
+          rowsPerPageOptions={[5, 10, 20, 30]}
+          className="p-datatable-striped"
+          emptyMessage="No se encontraron inmobiliarias"
+        >
+          <Column field="nombre" header="Nombre" />
+          <Column
+            body={(rowData) => (
+              <div>
+                <Button
+                  icon="pi pi-pencil"
+                  rounded text
+                  severity="success"
+                  onClick={() => handleEdit(rowData.id)}
+                />
+                <Button
+                  icon="pi pi-trash"
+                  rounded text
+                  severity="danger"
+                  onClick={() => handleDelete(rowData.id)}
+                />
+              </div>
+            )}
+            header="Funciones"
+          />
+        </DataTable>
+      )}
+    </div>
   );
 };
 
