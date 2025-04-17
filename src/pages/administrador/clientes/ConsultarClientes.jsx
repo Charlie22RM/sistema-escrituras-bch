@@ -10,7 +10,7 @@ import { ProgressSpinner } from 'primereact/progressspinner';
 import { Toast } from 'primereact/toast';
 import { useNavigate } from 'react-router-dom';
 import { clearLogout } from '../../../redux/authSlice';
-import './clientes.css';
+import '../administrador.css';
 
 const ConsultarClientes = () => {
   // Estados principales para manejar los datos de clientes, paginación, búsqueda, carga y total de registros
@@ -166,7 +166,7 @@ const ConsultarClientes = () => {
         <Button
           label="Crear Cliente"
           icon="pi pi-plus"
-          className="p-button-sm p-button-success create-client-btn"
+          className="p-button-sm p-button-success create-btn"
           onClick={() => navigate('/administrador/crear-cliente')}
         />
       </div>
