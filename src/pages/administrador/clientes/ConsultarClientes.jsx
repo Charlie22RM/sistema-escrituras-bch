@@ -129,8 +129,9 @@ const ConsultarClientes = () => {
       header: 'Confirmar eliminación',
       icon: 'pi pi-exclamation-triangle',
       acceptLabel: 'Sí',
-      rejectLabel: 'No',
+      rejectLabel: 'Cancelar',
       acceptClassName: 'p-button-danger',
+      rejectClassName: 'p-button-secondary',
       accept: async () => {
         try {
           await clienteService.deleteCliente(id);
@@ -152,10 +153,10 @@ const ConsultarClientes = () => {
     <div className="p-4">
       <Toast ref={toast} />
       <ConfirmDialog />
-      <h2 className="section-title">Gestión de Clientes</h2>
+      <h2 className="section-title">Entidades Financieras</h2>
 
       {/* Barra de búsqueda y botón para crear cliente */}
-      <div className="search-container">
+      {/* <div className="search-container">
         <InputText
           value={search}
           onChange={handleSearch}
@@ -165,6 +166,27 @@ const ConsultarClientes = () => {
 
         <Button
           label="Crear Cliente"
+          icon="pi pi-plus"
+          className="p-button-sm p-button-success create-btn"
+          onClick={() => navigate('/administrador/crear-cliente')}
+        />
+      </div> */}
+      <div className="search-container">
+        <div className="p-inputgroup custom-inputgroup">
+          <InputText
+            value={search}
+            onChange={handleSearch}
+            placeholder="Buscar Cliente"
+            className="p-inputtext-sm"
+          />
+          <Button
+            icon="pi pi-search"
+            className="p-button-secondary"
+          />
+        </div>
+
+        <Button
+          label="Agregar Cliente"
           icon="pi pi-plus"
           className="p-button-sm p-button-success create-btn"
           onClick={() => navigate('/administrador/crear-cliente')}
@@ -180,6 +202,7 @@ const ConsultarClientes = () => {
         // Tabla de clientes con paginación, ordenamiento y acciones
         <DataTable
           value={clientes}
+          showGridlines
           lazy
           paginator
           first={lazyState.first}
@@ -201,13 +224,15 @@ const ConsultarClientes = () => {
                 <Button
                   icon="pi pi-pencil"
                   rounded text
-                  severity="success"
+                  //severity="success"
+                  className="custom-edit-btn"
                   onClick={() => handleEdit(rowData.id)}
                 />
                 <Button
                   icon="pi pi-trash"
                   rounded text
-                  severity="danger"
+                  //severity="danger"
+                  className="custom-delete-btn"
                   onClick={() => handleDelete(rowData.id)}
                 />
               </div>

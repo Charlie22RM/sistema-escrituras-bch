@@ -129,8 +129,9 @@ const ConsultarCantones = () => {
       header: 'Confirmar eliminación',
       icon: 'pi pi-exclamation-triangle',
       acceptLabel: 'Sí',
-      rejectLabel: 'No',
+      rejectLabel: 'Cancelar',
       acceptClassName: 'p-button-danger',
+      rejectClassName: 'p-button-secondary',
       accept: async () => {
         try {
           await cantonService.deleteCanton(id);
@@ -152,19 +153,25 @@ const ConsultarCantones = () => {
     <div className="p-4">
       <Toast ref={toast} />
       <ConfirmDialog />
-      <h2 className="section-title">Gestión de Cantones</h2>
+      <h2 className="section-title">Cantones</h2>
 
       {/* Barra de búsqueda y botón para crear cantón */}
       <div className="search-container">
-        <InputText
-          value={search}
-          onChange={handleSearch}
-          placeholder="Buscar Cantón"
-          className="p-inputtext-sm search-input"
-        />
+        <div className="p-inputgroup custom-inputgroup">
+          <InputText
+            value={search}
+            onChange={handleSearch}
+            placeholder="Buscar Cantón"
+            className="p-inputtext-sm"
+          />
+          <Button
+            icon="pi pi-search"
+            className="p-button-secondary"
+          />
+        </div>
 
         <Button
-          label="Crear Cantón"
+          label="Agregar Cantón"
           icon="pi pi-plus"
           className="p-button-sm p-button-success create-btn"
           onClick={() => navigate('/administrador/crear-canton')}
@@ -180,6 +187,7 @@ const ConsultarCantones = () => {
         // Tabla de cantones con paginación, ordenamiento y acciones
         <DataTable
           value={cantones}
+          showGridlines
           lazy
           paginator
           first={lazyState.first}
@@ -199,13 +207,13 @@ const ConsultarCantones = () => {
                 <Button
                   icon="pi pi-pencil"
                   rounded text
-                  severity="success"
+                  className="custom-edit-btn"
                   onClick={() => handleEdit(rowData.id)}
                 />
                 <Button
                   icon="pi pi-trash"
                   rounded text
-                  severity="danger"
+                  className="custom-delete-btn"
                   onClick={() => handleDelete(rowData.id)}
                 />
               </div>

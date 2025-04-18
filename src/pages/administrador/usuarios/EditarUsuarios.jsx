@@ -195,11 +195,11 @@ const EditarUsuarios = () => {
               )}
             </div>
 
-            <div className="flex justify-content-between mt-4">
+            <div className="flex justify-content-between gap-3">
               <Button
                 type="submit"
                 label="Guardar"
-                className="p-button-primary"
+                className="p-button-success"
               />
               <Button
                 type="button"

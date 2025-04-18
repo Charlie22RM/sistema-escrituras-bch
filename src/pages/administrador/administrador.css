@@ -3,13 +3,18 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 1rem;
+    margin-bottom: 2.3rem;
   }
   
   /* Estilo del input para hacerlo más ancho */
   .search-input {
     height: 2.5rem;
     width: 200px;
+  }
+
+  .custom-inputgroup {
+    height: 2.5rem;
+    width: 250px;
   }
   
   /* Estilo del botón para hacerlo más ancho */
@@ -21,11 +26,31 @@
   
   /* Título de la sección */
 .section-title {
-  font-size: 2rem;
+  font-size: 2.3rem;
   font-weight: bold;
-  margin-bottom: 1rem;
-  text-align: center;
+   margin: 0 0 1rem 0; /* Elimina margen superior heredado */
+  padding-top: 0.5rem; /* Espacio controlado */
+  margin-bottom: 1.5rem;
+  text-align: left;
   color: #606060;
+}
+
+.custom-edit-btn {
+  color: #07bc0c !important; /* Rosa brillante */
+}
+
+.custom-edit-btn:hover {
+  color: #0f8339 !important;
+  background-color: rgba(255, 0, 255, 0.04) !important;
+}
+
+.custom-delete-btn {
+  color: #ff5b5b !important; /* Rosa brillante */
+}
+
+.custom-delete-btn:hover {
+  color: #da2a2a !important;
+  background-color: rgba(255, 0, 255, 0.04) !important;
 }
 
 /* Estilo para la tabla, reducir el tamaño general */

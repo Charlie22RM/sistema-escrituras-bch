@@ -129,8 +129,9 @@ const ConsultarInmobiliarias = () => {
       header: 'Confirmar eliminación',
       icon: 'pi pi-exclamation-triangle',
       acceptLabel: 'Sí',
-      rejectLabel: 'No',
+      rejectLabel: 'Cancelar',
       acceptClassName: 'p-button-danger',
+      rejectClassName: 'p-button-secondary',
       accept: async () => {
         try {
           await inmobiliariaService.deleteInmobiliaria(id);
@@ -152,19 +153,25 @@ const ConsultarInmobiliarias = () => {
     <div className="p-4">
       <Toast ref={toast} />
       <ConfirmDialog />
-      <h2 className="section-title">Gestión de Inmobiliarias</h2>
+      <h2 className="section-title">Inmobiliarias</h2>
 
       {/* Barra de búsqueda y botón para crear inmobiliaria */}
       <div className="search-container">
-        <InputText
-          value={search}
-          onChange={handleSearch}
-          placeholder="Buscar Inmobiliaria"
-          className="p-inputtext-sm search-input"
-        />
+        <div className="p-inputgroup custom-inputgroup">
+          <InputText
+            value={search}
+            onChange={handleSearch}
+            placeholder="Buscar Inmobiliaria"
+            className="p-inputtext-sm"
+          />
+          <Button
+            icon="pi pi-search"
+            className="p-button-secondary"
+          />
+        </div>
 
         <Button
-          label="Crear Inmobiliaria"
+          label="Agregar Inmobiliaria"
           icon="pi pi-plus"
           className="p-button-sm p-button-success create-btn"
           onClick={() => navigate('/administrador/crear-inmobiliaria')}
@@ -180,6 +187,7 @@ const ConsultarInmobiliarias = () => {
         // Tabla de inmobiliarias con paginación, ordenamiento y acciones
         <DataTable
           value={inmobiliarias}
+          showGridlines
           lazy
           paginator
           first={lazyState.first}
@@ -198,13 +206,13 @@ const ConsultarInmobiliarias = () => {
                 <Button
                   icon="pi pi-pencil"
                   rounded text
-                  severity="success"
+                  className="custom-edit-btn"
                   onClick={() => handleEdit(rowData.id)}
                 />
                 <Button
                   icon="pi pi-trash"
                   rounded text
-                  severity="danger"
+                  className="custom-delete-btn"
                   onClick={() => handleDelete(rowData.id)}
                 />
               </div>

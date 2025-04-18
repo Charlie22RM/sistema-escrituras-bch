@@ -12,7 +12,7 @@ import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { clearLogout } from "../../../redux/authSlice";
 import { Column } from "primereact/column";
-import "./ConsultarUsuarios.css";
+import "../administrador.css";
 
 const ConsultarUsuarios = () => {
   const toast = useRef(null);
@@ -124,6 +124,10 @@ const ConsultarUsuarios = () => {
       message: "¿Está seguro de que desea eliminar este usuario?",
       header: "Confirmación",
       icon: "pi pi-exclamation-triangle",
+      acceptLabel: 'Sí',
+      rejectLabel: 'Cancelar',
+      acceptClassName: 'p-button-danger',
+      rejectClassName: 'p-button-secondary',
       accept: async () => {
         try {
           setLoading(true);
@@ -154,34 +158,35 @@ const ConsultarUsuarios = () => {
       <ConfirmDialog />
 
       <BlockUI blocked={loading} template={<ProgressSpinner />}>
-        <h2 className="section-title">Gestión de Usuarios</h2>
+        <h2 className="section-title">Usuarios</h2>
 
         <div className="search-container">
-          <div className="col-12 md:col-4">
-            <div className="p-inputgroup">
+
+            <div className="p-inputgroup custom-inputgroup">
               <InputText
-                placeholder="Buscar usuario"
+                placeholder="Buscar Usuario"
                 value={inputSearch}
                 onChange={(e) => setInputSearch(e.target.value)}
               />
               <Button
                 icon="pi pi-search"
-                className="p-button-primary"
+                className="p-button-secondary"
                 onClick={handleSearch}
               />
             </div>
-          </div>
+
 
           <Button
-            label="Crear usuario"
+            label="Agregar usuario"
             icon="pi pi-plus"
-            className="p-button-sm p-button-success create-client-btn"
+            className="p-button-sm p-button-success create-btn"
             onClick={() => navigate("/administrador/crear-usuario")}
           />
         </div>
 
         <DataTable
           value={usuarios}
+          showGridlines
           lazy
           paginator
           first={lazyState.first}
@@ -200,14 +205,14 @@ const ConsultarUsuarios = () => {
                   icon="pi pi-pencil"
                   rounded
                   text
-                  severity="success"
+                  className="custom-edit-btn"
                   onClick={() => handleEdit(rowData.id)}
                 />
                 <Button
                   icon="pi pi-trash"
                   rounded
                   text
-                  severity="danger"
+                  className="custom-delete-btn"
                   onClick={() => handleDelete(rowData.id)}
                 />
               </div>
