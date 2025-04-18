@@ -71,7 +71,7 @@ body, html {
 
 /* ================== NAVBAR ================== */
 
-.navbar {
+/* .navbar {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -111,7 +111,76 @@ body, html {
 
 .navbar-item i {
   font-size: 20px;
+} */
+
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #ff5b5b; /* Mantener el rojo */
+  padding: 10px 30px;
+  color: white;
+  width: 100%;
+  height: 60px;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 1000;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2); /* Sombra más destacada */
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
 }
+
+.navbar-left,
+.navbar-right {
+  display: flex;
+  align-items: center;
+}
+
+.navbar-item {
+  margin: 0 15px;
+  cursor: pointer;
+  font-size: 1.2rem;
+  color: white;
+  padding: 8px 12px;
+  border-radius: 8px;
+  transition: background-color 0.3s ease, transform 0.3s ease, color 0.3s ease;
+}
+
+.navbar-item:hover {
+  background-color: rgba(255, 255, 255, 0.2); /* Fondo más claro en hover */
+  transform: scale(1.1); /* Aumenta el tamaño del ítem */
+  color: white; /* Cambia el color del texto al rojo del navbar */
+}
+
+.navbar-item i {
+  font-size: 20px;
+  transition: transform 0.3s ease; /* Animación en los iconos */
+}
+
+.navbar-item:hover i {
+  transform: rotate(360deg); /* Efecto de rotación al hacer hover sobre el icono */
+}
+
+.navbar-title {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: white;
+  margin-right: auto; /* Empuja los elementos de la derecha hacia el borde */
+  letter-spacing: 1px;
+}
+
+.navbar-right {
+  display: flex;
+  align-items: center;
+}
+
+.main-content {
+  padding: 20px;
+  margin-top: 60px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
 
 
 /* ================== DROPDOWN MENU ================== */

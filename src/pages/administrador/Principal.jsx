@@ -113,6 +113,7 @@ const Principal = () => {
         {/* Navbar superior */}
         <div className="navbar">
           <div className="navbar-left">
+            <div className="navbar-title">BCH Asesores S.A.</div> {/* Título de la aplicación */}
             <div
               className="navbar-item"
               onClick={toggleSidebar}
@@ -131,6 +132,7 @@ const Principal = () => {
             </div>
           </div>
         </div>
+
 
         {/* Menú desplegable del usuario (Configuración, Cambio de contraseña, Logout) */}
         {isDropdownVisible && (
