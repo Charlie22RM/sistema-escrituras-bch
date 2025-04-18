@@ -9,15 +9,17 @@ import axios from 'axios';
 import { clearLogout } from '../../../redux/authSlice';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
+import CantonService from "../../../services/CantonService";
 
 // Componente para editar un cantón existente
 const EditarCantones = () => {
-  const { id } = useParams(); // ID del cantón desde la URL
-  const dispatch = useDispatch(); // Hook para acciones de Redux
-  const navigate = useNavigate(); // Hook para navegación
-  const toast = useRef(null); // Referencia para Toasts
+  const { id } = useParams(); 
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const toast = useRef(null);
 
-  // Configuración del formulario con Formik y validaciones con Yup
+  const cantonService = CantonService(); // Instanciar el servicio
+
   const formik = useFormik({
     initialValues: {
       nombre: '',
@@ -26,15 +28,9 @@ const EditarCantones = () => {
     validationSchema: Yup.object({
       nombre: Yup.string().required("El nombre es obligatorio"),
     }),
-
-    /**
-     * Función que se ejecuta al enviar el formulario.
-     * Envía los nuevos datos al backend para actualizar el cantón.
-     * @param {Object} values - Datos del formulario
-     */
     onSubmit: async (values) => {
       try {
-        await axios.put(`http://localhost:3000/cantones/${id}`, values);
+        await cantonService.updateCanton(id, values);
         toast.current.show({
           severity: 'success',
           summary: 'Éxito',
@@ -43,7 +39,7 @@ const EditarCantones = () => {
         });
         setTimeout(() => navigate('/administrador/consultar-canton'), 3000);
       } catch (error) {
-        if (error.response && error.response.status === 401) {
+        if (error.message === 'No autorizado') {
           toast.current.show({
             severity: 'warn',
             summary: 'Advertencia',
@@ -66,20 +62,29 @@ const EditarCantones = () => {
     },
   });
 
-  // Cargar datos del cantón al montar el componente
   useEffect(() => {
     const fetchCanton = async () => {
       try {
-        const response = await axios.get(`http://localhost:3000/cantones/${id}`);
-        const { nombre, provincia } = response.data;
+        const response = await cantonService.getCantones(1, 100); 
+        const canton = response.data.find((c) => c.id === parseInt(id));
 
-        // Cargar los valores obtenidos al formulario
-        formik.setValues({
-          nombre: nombre || '',
-          provincia: provincia || '',
-        });
+        if (canton) {
+          const { nombre, provincia } = canton;
+          formik.setValues({
+            nombre: nombre || '',
+            provincia: provincia || '',
+
+          });
+        } else {
+          toast.current.show({
+            severity: 'warn',
+            summary: 'No encontrado',
+            detail: 'Cantón no encontrado.',
+            life: 3000,
+          });
+        }
       } catch (error) {
-        if (error.response && error.response.status === 401) {
+        if (error.message === 'No autorizado') {
           toast.current.show({
             severity: 'warn',
             summary: 'Advertencia',
@@ -109,7 +114,6 @@ const EditarCantones = () => {
       <Toast ref={toast} />
       <Card title="Editar Cantón" className="w-full md:w-5">
         <form onSubmit={formik.handleSubmit} className="p-fluid">
-          {/* Campo: Nombre */}
           <div className="field mb-3">
             <label htmlFor="nombre">Nombre</label>
             <InputText
@@ -125,7 +129,6 @@ const EditarCantones = () => {
             )}
           </div>
 
-          {/* Campo: Cantón */}
           <div className="field mb-3">
             <label htmlFor="provincia">Provincia</label>
             <InputText
@@ -137,7 +140,6 @@ const EditarCantones = () => {
             />
           </div>
 
-          {/* Botones: Guardar y Cancelar */}
           <div className="flex justify-content-between gap-3">
             <Button
               label="Guardar"

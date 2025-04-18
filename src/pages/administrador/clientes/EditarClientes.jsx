@@ -9,15 +9,17 @@ import axios from 'axios';
 import { clearLogout } from '../../../redux/authSlice';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
+import ClienteService from "../../../services/ClienteService";
 
 // Componente para editar un cliente existente
 const EditarClientes = () => {
-  const { id } = useParams(); // ID del cliente desde la URL
-  const dispatch = useDispatch(); // Hook para acciones de Redux
-  const navigate = useNavigate(); // Hook para navegación
-  const toast = useRef(null); // Referencia para Toasts
+  const { id } = useParams(); 
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const toast = useRef(null);
 
-  // Configuración del formulario con Formik y validaciones con Yup
+  const clienteService = ClienteService(); // Instanciar el servicio
+
   const formik = useFormik({
     initialValues: {
       nombre: '',
@@ -31,15 +33,9 @@ const EditarClientes = () => {
         .email("Correo tiene un formato inválido")
         .required("El correo electrónico es obligatorio"),
     }),
-
-    /**
-     * Función que se ejecuta al enviar el formulario.
-     * Envía los nuevos datos al backend para actualizar el cliente.
-     * @param {Object} values - Datos del formulario
-     */
     onSubmit: async (values) => {
       try {
-        await axios.put(`http://localhost:3000/clientes/${id}`, values);
+        await clienteService.updateCliente(id, values);
         toast.current.show({
           severity: 'success',
           summary: 'Éxito',
@@ -48,7 +44,7 @@ const EditarClientes = () => {
         });
         setTimeout(() => navigate('/administrador/consultar-cliente'), 3000);
       } catch (error) {
-        if (error.response && error.response.status === 401) {
+        if (error.message === 'No autorizado') {
           toast.current.show({
             severity: 'warn',
             summary: 'Advertencia',
@@ -71,22 +67,30 @@ const EditarClientes = () => {
     },
   });
 
-  // Cargar datos del cliente al montar el componente
   useEffect(() => {
     const fetchCliente = async () => {
       try {
-        const response = await axios.get(`http://localhost:3000/clientes/${id}`);
-        const { nombre, telefono, email, direccion } = response.data;
+        const response = await clienteService.getClientes(1, 100); // O usa getAllClientes si lo prefieres
+        const cliente = response.data.find((c) => c.id === parseInt(id));
 
-        // Cargar los valores obtenidos al formulario
-        formik.setValues({
-          nombre: nombre || '',
-          telefono: telefono || '',
-          email: email || '',
-          direccion: direccion || '',
-        });
+        if (cliente) {
+          const { nombre, telefono, email, direccion } = cliente;
+          formik.setValues({
+            nombre: nombre || '',
+            telefono: telefono || '',
+            email: email || '',
+            direccion: direccion || '',
+          });
+        } else {
+          toast.current.show({
+            severity: 'warn',
+            summary: 'No encontrado',
+            detail: 'Cliente no encontrado.',
+            life: 3000,
+          });
+        }
       } catch (error) {
-        if (error.response && error.response.status === 401) {
+        if (error.message === 'No autorizado') {
           toast.current.show({
             severity: 'warn',
             summary: 'Advertencia',
@@ -116,7 +120,6 @@ const EditarClientes = () => {
       <Toast ref={toast} />
       <Card title="Editar Cliente" className="w-full md:w-5">
         <form onSubmit={formik.handleSubmit} className="p-fluid">
-          {/* Campo: Nombre */}
           <div className="field mb-3">
             <label htmlFor="nombre">Nombre</label>
             <InputText
@@ -132,7 +135,6 @@ const EditarClientes = () => {
             )}
           </div>
 
-          {/* Campo: Teléfono */}
           <div className="field mb-3">
             <label htmlFor="telefono">Teléfono</label>
             <InputText
@@ -145,7 +147,6 @@ const EditarClientes = () => {
             />
           </div>
 
-          {/* Campo: Email */}
           <div className="field mb-3">
             <label htmlFor="email">Email</label>
             <InputText
@@ -161,7 +162,6 @@ const EditarClientes = () => {
             )}
           </div>
 
-          {/* Campo: Dirección */}
           <div className="field mb-3">
             <label htmlFor="direccion">Dirección</label>
             <InputText
@@ -173,7 +173,6 @@ const EditarClientes = () => {
             />
           </div>
 
-          {/* Botones: Guardar y Cancelar */}
           <div className="flex justify-content-between gap-3">
             <Button
               label="Guardar"

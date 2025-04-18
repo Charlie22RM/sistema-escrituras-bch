@@ -9,15 +9,17 @@ import axios from 'axios';
 import { clearLogout } from '../../../redux/authSlice';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
+import InmobiliariaService from "../../../services/InmobiliariaService";
 
-// Componente para editar un inmobiliaria existente
+// Componente para editar una inmobiliaria existente
 const EditarInmobiliarias = () => {
-  const { id } = useParams(); // ID de la inmobiliaria desde la URL
-  const dispatch = useDispatch(); // Hook para acciones de Redux
-  const navigate = useNavigate(); // Hook para navegación
-  const toast = useRef(null); // Referencia para Toasts
+  const { id } = useParams(); 
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const toast = useRef(null);
 
-  // Configuración del formulario con Formik y validaciones con Yup
+  const inmobiliariaService = InmobiliariaService(); // Instanciar el servicio
+
   const formik = useFormik({
     initialValues: {
       nombre: '',
@@ -25,24 +27,18 @@ const EditarInmobiliarias = () => {
     validationSchema: Yup.object({
       nombre: Yup.string().required("El nombre es obligatorio"),
     }),
-
-    /**
-     * Función que se ejecuta al enviar el formulario.
-     * Envía los nuevos datos al backend para actualizar la inmobiliaria.
-     * @param {Object} values - Datos del formulario
-     */
     onSubmit: async (values) => {
       try {
-        await axios.put(`http://localhost:3000/inmobiliarias/${id}`, values);
+        await inmobiliariaService.updateInmobiliaria(id, values);
         toast.current.show({
           severity: 'success',
           summary: 'Éxito',
-          detail: 'Inmobiliaria actualizada correctamente',
+          detail: 'Inmobilaria actualizada correctamente',
           life: 3000,
         });
         setTimeout(() => navigate('/administrador/consultar-inmobiliaria'), 3000);
       } catch (error) {
-        if (error.response && error.response.status === 401) {
+        if (error.message === 'No autorizado') {
           toast.current.show({
             severity: 'warn',
             summary: 'Advertencia',
@@ -65,19 +61,27 @@ const EditarInmobiliarias = () => {
     },
   });
 
-  // Cargar datos de la inmobiliaria al montar el componente
   useEffect(() => {
     const fetchInmobiliaria = async () => {
       try {
-        const response = await axios.get(`http://localhost:3000/inmobiliarias/${id}`);
-        const { nombre } = response.data;
+        const response = await inmobiliariaService.getInmobiliarias(1, 100); 
+        const inmobiliaria = response.data.find((c) => c.id === parseInt(id));
 
-        // Cargar los valores obtenidos al formulario
-        formik.setValues({
-          nombre: nombre || '',
-        });
+        if (inmobiliaria) {
+          const { nombre } = inmobiliaria;
+          formik.setValues({
+            nombre: nombre || '',
+          });
+        } else {
+          toast.current.show({
+            severity: 'warn',
+            summary: 'No encontrado',
+            detail: 'Inmobiliaria no encontrada.',
+            life: 3000,
+          });
+        }
       } catch (error) {
-        if (error.response && error.response.status === 401) {
+        if (error.message === 'No autorizado') {
           toast.current.show({
             severity: 'warn',
             summary: 'Advertencia',
@@ -107,7 +111,6 @@ const EditarInmobiliarias = () => {
       <Toast ref={toast} />
       <Card title="Editar Inmobiliaria" className="w-full md:w-5">
         <form onSubmit={formik.handleSubmit} className="p-fluid">
-          {/* Campo: Nombre */}
           <div className="field mb-3">
             <label htmlFor="nombre">Nombre</label>
             <InputText
@@ -122,8 +125,6 @@ const EditarInmobiliarias = () => {
               <small className="p-error">{formik.errors.nombre}</small>
             )}
           </div>
-
-          {/* Botones: Guardar y Cancelar */}
           <div className="flex justify-content-between gap-3">
             <Button
               label="Guardar"
