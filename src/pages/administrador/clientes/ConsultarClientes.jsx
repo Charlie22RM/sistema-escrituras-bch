@@ -154,23 +154,6 @@ const ConsultarClientes = () => {
       <Toast ref={toast} />
       <ConfirmDialog />
       <h2 className="section-title">Entidades Financieras</h2>
-
-      {/* Barra de búsqueda y botón para crear cliente */}
-      {/* <div className="search-container">
-        <InputText
-          value={search}
-          onChange={handleSearch}
-          placeholder="Buscar Cliente"
-          className="p-inputtext-sm search-input"
-        />
-
-        <Button
-          label="Crear Cliente"
-          icon="pi pi-plus"
-          className="p-button-sm p-button-success create-btn"
-          onClick={() => navigate('/administrador/crear-cliente')}
-        />
-      </div> */}
       <div className="search-container">
         <div className="p-inputgroup custom-inputgroup">
           <InputText
@@ -224,14 +207,12 @@ const ConsultarClientes = () => {
                 <Button
                   icon="pi pi-pencil"
                   rounded text
-                  //severity="success"
                   className="custom-edit-btn"
                   onClick={() => handleEdit(rowData.id)}
                 />
                 <Button
                   icon="pi pi-trash"
                   rounded text
-                  //severity="danger"
                   className="custom-delete-btn"
                   onClick={() => handleDelete(rowData.id)}
                 />

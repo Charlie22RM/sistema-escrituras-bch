@@ -157,32 +157,38 @@ const ConsultarUsuarios = () => {
       <Toast ref={toast} />
       <ConfirmDialog />
 
-      <BlockUI blocked={loading} template={<ProgressSpinner />}>
-        <h2 className="section-title">Usuarios</h2>
 
-        <div className="search-container">
+      <h2 className="section-title">Usuarios</h2>
 
-            <div className="p-inputgroup custom-inputgroup">
-              <InputText
-                placeholder="Buscar Usuario"
-                value={inputSearch}
-                onChange={(e) => setInputSearch(e.target.value)}
-              />
-              <Button
-                icon="pi pi-search"
-                className="p-button-secondary"
-                onClick={handleSearch}
-              />
-            </div>
+      <div className="search-container">
 
-
+        <div className="p-inputgroup custom-inputgroup">
+          <InputText
+            placeholder="Buscar Usuario"
+            value={inputSearch}
+            onChange={(e) => setInputSearch(e.target.value)}
+          />
           <Button
-            label="Agregar usuario"
-            icon="pi pi-plus"
-            className="p-button-sm p-button-success create-btn"
-            onClick={() => navigate("/administrador/crear-usuario")}
+            icon="pi pi-search"
+            className="p-button-secondary"
+            onClick={handleSearch}
           />
         </div>
+
+
+        <Button
+          label="Agregar usuario"
+          icon="pi pi-plus"
+          className="p-button-sm p-button-success create-btn"
+          onClick={() => navigate("/administrador/crear-usuario")}
+        />
+      </div>
+
+      {loading ? (
+        <div className="flex justify-content-center">
+          <ProgressSpinner />
+        </div>
+      ) : (
 
         <DataTable
           value={usuarios}
@@ -220,7 +226,7 @@ const ConsultarUsuarios = () => {
             header="Acciones"
           />
         </DataTable>
-      </BlockUI>
+      )}
     </div>
   );
 };
