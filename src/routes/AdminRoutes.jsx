@@ -13,15 +13,15 @@ import EditarCantones from '../pages/administrador/cantones/EditarCantones';
 import ConsultarInmobiliarias from '../pages/administrador/inmobiliarias/ConsultarInmobiliarias';
 import CrearInmobiliarias from '../pages/administrador/inmobiliarias/CrearInmobiliarias';
 import EditarInmobiliarias from '../pages/administrador/inmobiliarias/EditarInmobiliarias';
-import ConsultarCiudadelas from '../pages/administrador/ciudadelas/ConsultarCiudadelas';
-import CrearCiudadelas from '../pages/administrador/ciudadelas/CrearCiudadelas';
-import EditarCiudadelas from '../pages/administrador/ciudadelas/EditarCiudadelas';
+import ConsultarProyectos from '../pages/administrador/ciudadelas/ConsultarProyectos';
 import ConsultarTramites from '../pages/administrador/tramites/ConsultarTramites';
 import CrearTramites from '../pages/administrador/tramites/CrearTramites';
 import EditarTramites from '../pages/administrador/tramites/EditarTramites';
 import Parametros from '../pages/administrador/Parametros';
 import CambioContrasena from '../components/CambioContrasena';
 import { Navigate } from 'react-router-dom';
+import CrearProyectos from '../pages/administrador/ciudadelas/CrearProyectos';
+import EditarProyectos from '../pages/administrador/ciudadelas/EditarProyectos';
 
 const AdminRoutes = () => {
     return (
@@ -40,9 +40,9 @@ const AdminRoutes = () => {
                 <Route path="consultar-inmobiliaria" element={<ConsultarInmobiliarias />} />
                 <Route path="crear-inmobiliaria" element={<CrearInmobiliarias />} />
                 <Route path="editar-inmobiliaria/:id" element={<EditarInmobiliarias />} />
-                <Route path="consultar-ciudadela" element={<ConsultarCiudadelas />} />
-                <Route path="crear-ciudadela" element={<CrearCiudadelas />} />
-                <Route path="editar-ciudadela/:id" element={<EditarCiudadelas />} />
+                <Route path="consultar-proyecto" element={<ConsultarProyectos />} />
+                <Route path="crear-proyecto" element={<CrearProyectos />} />
+                <Route path="editar-proyecto/:id" element={<EditarProyectos />} />
                 <Route path="crear-tramite" element={<CrearTramites />} />
                 <Route path="editar-tramite" element={<EditarTramites />} />
                 <Route path="config" element={<Parametros />} />

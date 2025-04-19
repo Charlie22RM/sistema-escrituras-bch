@@ -1,6 +1,5 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { useDispatch } from 'react-redux';
-import CiudadelaService from '../../../services/CiudadelaService';
 import { Button } from 'primereact/button';
 import { Column } from 'primereact/column';
 import { ConfirmDialog, confirmDialog } from 'primereact/confirmdialog';
@@ -11,8 +10,9 @@ import { Toast } from 'primereact/toast';
 import { useNavigate } from 'react-router-dom';
 import { clearLogout } from '../../../redux/authSlice';
 import '../administrador.css';
+import ProyectoService from '../../../services/ProyectoService';
 
-const ConsultarCiudadelas = () => {
+const ConsultarProyectos = () => {
   // Estados principales para manejar los datos de ciudadelas, paginación, búsqueda, carga y total de registros
   const [ciudadelas, setCiudadelas] = useState([]);
   const [lazyState, setLazyState] = useState({
@@ -26,7 +26,7 @@ const ConsultarCiudadelas = () => {
   const [searchInput, setSearchInput] = useState(''); // Input controlado por el usuario
 
   // Inicialización de servicios y utilidades de navegación, dispatch y toast
-  const ciudadelaService = CiudadelaService();
+  const proyectoService = ProyectoService();
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const toast = useRef(null);
@@ -42,9 +42,9 @@ const ConsultarCiudadelas = () => {
     try {
       let response;
       if (searchQuery) {
-        response = await ciudadelaService.searchCiudadelas(searchQuery, page, limit);
+        response = await proyectoService.searchProyectos(searchQuery, page, limit);
       } else {
-        response = await ciudadelaService.getCiudadelas(page, limit);
+        response = await proyectoService.getProyectos(page, limit);
       }
       setCiudadelas(response.data);
       setTotalRecords(response.total);
@@ -115,7 +115,7 @@ const ConsultarCiudadelas = () => {
 
   // Redirige al formulario de edición con el ID de la ciudadela seleccionado
   const handleEdit = (id) => {
-    navigate(`/administrador/editar-ciudadela/${id}`);
+    navigate(`/administrador/editar-proyecto/${id}`);
   };
 
   /**
@@ -134,7 +134,7 @@ const ConsultarCiudadelas = () => {
       rejectClassName: 'p-button-secondary',
       accept: async () => {
         try {
-          await ciudadelaService.deleteCiudadela(id);
+          await proyectoService.deleteProyecto(id);
           setCiudadelas(prev => prev.filter(ciudadela => ciudadela.id !== id));
           toast.current.show({
             severity: 'success',
@@ -153,7 +153,7 @@ const ConsultarCiudadelas = () => {
     <div className="p-4">
       <Toast ref={toast} />
       <ConfirmDialog />
-      <h2 className="section-title">Ciudadelas</h2>
+      <h2 className="section-title">Proyectos</h2>
 
       {/* Barra de búsqueda y botón para crear ciudadela */}
       <div className="search-container">
@@ -197,7 +197,7 @@ const ConsultarCiudadelas = () => {
           label="Agregar Ciudadela"
           icon="pi pi-plus"
           className="p-button-sm p-button-success create-btn"
-          onClick={() => navigate('/administrador/crear-ciudadela')}
+          onClick={() => navigate('/administrador/crear-proyecto')}
         />
       </div>
 
@@ -249,4 +249,4 @@ const ConsultarCiudadelas = () => {
   );
 };
 
-export default ConsultarCiudadelas;
+export default ConsultarProyectos;

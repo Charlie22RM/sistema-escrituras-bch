@@ -5,20 +5,19 @@ import { Button } from 'primereact/button';
 import { Card } from 'primereact/card';
 import { InputText } from 'primereact/inputtext';
 import { Toast } from 'primereact/toast';
-import axios from 'axios';
 import { clearLogout } from '../../../redux/authSlice';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
-import CiudadelaService from "../../../services/CiudadelaService";
+import ProyectoService from '../../../services/ProyectoService';
 
 // Componente para editar una ciudadela existente
-const EditarCiudadelas = () => {
+const EditarProyectos = () => {
   const { id } = useParams();
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const toast = useRef(null);
 
-  const ciudadelaService = CiudadelaService(); // Instanciar el servicio
+  const proyectoService = ProyectoService(); // Instanciar el servicio
 
   const formik = useFormik({
     initialValues: {
@@ -30,14 +29,14 @@ const EditarCiudadelas = () => {
     }),
     onSubmit: async (values) => {
       try {
-        await ciudadelaService.updateCiudadela(id, values);
+        await proyectoService.updateProyecto(id, values);
         toast.current.show({
           severity: 'success',
           summary: 'Éxito',
           detail: 'Ciudadela actualizada correctamente',
           life: 3000,
         });
-        setTimeout(() => navigate('/administrador/consultar-ciudadela'), 3000);
+        setTimeout(() => navigate('/administrador/consultar-proyecto'), 3000);
       } catch (error) {
         if (error.message === 'No autorizado') {
           toast.current.show({
@@ -65,7 +64,7 @@ const EditarCiudadelas = () => {
   useEffect(() => {
     const fetchCiudadela = async () => {
       try {
-        const response = await ciudadelaService.getCiudadelas(1, 100);
+        const response = await proyectoService.getProyectos(1, 100);
         const ciudadela = response.data.find((c) => c.id === parseInt(id));
 
         if (ciudadela) {
@@ -112,7 +111,7 @@ const EditarCiudadelas = () => {
   return (
     <div className="p-1 flex justify-content-center">
       <Toast ref={toast} />
-      <Card title="Editar Ciudadela" className="w-full md:w-5">
+      <Card title="Editar Proyecto" className="w-full md:w-5">
         <form onSubmit={formik.handleSubmit} className="p-fluid">
           <div className="field mb-3">
             <label htmlFor="nombre">Nombre</label>
@@ -153,7 +152,7 @@ const EditarCiudadelas = () => {
               icon="pi pi-times"
               type="button"
               className="p-button-danger w-full"
-              onClick={() => navigate('/administrador/consultar-ciudadela')}
+              onClick={() => navigate('/administrador/consultar-proyecto')}
               disabled={formik.isSubmitting}
             />
           </div>
@@ -163,4 +162,4 @@ const EditarCiudadelas = () => {
   );
 };
 
-export default EditarCiudadelas;
+export default EditarProyectos;

@@ -8,15 +8,15 @@ import { Toast } from "primereact/toast";
 import { clearLogout } from "../../../redux/authSlice";
 import { useFormik } from "formik";
 import * as Yup from "yup";
-import CiudadelaService from "../../../services/CiudadelaService";
+import ProyectoService from "../../../services/ProyectoService";
 
 
 // Componente que permite registrar una nueva ciudadela
-const CrearCiudadelas = () => {
+const CrearProyectos = () => {
   const dispatch = useDispatch(); // Hook para disparar acciones de Redux
   const navigate = useNavigate(); // Hook para redireccionar entre rutas
   const toast = useRef(null); // Referencia para mostrar mensajes tipo Toast
-  const ciudadelaService = CiudadelaService(); // Servicio de ciudadelas
+  const proyectoService = ProyectoService(); // Servicio de ciudadelas
 
   // Hook Formik para manejo del formulario, validación y envío
   const formik = useFormik({
@@ -36,7 +36,7 @@ const CrearCiudadelas = () => {
      */
     onSubmit: async (values) => {
       try {
-        const response = await ciudadelaService.createCiudadela(values);
+        const response = await proyectoService.createProyecto(values);
         toast.current.show({
           severity: "success",
           summary: "Éxito",
@@ -44,7 +44,7 @@ const CrearCiudadelas = () => {
           life: 3000,
         });
         // Redirige después de 3 segundos a la lista de ciudadelas
-        setTimeout(() => navigate("/administrador/consultar-ciudadela"), 3000);
+        setTimeout(() => navigate("/administrador/consultar-proyecto"), 3000);
       } catch (error) {
         // Manejo de error por falta de autorización
         if (error.response && error.response.status === 401) {
@@ -73,7 +73,7 @@ const CrearCiudadelas = () => {
   return (
     <div className="p-1 flex justify-content-center">
       <Toast ref={toast} />
-      <Card title="Registrar Nueva Ciudadela" className="w-full md:w-5">
+      <Card title="Registrar Nuevo Proyecto" className="w-full md:w-5">
         <form onSubmit={formik.handleSubmit} className="p-fluid">
           {/* Campo: Nombre */}
           <div className="field mb-3">
@@ -117,7 +117,7 @@ const CrearCiudadelas = () => {
               icon="pi pi-times"
               type="button"
               className="p-button-danger w-full"
-              onClick={() => navigate("/administrador/consultar-ciudadela")}
+              onClick={() => navigate("/administrador/consultar-proyecto")}
               disabled={formik.isSubmitting}
             />
           </div>
@@ -127,4 +127,4 @@ const CrearCiudadelas = () => {
   );
 };
 
-export default CrearCiudadelas;
+export default CrearProyectos;

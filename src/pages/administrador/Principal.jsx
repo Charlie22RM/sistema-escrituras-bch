@@ -100,7 +100,7 @@ const Principal = () => {
         <div className="sidebar-item" onClick={() => navigate('./consultar-canton')}>
           <i className="pi pi-map"></i> Cantones
         </div>
-        <div className="sidebar-item" onClick={() => navigate('./consultar-ciudadela')}>
+        <div className="sidebar-item" onClick={() => navigate('./consultar-proyecto')}>
           <i className="pi pi-home"></i> Proyectos
         </div>
         <div className="sidebar-item" onClick={() => navigate('./consultar-usuario')}>

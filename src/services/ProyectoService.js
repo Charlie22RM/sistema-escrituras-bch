@@ -5,7 +5,7 @@ import { toast } from 'react-toastify';
 // API base URL desde las variables de entorno (.env)
 const API_URL = import.meta.env.VITE_API_BASE_URL;
 
-const CiudadelaService = () => {
+const ProyectoService = () => {
   // Obtener el token desde Redux para autenticación
   const { token } = useSelector((state) => state.auth);
 
@@ -30,94 +30,94 @@ const CiudadelaService = () => {
     }
   );
 
-  // Obtener ciudadelas paginados
-  const getCiudadelas = async (page = 1, limit = 10) => {
+  // Obtener proyectos paginados
+  const getProyectos = async (page = 1, limit = 10) => {
     const headers = { Authorization: `Bearer ${token}` };
     try {
-      const url = `${API_URL}/ciudadelas?page=${page}&limit=${limit}`;
+      const url = `${API_URL}/proyectos?page=${page}&limit=${limit}`;
       const response = await secureAxios.get(url, { headers });
       return response.data; // Devuelve { data, total } o similar
     } catch (error) {
-      console.error("Error al obtener ciudadelas:", error.response?.data || error.message);
-      throw error.response?.data || { message: "Error al obtener ciudadelas" };
+      console.error("Error al obtener proyectos:", error.response?.data || error.message);
+      throw error.response?.data || { message: "Error al obtener proyectos" };
     }
   };
 
-  // Obtener todos los ciudadelas sin paginación
-  const getAllCiudadelas = async () => {
+  // Obtener todos los proyectos sin paginación
+  const getAllProyectos = async () => {
     const headers = { Authorization: `Bearer ${token}` };
     try {
-      const url = `${API_URL}/ciudadelas/all`; // Endpoint específico para todos los ciudadelas
+      const url = `${API_URL}/proyectos/all`; // Endpoint específico para todos los proyectos
       const response = await secureAxios.get(url, { headers });
       return response.data;
     } catch (error) {
-      console.error("Error al obtener todos los ciudadelas:", error.response?.data || error.message);
-      throw error.response?.data || { message: "Error al obtener todos los ciudadelas" };
+      console.error("Error al obtener todos los proyectos:", error.response?.data || error.message);
+      throw error.response?.data || { message: "Error al obtener todos los proyectos" };
     }
   };
 
-  // Crear nuevo ciudadela
-  const createCiudadela = async (ciudadelaData) => {
+  // Crear nuevo proyecto
+  const createProyecto = async (ciudadelaData) => {
     const headers = { Authorization: `Bearer ${token}` };
     try {
-      const url = `${API_URL}/ciudadelas`;
+      const url = `${API_URL}/proyectos`;
       const response = await secureAxios.post(url, ciudadelaData, { headers });
       return response;
     } catch (error) {
-      console.error("Error al crear ciudadela:", error.response?.data || error.message);
-      throw error.response?.data || { message: "Error al crear ciudadela" };
+      console.error("Error al crear proyecto:", error.response?.data || error.message);
+      throw error.response?.data || { message: "Error al crear proyecto" };
     }
   };
 
   // Actualizar ciudadela por ID
-  const updateCiudadela = async (id, ciudadelaData) => {
+  const updateProyecto = async (id, ciudadelaData) => {
     const headers = { Authorization: `Bearer ${token}` };
     try {
-      const url = `${API_URL}/ciudadelas/${id}`;
+      const url = `${API_URL}/proyectos/${id}`;
       const response = await secureAxios.put(url, ciudadelaData, { headers });
       return response;
     } catch (error) {
       console.error("Error al actualizar ciudadela:", error.response?.data || error.message);
-      throw error.response?.data || { message: "Error al actualizar ciudadela" };
+      throw error.response?.data || { message: "Error al actualizar proyecto" };
     }
   };
 
   // Eliminar ciudadela por ID
-  const deleteCiudadela = async (id) => {
+  const deleteProyecto = async (id) => {
     const headers = { Authorization: `Bearer ${token}` };
     try {
-      const url = `${API_URL}/ciudadelas/${id}`;
+      const url = `${API_URL}/proyectos/${id}`;
       const response = await secureAxios.delete(url, { headers });
       return response;
     } catch (error) {
-      console.error("Error al eliminar ciudadela:", error.response?.data || error.message);
-      throw error.response?.data || { message: "Error al eliminar ciudadela" };
+      console.error("Error al eliminar proyecto:", error.response?.data || error.message);
+      throw error.response?.data || { message: "Error al eliminar proyecto" };
     }
   };
 
-  // Buscar ciudadelas con filtro por texto (query), con paginación
-  const searchCiudadelas = async (query, page = 1, limit = 10) => {
+  // Buscar proyectos con filtro por texto (query), con paginación
+  const searchProyectos = async (query, page = 1, limit = 10) => {
     const headers = { Authorization: `Bearer ${token}` };
     try {
-      const url = `${API_URL}/ciudadelas/search?query=${encodeURIComponent(query)}&page=${page}&limit=${limit}`;
+      const url = `${API_URL}/proyectos/search?query=${encodeURIComponent(query)}&page=${page}&limit=${limit}`;
       const response = await secureAxios.get(url, { headers });
       return response.data;
     } catch (error) {
-      console.error("Error al buscar ciudadelas:", error.response?.data || error.message);
-      throw error.response?.data || { message: "Error al buscar ciudadelas" };
+      console.error("Error al buscar proyectos:", error.response?.data || error.message);
+      throw error.response?.data || { message: "Error al buscar proyectos" };
     }
   };
 
   // Exportar todas las funciones del servicio
   return {
-    getCiudadelas,
-    getAllCiudadelas,
-    createCiudadela,
-    updateCiudadela,
-    deleteCiudadela,
-    searchCiudadelas,
+    getProyectos,
+    getAllProyectos,
+    createProyecto,
+    updateProyecto,
+    deleteProyecto,
+    searchProyectos,
   };
 };
 
-export default CiudadelaService;
+export default ProyectoService;
 
