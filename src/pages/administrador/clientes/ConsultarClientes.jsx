@@ -13,29 +13,23 @@ import { clearLogout } from '../../../redux/authSlice';
 import '../administrador.css';
 
 const ConsultarClientes = () => {
-  // Estados principales para manejar los datos de clientes, paginación, búsqueda, carga y total de registros
   const [clientes, setClientes] = useState([]);
   const [lazyState, setLazyState] = useState({
-    first: 0,     // Índice del primer registro a mostrar
-    rows: 10,     // Cantidad de registros por página
-    page: 1       // Página actual (1-indexed)
+    first: 0,
+    rows: 10,
+    page: 1
   });
-  const [loading, setLoading] = useState(true); // Indica si los datos están cargando
-  const [totalRecords, setTotalRecords] = useState(0); // Total de clientes disponibles en el servidor
-  const [search, setSearch] = useState(''); // Término de búsqueda ingresado por el usuario
+  const [loading, setLoading] = useState(true);
+  const [totalRecords, setTotalRecords] = useState(0);
 
-  // Inicialización de servicios y utilidades de navegación, dispatch y toast
+  const [search, setSearch] = useState(''); // Se ejecuta la búsqueda con este valor
+  const [searchInput, setSearchInput] = useState(''); // Input controlado por el usuario
+
   const clienteService = ClienteService();
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const toast = useRef(null);
 
-  /**
-   * Función que carga los clientes desde el servicio, ya sea todos o filtrados por búsqueda.
-   * @param {number} page Página actual
-   * @param {number} limit Número de registros por página
-   * @param {string} searchQuery Término de búsqueda
-   */
   const loadClientes = async (page, limit, searchQuery = '') => {
     setLoading(true);
     try {
@@ -54,10 +48,6 @@ const ConsultarClientes = () => {
     }
   };
 
-  /**
-   * Maneja los errores provenientes del backend, especialmente los de autorización (401).
-   * Desconecta al usuario si no tiene permisos.
-   */
   const handleError = (error) => {
     if (error.response && error.response.status === 401) {
       toast.current.show({
@@ -81,31 +71,21 @@ const ConsultarClientes = () => {
     }
   };
 
-  // Carga los clientes cada vez que cambian la página, número de filas o término de búsqueda
   useEffect(() => {
     loadClientes(lazyState.page, lazyState.rows, search);
   }, [lazyState.page, lazyState.rows, search]);
 
-  /**
-   * Actualiza el estado de paginación cuando el usuario cambia de página en la tabla
-   * @param {object} event Evento emitido por el DataTable
-   */
   const onPageChange = (event) => {
     setLazyState({
       ...lazyState,
       first: event.first,
       rows: event.rows,
-      page: event.page + 1, // PrimeReact indexa desde 0, pero tu API parece usar 1-indexed
+      page: event.page + 1,
     });
   };
 
-  /**
-   * Maneja los cambios en el campo de búsqueda, reiniciando la paginación al primer registro
-   * @param {object} e Evento del input
-   */
-  const handleSearch = (e) => {
-    const value = e.target.value;
-    setSearch(value);
+  const handleSearchClick = () => {
+    setSearch(searchInput);
     setLazyState({
       ...lazyState,
       first: 0,
@@ -113,16 +93,10 @@ const ConsultarClientes = () => {
     });
   };
 
-  // Redirige al formulario de edición con el ID del cliente seleccionado
   const handleEdit = (id) => {
     navigate(`/administrador/editar-cliente/${id}`);
   };
 
-  /**
-   * Muestra un cuadro de confirmación antes de eliminar un cliente
-   * Si se confirma, se llama al servicio y se actualiza el estado local
-   * @param {number} id ID del cliente a eliminar
-   */
   const handleDelete = (id) => {
     confirmDialog({
       message: '¿Estás seguro de que deseas eliminar este cliente?',
@@ -157,16 +131,40 @@ const ConsultarClientes = () => {
       <div className="search-container">
         <div className="p-inputgroup custom-inputgroup">
           <InputText
-            value={search}
-            onChange={handleSearch}
+            value={searchInput}
+            onChange={(e) => setSearchInput(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') {
+                handleSearchClick();
+              }
+            }}
             placeholder="Buscar Cliente"
             className="p-inputtext-sm"
           />
+
+          {searchInput && (
+            <Button
+              icon="pi pi-times"
+              className="p-button-danger p-button-sm"
+              onClick={() => {
+                setSearchInput('');
+                setSearch('');
+                setLazyState({
+                  ...lazyState,
+                  first: 0,
+                  page: 1,
+                });
+              }}
+            />
+          )}
+
           <Button
             icon="pi pi-search"
-            className="p-button-secondary"
+            className="p-button-success"
+            onClick={handleSearchClick}
           />
         </div>
+
 
         <Button
           label="Agregar Cliente"
@@ -176,13 +174,11 @@ const ConsultarClientes = () => {
         />
       </div>
 
-      {/* Spinner de carga mientras se obtienen los datos */}
       {loading ? (
         <div className="flex justify-content-center">
           <ProgressSpinner />
         </div>
       ) : (
-        // Tabla de clientes con paginación, ordenamiento y acciones
         <DataTable
           value={clientes}
           showGridlines

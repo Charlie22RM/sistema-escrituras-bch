@@ -167,13 +167,37 @@ const ConsultarUsuarios = () => {
             placeholder="Buscar Usuario"
             value={inputSearch}
             onChange={(e) => setInputSearch(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') {
+                handleSearch();
+              }
+            }}
+            className="p-inputtext-sm"
           />
+
+          {inputSearch && (
+            <Button
+              icon="pi pi-times"
+              className="p-button-danger p-button-sm"
+              onClick={() => {
+                setInputSearch('');
+                setLazyState((prev) => ({
+                  ...prev,
+                  searchTerm: '',
+                  page: 1,
+                  first: 0,
+                }));
+              }}
+            />
+          )}
+
           <Button
             icon="pi pi-search"
-            className="p-button-secondary"
+            className="p-button-success"
             onClick={handleSearch}
           />
         </div>
+
 
 
         <Button

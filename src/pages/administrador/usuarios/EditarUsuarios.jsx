@@ -132,12 +132,7 @@ const EditarUsuarios = () => {
   return (
     <div className="p-1 flex justify-content-center">
       <Toast ref={toast} />
-      <BlockUI
-        style={{ minWidth: "600px", width: "1oo%" }}
-        className="w-full md:w-5"
-        blocked={loading}
-        template={<ProgressSpinner />}
-      >
+     
         <Card
           style={{ minWidth: "600px", width: "1oo%" }}
           title="Editar Usuario"
@@ -210,7 +205,7 @@ const EditarUsuarios = () => {
             </div>
           </form>
         </Card>
-      </BlockUI>
+
     </div>
   );
 };

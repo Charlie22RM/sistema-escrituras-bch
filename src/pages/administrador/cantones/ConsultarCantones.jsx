@@ -23,6 +23,7 @@ const ConsultarCantones = () => {
   const [loading, setLoading] = useState(true); // Indica si los datos están cargando
   const [totalRecords, setTotalRecords] = useState(0); // Total de cantones disponibles en el servidor
   const [search, setSearch] = useState(''); // Término de búsqueda ingresado por el usuario
+  const [searchInput, setSearchInput] = useState(''); // Input controlado por el usuario
 
   // Inicialización de servicios y utilidades de navegación, dispatch y toast
   const cantonService = CantonService();
@@ -103,9 +104,8 @@ const ConsultarCantones = () => {
    * Maneja los cambios en el campo de búsqueda, reiniciando la paginación al primer registro
    * @param {object} e Evento del input
    */
-  const handleSearch = (e) => {
-    const value = e.target.value;
-    setSearch(value);
+  const handleSearchClick = () => {
+    setSearch(searchInput);
     setLazyState({
       ...lazyState,
       first: 0,
@@ -157,18 +157,41 @@ const ConsultarCantones = () => {
 
       {/* Barra de búsqueda y botón para crear cantón */}
       <div className="search-container">
-        <div className="p-inputgroup custom-inputgroup">
-          <InputText
-            value={search}
-            onChange={handleSearch}
-            placeholder="Buscar Cantón"
-            className="p-inputtext-sm"
-          />
-          <Button
-            icon="pi pi-search"
-            className="p-button-secondary"
-          />
-        </div>
+         <div className="p-inputgroup custom-inputgroup">
+                  <InputText
+                    value={searchInput}
+                    onChange={(e) => setSearchInput(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter') {
+                        handleSearchClick();
+                      }
+                    }}
+                    placeholder="Buscar Cliente"
+                    className="p-inputtext-sm"
+                  />
+        
+                  {searchInput && (
+                    <Button
+                      icon="pi pi-times"
+                      className="p-button-danger p-button-sm"
+                      onClick={() => {
+                        setSearchInput('');
+                        setSearch('');
+                        setLazyState({
+                          ...lazyState,
+                          first: 0,
+                          page: 1,
+                        });
+                      }}
+                    />
+                  )}
+        
+                  <Button
+                    icon="pi pi-search"
+                    className="p-button-success"
+                    onClick={handleSearchClick}
+                  />
+                </div>
 
         <Button
           label="Agregar Cantón"
