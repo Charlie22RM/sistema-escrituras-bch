@@ -48,7 +48,7 @@ const ConsultarUsuarios = () => {
       toast.current.show({
         severity: "warn",
         summary: "Advertencia",
-        detail: "Su sesión ha expirado,inicie sesión de nuevo.",
+        detail: "Su sesión ha expirado, inicie sesión de nuevo.",
         life: 5000,
       });
 
@@ -224,8 +224,9 @@ const ConsultarUsuarios = () => {
           totalRecords={totalRecords}
           onPage={onPageChange}
           className="p-datatable-striped"
+          emptyMessage="No se encontraron usuarios"
         >
-          <Column field="email" header="Email" />
+          <Column field="email" header="Correo Electrónico" />
           <Column field="nombre" header="Nombre" />
           <Column field="rol.nombre" header="Rol" />
           <Column

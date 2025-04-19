@@ -51,7 +51,7 @@ const CrearCiudadelas = () => {
           toast.current.show({
             severity: "warn",
             summary: "Advertencia",
-            detail: "No tienes permiso para acceder a esta sección.",
+            detail: "Su sesión ha expirado, inicie sesión de nuevo.",
             life: 5000,
           });
           setTimeout(() => {
