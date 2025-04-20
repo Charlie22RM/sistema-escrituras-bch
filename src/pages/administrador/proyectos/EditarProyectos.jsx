@@ -10,7 +10,7 @@ import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import ProyectoService from '../../../services/ProyectoService';
 
-// Componente para editar una ciudadela existente
+// Componente para editar un proyecto existente
 const EditarProyectos = () => {
   const { id } = useParams();
   const dispatch = useDispatch();
@@ -33,7 +33,7 @@ const EditarProyectos = () => {
         toast.current.show({
           severity: 'success',
           summary: 'Éxito',
-          detail: 'Ciudadela actualizada correctamente',
+          detail: 'Proyecto actualizado correctamente',
           life: 3000,
         });
         setTimeout(() => navigate('/administrador/consultar-proyecto'), 3000);
@@ -53,7 +53,7 @@ const EditarProyectos = () => {
           toast.current.show({
             severity: 'error',
             summary: 'Error',
-            detail: 'No se pudo actualizar la ciudadela.',
+            detail: 'No se pudo actualizar el proyecto.',
             life: 5000,
           });
         }
@@ -62,13 +62,13 @@ const EditarProyectos = () => {
   });
 
   useEffect(() => {
-    const fetchCiudadela = async () => {
+    const fetchProyecto = async () => {
       try {
         const response = await proyectoService.getProyectos(1, 100);
-        const ciudadela = response.data.find((c) => c.id === parseInt(id));
+        const proyecto = response.data.find((c) => c.id === parseInt(id));
 
-        if (ciudadela) {
-          const { nombre, urbanizacion } = ciudadela;
+        if (proyecto) {
+          const { nombre, urbanizacion } = proyecto;
           formik.setValues({
             nombre: nombre || '',
             urbanizacion: urbanizacion || '',
@@ -78,7 +78,7 @@ const EditarProyectos = () => {
           toast.current.show({
             severity: 'warn',
             summary: 'No encontrado',
-            detail: 'Ciudadela no encontrada.',
+            detail: 'Proyecto no encontrado.',
             life: 3000,
           });
         }
@@ -98,14 +98,14 @@ const EditarProyectos = () => {
           toast.current.show({
             severity: 'error',
             summary: 'Error',
-            detail: 'No se pudo cargar la ciudadela.',
+            detail: 'No se pudo cargar el proyecto.',
             life: 5000,
           });
         }
       }
     };
 
-    fetchCiudadela();
+    fetchProyecto();
   }, [id, dispatch, navigate]);
 
   return (

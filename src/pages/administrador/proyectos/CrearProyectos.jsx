@@ -11,12 +11,12 @@ import * as Yup from "yup";
 import ProyectoService from "../../../services/ProyectoService";
 
 
-// Componente que permite registrar una nueva ciudadela
+// Componente que permite registrar un nuevo proyecto
 const CrearProyectos = () => {
   const dispatch = useDispatch(); // Hook para disparar acciones de Redux
   const navigate = useNavigate(); // Hook para redireccionar entre rutas
   const toast = useRef(null); // Referencia para mostrar mensajes tipo Toast
-  const proyectoService = ProyectoService(); // Servicio de ciudadelas
+  const proyectoService = ProyectoService(); // Servicio de proyectos
 
   // Hook Formik para manejo del formulario, validación y envío
   const formik = useFormik({
@@ -31,7 +31,7 @@ const CrearProyectos = () => {
 
     /**
      * Función que se ejecuta al enviar el formulario.
-     * Intenta crear una nueva ciudadela con los datos ingresados.
+     * Intenta crear un nuevo proyecto con los datos ingresados.
      * @param {Object} values - Datos del formulario
      */
     onSubmit: async (values) => {
@@ -40,10 +40,10 @@ const CrearProyectos = () => {
         toast.current.show({
           severity: "success",
           summary: "Éxito",
-          detail: "Ciudadela creada correctamente",
+          detail: "Proyecto creado correctamente",
           life: 3000,
         });
-        // Redirige después de 3 segundos a la lista de ciudadelas
+        // Redirige después de 3 segundos a la lista de proyectos
         setTimeout(() => navigate("/administrador/consultar-proyecto"), 3000);
       } catch (error) {
         // Manejo de error por falta de autorización
@@ -62,7 +62,7 @@ const CrearProyectos = () => {
           toast.current.show({
             severity: "error",
             summary: "Error",
-            detail: error.response?.data?.message || "Error al crear ciudadela",
+            detail: error.response?.data?.message || "Error al crear proyecto",
             life: 5000,
           });
         }

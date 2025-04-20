@@ -13,15 +13,15 @@ import '../administrador.css';
 import ProyectoService from '../../../services/ProyectoService';
 
 const ConsultarProyectos = () => {
-  // Estados principales para manejar los datos de ciudadelas, paginación, búsqueda, carga y total de registros
-  const [ciudadelas, setCiudadelas] = useState([]);
+  // Estados principales para manejar los datos de proyectos, paginación, búsqueda, carga y total de registros
+  const [proyectos, setProyectos] = useState([]);
   const [lazyState, setLazyState] = useState({
     first: 0,     // Índice del primer registro a mostrar
     rows: 10,     // Cantidad de registros por página
     page: 1       // Página actual (1-indexed)
   });
   const [loading, setLoading] = useState(true); // Indica si los datos están cargando
-  const [totalRecords, setTotalRecords] = useState(0); // Total de ciudadelas disponibles en el servidor
+  const [totalRecords, setTotalRecords] = useState(0); // Total de proyectos disponibles en el servidor
   const [search, setSearch] = useState(''); // Término de búsqueda ingresado por el usuario
   const [searchInput, setSearchInput] = useState(''); // Input controlado por el usuario
 
@@ -32,12 +32,12 @@ const ConsultarProyectos = () => {
   const toast = useRef(null);
 
   /**
-   * Función que carga los ciudadelas desde el servicio, ya sea todos o filtrados por búsqueda.
+   * Función que carga los proyectos desde el servicio, ya sea todos o filtrados por búsqueda.
    * @param {number} page Página actual
    * @param {number} limit Número de registros por página
    * @param {string} searchQuery Término de búsqueda
    */
-  const loadCiudadelas = async (page, limit, searchQuery = '') => {
+  const loadProyectos = async (page, limit, searchQuery = '') => {
     setLoading(true);
     try {
       let response;
@@ -46,7 +46,7 @@ const ConsultarProyectos = () => {
       } else {
         response = await proyectoService.getProyectos(page, limit);
       }
-      setCiudadelas(response.data);
+      setProyectos(response.data);
       setTotalRecords(response.total);
     } catch (error) {
       handleError(error);
@@ -72,19 +72,19 @@ const ConsultarProyectos = () => {
         navigate('/');
       }, 5000);
     } else {
-      console.error('Error al cargar las ciudadelas:', error);
+      console.error('Error al cargar los proyectos:', error);
       toast.current.show({
         severity: 'error',
         summary: 'Error',
-        detail: 'No se pudo cargar las ciudadelas.',
+        detail: 'No se pudo cargar los proyectos.',
         life: 5000,
       });
     }
   };
 
-  // Carga los ciudadelas ciudadelas cada vez que cambian la página, número de filas o término de búsqueda
+  // Carga los proyectos cada vez que cambian la página, número de filas o término de búsqueda
   useEffect(() => {
-    loadCiudadelas(lazyState.page, lazyState.rows, search);
+    loadProyectos(lazyState.page, lazyState.rows, search);
   }, [lazyState.page, lazyState.rows, search]);
 
   /**
@@ -113,19 +113,19 @@ const ConsultarProyectos = () => {
     });
   };
 
-  // Redirige al formulario de edición con el ID de la ciudadela seleccionado
+  // Redirige al formulario de edición con el ID del proyecto seleccionado
   const handleEdit = (id) => {
     navigate(`/administrador/editar-proyecto/${id}`);
   };
 
   /**
-   * Muestra un cuadro de confirmación antes de eliminar una ciudadela
+   * Muestra un cuadro de confirmación antes de eliminar un proyecto
    * Si se confirma, se llama al servicio y se actualiza el estado local
-   * @param {number} id ID de la ciudadela a eliminar
+   * @param {number} id ID del proyecto a eliminar
    */
   const handleDelete = (id) => {
     confirmDialog({
-      message: '¿Estás seguro de que deseas eliminar este ciudadela?',
+      message: '¿Estás seguro de que deseas eliminar este proyecto?',
       header: 'Confirmar eliminación',
       icon: 'pi pi-exclamation-triangle',
       acceptLabel: 'Sí',
@@ -135,11 +135,11 @@ const ConsultarProyectos = () => {
       accept: async () => {
         try {
           await proyectoService.deleteProyecto(id);
-          setCiudadelas(prev => prev.filter(ciudadela => ciudadela.id !== id));
+          setProyectos(prev => prev.filter(proyecto => proyecto.id !== id));
           toast.current.show({
             severity: 'success',
             summary: 'Éxito',
-            detail: 'Ciudadela eliminada correctamente',
+            detail: 'Proyecto eliminada correctamente',
             life: 3000,
           });
         } catch (error) {
@@ -155,7 +155,7 @@ const ConsultarProyectos = () => {
       <ConfirmDialog />
       <h2 className="section-title">Proyectos</h2>
 
-      {/* Barra de búsqueda y botón para crear ciudadela */}
+      {/* Barra de búsqueda y botón para crear proyecto */}
       <div className="search-container">
         <div className="p-inputgroup custom-inputgroup">
           <InputText
@@ -194,7 +194,7 @@ const ConsultarProyectos = () => {
         </div>
 
         <Button
-          label="Agregar Ciudadela"
+          label="Agregar proyecto"
           icon="pi pi-plus"
           className="p-button-sm p-button-success create-btn"
           onClick={() => navigate('/administrador/crear-proyecto')}
@@ -207,9 +207,9 @@ const ConsultarProyectos = () => {
           <ProgressSpinner />
         </div>
       ) : (
-        // Tabla de ciudadelas con paginación, ordenamiento y acciones
+        // Tabla de proyectos con paginación, ordenamiento y acciones
         <DataTable
-          value={ciudadelas}
+          value={proyectos}
           showGridlines
           lazy
           paginator
@@ -220,7 +220,7 @@ const ConsultarProyectos = () => {
           loading={loading}
           rowsPerPageOptions={[5, 10, 20, 30]}
           className="p-datatable-striped"
-          emptyMessage="No se encontraron ciudadelas"
+          emptyMessage="No se encontraron proyectos"
         >
           <Column field="nombre" header="Nombre" />
           <Column field="urbanizacion" header="Urbanización" />

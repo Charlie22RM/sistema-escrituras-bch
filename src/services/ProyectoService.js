@@ -57,11 +57,11 @@ const ProyectoService = () => {
   };
 
   // Crear nuevo proyecto
-  const createProyecto = async (ciudadelaData) => {
+  const createProyecto = async (proyectoData) => {
     const headers = { Authorization: `Bearer ${token}` };
     try {
       const url = `${API_URL}/proyectos`;
-      const response = await secureAxios.post(url, ciudadelaData, { headers });
+      const response = await secureAxios.post(url, proyectoData, { headers });
       return response;
     } catch (error) {
       console.error("Error al crear proyecto:", error.response?.data || error.message);
@@ -69,20 +69,20 @@ const ProyectoService = () => {
     }
   };
 
-  // Actualizar ciudadela por ID
-  const updateProyecto = async (id, ciudadelaData) => {
+  // Actualizar proyecto por ID
+  const updateProyecto = async (id, proyectoData) => {
     const headers = { Authorization: `Bearer ${token}` };
     try {
       const url = `${API_URL}/proyectos/${id}`;
-      const response = await secureAxios.put(url, ciudadelaData, { headers });
+      const response = await secureAxios.put(url, proyectoData, { headers });
       return response;
     } catch (error) {
-      console.error("Error al actualizar ciudadela:", error.response?.data || error.message);
+      console.error("Error al actualizar proyecto:", error.response?.data || error.message);
       throw error.response?.data || { message: "Error al actualizar proyecto" };
     }
   };
 
-  // Eliminar ciudadela por ID
+  // Eliminar proyecto por ID
   const deleteProyecto = async (id) => {
     const headers = { Authorization: `Bearer ${token}` };
     try {

@@ -13,15 +13,15 @@ import EditarCantones from '../pages/administrador/cantones/EditarCantones';
 import ConsultarInmobiliarias from '../pages/administrador/inmobiliarias/ConsultarInmobiliarias';
 import CrearInmobiliarias from '../pages/administrador/inmobiliarias/CrearInmobiliarias';
 import EditarInmobiliarias from '../pages/administrador/inmobiliarias/EditarInmobiliarias';
-import ConsultarProyectos from '../pages/administrador/ciudadelas/ConsultarProyectos';
+import ConsultarProyectos from '../pages/administrador/proyectos/ConsultarProyectos';
 import ConsultarTramites from '../pages/administrador/tramites/ConsultarTramites';
 import CrearTramites from '../pages/administrador/tramites/CrearTramites';
 import EditarTramites from '../pages/administrador/tramites/EditarTramites';
 import Parametros from '../pages/administrador/Parametros';
 import CambioContrasena from '../components/CambioContrasena';
 import { Navigate } from 'react-router-dom';
-import CrearProyectos from '../pages/administrador/ciudadelas/CrearProyectos';
-import EditarProyectos from '../pages/administrador/ciudadelas/EditarProyectos';
+import CrearProyectos from '../pages/administrador/proyectos/CrearProyectos';
+import EditarProyectos from '../pages/administrador/proyectos/EditarProyectos';
 
 const AdminRoutes = () => {
     return (
