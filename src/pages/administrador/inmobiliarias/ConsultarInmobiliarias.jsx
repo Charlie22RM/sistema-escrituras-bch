@@ -223,6 +223,7 @@ const ConsultarInmobiliarias = () => {
           emptyMessage="No se encontraron inmobiliarias"
         >
           <Column field="nombre" header="Nombre" />
+          <Column field="cliente.nombre" header="Cliente" />
           <Column
             body={(rowData) => (
               <div>

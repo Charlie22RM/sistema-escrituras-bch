@@ -13,6 +13,7 @@ const ClienteService = () => {
   const secureAxios = axios.create();
 
   // Interceptor para manejar errores globales (como 401 Unauthorized)
+  /*
   secureAxios.interceptors.response.use(
     (response) => response,
     (error) => {
@@ -29,7 +30,7 @@ const ClienteService = () => {
       return Promise.reject(error);
     }
   );
-
+*/
   // Obtener clientes paginados
   const getClientes = async (page = 1, limit = 10) => {
     const headers = { Authorization: `Bearer ${token}` };
@@ -43,6 +44,17 @@ const ClienteService = () => {
     }
   };
 
+  const getAllWithFilters = async (qs="") =>{
+    const headers = { Authorization: `Bearer ${token}` };
+    try {
+      const url = `${API_URL}/clientes/all${qs}`;
+      const response = await secureAxios.get(url, { headers });
+      return response;
+    } catch (error) {
+      throw error.response?.data || { message: "Error al obtener clientes" };
+    }
+  }
+
   // Obtener todos los clientes sin paginación
   const getAllClientes = async () => {
     const headers = { Authorization: `Bearer ${token}` };
@@ -55,6 +67,18 @@ const ClienteService = () => {
       throw error.response?.data || { message: "Error al obtener todos los clientes" };
     }
   };
+
+  const getTags = async () => {
+    const headers = { Authorization: `Bearer ${token}` };
+    try {
+      const url = `${API_URL}/clientes/tags`; // Endpoint específico para todos los clientes
+      const response = await secureAxios.get(url, { headers });
+      return response.data;
+    } catch (error) {
+      console.error("Error al obtener todos los tags:", error.response?.data || error.message);
+      throw error.response?.data || { message: "Error al obtener todos los tags" };
+    }
+  }
 
   // Crear nuevo cliente
   const createCliente = async (clienteData) => {
@@ -111,11 +135,13 @@ const ClienteService = () => {
   // Exportar todas las funciones del servicio
   return {
     getClientes,
+    getTags,
     getAllClientes,
     createCliente,
     updateCliente,
     deleteCliente,
     searchClientes,
+    getAllWithFilters,
   };
 };
 

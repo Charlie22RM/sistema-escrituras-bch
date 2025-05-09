@@ -5,27 +5,45 @@ import { Button } from "primereact/button";
 import { Card } from "primereact/card";
 import { InputText } from "primereact/inputtext";
 import { Toast } from "primereact/toast";
+import { Dropdown } from "primereact/dropdown";
 import { clearLogout } from "../../../redux/authSlice";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import InmobiliariaService from "../../../services/InmobiliariaService";
+import ClienteService from "../../../services/ClienteService";
+import { useState } from "react";
+import { useEffect } from "react";
 
-
-// Componente que permite registrar un nuevo inmobiliaria 
+// Componente que permite registrar un nuevo inmobiliaria
 const CrearInmobiliarias = () => {
   const dispatch = useDispatch(); // Hook para disparar acciones de Redux
   const navigate = useNavigate(); // Hook para redireccionar entre rutas
   const toast = useRef(null); // Referencia para mostrar mensajes tipo Toast
-  const inmobiliariaService = InmobiliariaService(); // Servicio de inmobiliarias 
+  const inmobiliariaService = InmobiliariaService(); // Servicio de inmobiliarias
+  const clienteService = ClienteService(); // Servicio de clientes
+  const [clientes, setClientes] = useState([]);
+  const [loading, setLoading] = useState(false); // Estado para manejar la carga de datos
 
+  const getTags = async () => {
+    try {
+      const response = await clienteService.getTags();
+      console.log("tags",response);
+      setClientes(response);
+    } catch (error) {
+      console.error("Error al traer los tags:", error);
+      handleError(error);
+    }
+  };
   // Hook Formik para manejo del formulario, validación y envío
   const formik = useFormik({
     initialValues: {
       nombre: "",
+      cliente_id: "",
     },
     // Esquema de validación con Yup
     validationSchema: Yup.object({
       nombre: Yup.string().required("El nombre es obligatorio"),
+      cliente_id: Yup.string().required("El cliente es obligatorio"),
     }),
 
     /**
@@ -43,7 +61,10 @@ const CrearInmobiliarias = () => {
           life: 3000,
         });
         // Redirige después de 3 segundos a la lista de inmobiliarias
-        setTimeout(() => navigate("/administrador/consultar-inmobiliaria"), 3000);
+        setTimeout(
+          () => navigate("/administrador/consultar-inmobiliaria"),
+          3000
+        );
       } catch (error) {
         // Manejo de error por falta de autorización
         if (error.response && error.response.status === 401) {
@@ -61,7 +82,8 @@ const CrearInmobiliarias = () => {
           toast.current.show({
             severity: "error",
             summary: "Error",
-            detail: error.response?.data?.message || "Error al crear inmobiliaria ",
+            detail:
+              error.response?.data?.message || "Error al crear inmobiliaria ",
             life: 5000,
           });
         }
@@ -69,6 +91,39 @@ const CrearInmobiliarias = () => {
     },
   });
 
+  const handleError = (error) => {
+    console.error("Error al cargar los clientes:", error.statusCode);
+    if (error?.response?.data?.statusCode === 401 || error.statusCode === 401) {
+      toast.current.show({
+        severity: "warn",
+        summary: "Advertencia",
+        detail: "Su sesión ha expirado,inicie sesión de nuevo.",
+        life: 5000,
+      });
+
+      setTimeout(() => {
+        dispatch(clearLogout());
+        navigate("/");
+      }, 5000);
+    } else {
+      console.error("Error al cargar los clientes:", error);
+      toast.current.show({
+        severity: "error",
+        summary: "Error",
+        detail: error.response.data.message,
+        life: 5000,
+      });
+    }
+  };
+
+  useEffect(()=>{
+    setLoading(true);
+    const fetchData = async () => {
+      await getTags();
+      setLoading(false);
+    };
+    fetchData();
+  },[])
   return (
     <div className="p-1 flex justify-content-center">
       <Toast ref={toast} />
@@ -83,10 +138,35 @@ const CrearInmobiliarias = () => {
               value={formik.values.nombre}
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
-              className={`w-full ${formik.touched.nombre && formik.errors.nombre ? "p-invalid" : ""}`}
+              className={`w-full ${
+                formik.touched.nombre && formik.errors.nombre ? "p-invalid" : ""
+              }`}
             />
             {formik.touched.nombre && formik.errors.nombre && (
               <small className="p-error">{formik.errors.nombre}</small>
+            )}
+          </div>
+
+          <div className="field">
+            <label htmlFor="cliente_id">Cliente</label>
+            <Dropdown
+              id="cliente_id"
+              name="cliente_id"
+              value={formik.values.cliente_id}
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
+              options={clientes} 
+              optionLabel="nombre" 
+              optionValue="id" 
+              placeholder="Seleccione un cliente"
+              className={`w-full ${
+                formik.touched.cliente_id && formik.errors.cliente_id
+                  ? "p-invalid"
+                  : ""
+              }`}
+            />
+            {formik.touched.cliente_id && formik.errors.cliente_id && (
+              <small className="p-error">{formik.errors.cliente_id}</small>
             )}
           </div>
 
