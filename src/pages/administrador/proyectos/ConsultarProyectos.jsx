@@ -224,6 +224,7 @@ const ConsultarProyectos = () => {
         >
           <Column field="nombre" header="Nombre" />
           <Column field="urbanizacion" header="Urbanización" />
+          <Column field="canton.nombre" header="Cantón" />
           <Column
             body={(rowData) => (
               <div>

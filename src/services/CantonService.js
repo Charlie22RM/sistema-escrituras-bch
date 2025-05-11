@@ -11,7 +11,7 @@ const CantonService = () => {
 
   // Crear una instancia de Axios para usar interceptores personalizados
   const secureAxios = axios.create();
-
+  /*
   // Interceptor para manejar errores globales (como 401 Unauthorized)
   secureAxios.interceptors.response.use(
     (response) => response,
@@ -29,7 +29,7 @@ const CantonService = () => {
       return Promise.reject(error);
     }
   );
-
+  */
   // Obtener clientes paginados
   const getCantones = async (page = 1, limit = 10) => {
     const headers = { Authorization: `Bearer ${token}` };
@@ -55,6 +55,18 @@ const CantonService = () => {
       throw error.response?.data || { message: "Error al obtener todos los cantones" };
     }
   };
+
+  const getTags = async () => {
+    const headers = { Authorization: `Bearer ${token}` };
+    try {
+      const url = `${API_URL}/cantones/tags`;
+      const response = await secureAxios.get(url, { headers });
+      return response.data;
+    } catch (error) {
+      console.error("Error al obtener todos los tags:", error.response?.data || error.message);
+      throw error.response?.data || { message: "Error al obtener todos los tags" };
+    }
+  }
 
   // Crear nuevo cliente
   const createCanton = async (cantonData) => {
@@ -112,6 +124,7 @@ const CantonService = () => {
   return {
     getCantones,
     getAllCantones,
+    getTags,
     createCanton,
     updateCanton,
     deleteCanton,
