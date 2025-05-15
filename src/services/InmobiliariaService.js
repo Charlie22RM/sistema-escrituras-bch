@@ -13,6 +13,7 @@ const InmobiliariaService = () => {
   const secureAxios = axios.create();
 
   // Interceptor para manejar errores globales (como 401 Unauthorized)
+  /*
   secureAxios.interceptors.response.use(
     (response) => response,
     (error) => {
@@ -29,12 +30,24 @@ const InmobiliariaService = () => {
       return Promise.reject(error);
     }
   );
-
+  */
   // Obtener inmobiliarias paginados
   const getInmobiliarias = async (page = 1, limit = 10) => {
     const headers = { Authorization: `Bearer ${token}` };
     try {
       const url = `${API_URL}/inmobiliarias?page=${page}&limit=${limit}`;
+      const response = await secureAxios.get(url, { headers });
+      return response.data; // Devuelve { data, total } o similar
+    } catch (error) {
+      console.error("Error al obtener inmobiliarias:", error.response?.data || error.message);
+      throw error.response?.data || { message: "Error al obtener inmobiliarias" };
+    }
+  };
+
+    const find = async (qs="") => {
+    const headers = { Authorization: `Bearer ${token}` };
+    try {
+      const url = `${API_URL}/inmobiliarias/find${qs}`;
       const response = await secureAxios.get(url, { headers });
       return response.data; // Devuelve { data, total } o similar
     } catch (error) {
@@ -108,10 +121,25 @@ const InmobiliariaService = () => {
     }
   };
 
+  const getByClienteId = async (cliente_id) =>{
+    try {
+      const headers = { Authorization: `Bearer ${token}` };
+      const url = `${API_URL}/inmobiliarias/byClienteId/${cliente_id}`;
+      const response = await secureAxios.get(url, { headers });
+      return response.data;
+    } catch (error) {
+      console.error("Error al obtener inmobiliarias por cliente:", error.response?.data || error.message);
+      throw error.response?.data || { message: "Error al obtener inmobiliarias por cliente" };
+      
+    }
+  }
+
   // Exportar todas las funciones del servicio
   return {
     getInmobiliarias,
+    find,
     getAllInmobiliarias,
+    getByClienteId,
     createInmobiliaria,
     updateInmobiliaria,
     deleteInmobiliaria,

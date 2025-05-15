@@ -3,6 +3,7 @@ import ClienteModal from "../../../modals/ClienteModal";
 import { Button } from "primereact/button";
 import { InputText } from "primereact/inputtext";
 import { Toast } from "primereact/toast";
+import InmobiliariaModal from "../../../modals/InmobiliariaModal";
 
 // Estilo reutilizable para inputs bloqueados
 const blockedInputStyle = {
@@ -14,6 +15,7 @@ const blockedInputStyle = {
 
 const CrearTramites = () => {
   const [modalVisible, setModalVisible] = useState(false);
+  const [modalInmobiliariaVisible, setModalInmobiliariaVisible] = useState(false);
   const [cliente, setCliente] = useState(null);
   const [inmobiliaria, setInmobiliaria] = useState(null);
   const [tramite, setTramite] = useState(null);
@@ -31,7 +33,9 @@ const CrearTramites = () => {
       });
       return;
     }
+    setModalInmobiliariaVisible(true);
   };
+
   return (
     <>
       <Toast ref={toast} />
@@ -123,6 +127,12 @@ const CrearTramites = () => {
           visible={modalVisible}
           onHide={handleModalHide}
           setCliente={setCliente}
+        />
+        <InmobiliariaModal 
+          visible={modalInmobiliariaVisible}
+          onHide={() => setModalInmobiliariaVisible(false)}
+          setInmobiliaria={setInmobiliaria}
+          cliente_id={cliente?.id} // Asegúrate de pasar el ID del cliente seleccionado
         />
       </div>
     </>
