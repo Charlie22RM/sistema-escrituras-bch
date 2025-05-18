@@ -1,6 +1,6 @@
 import axios from "axios";
 import { useSelector } from "react-redux";
-import { toast } from 'react-toastify';
+import { toast } from "react-toastify";
 
 // API base URL desde las variables de entorno (.env)
 const API_URL = import.meta.env.VITE_API_BASE_URL;
@@ -18,12 +18,12 @@ const ProyectoService = () => {
     (error) => {
       if (error.response && error.response.status === 401) {
         // Mostrar advertencia de sesión inválida (requiere ajustar toast aquí, no es compatible con react-toastify tal como está)
-        toast.warning('No tienes permiso para acceder a esta sección.');
+        toast.warning("No tienes permiso para acceder a esta sección.");
 
         // Esperar y luego redirigir (nota: dispatch y navigate no están definidos aquí, deberías mover esta lógica a otro lugar)
         setTimeout(() => {
           dispatch(clearLogout()); // <-- Esto fallará si no se pasa dispatch como parámetro o contexto
-          navigate('/');           // <-- Igual que dispatch
+          navigate("/"); // <-- Igual que dispatch
         }, 5000);
       }
       return Promise.reject(error);
@@ -38,8 +38,28 @@ const ProyectoService = () => {
       const response = await secureAxios.get(url, { headers });
       return response.data; // Devuelve { data, total } o similar
     } catch (error) {
-      console.error("Error al obtener proyectos:", error.response?.data || error.message);
+      console.error(
+        "Error al obtener proyectos:",
+        error.response?.data || error.message
+      );
       throw error.response?.data || { message: "Error al obtener proyectos" };
+    }
+  };
+
+  const find = async (qs = "") => {
+    const headers = { Authorization: `Bearer ${token}` };
+    try {
+      const url = `${API_URL}/proyectos/find${qs}`;
+      const response = await secureAxios.get(url, { headers });
+      return response.data; // Devuelve { data, total } o similar
+    } catch (error) {
+      console.error(
+        "Error al obtener proyectos:",
+        error.response?.data || error.message
+      );
+      throw (
+        error.response?.data || { message: "Error al obtener proyectos" }
+      );
     }
   };
 
@@ -51,8 +71,15 @@ const ProyectoService = () => {
       const response = await secureAxios.get(url, { headers });
       return response.data;
     } catch (error) {
-      console.error("Error al obtener todos los proyectos:", error.response?.data || error.message);
-      throw error.response?.data || { message: "Error al obtener todos los proyectos" };
+      console.error(
+        "Error al obtener todos los proyectos:",
+        error.response?.data || error.message
+      );
+      throw (
+        error.response?.data || {
+          message: "Error al obtener todos los proyectos",
+        }
+      );
     }
   };
 
@@ -64,7 +91,10 @@ const ProyectoService = () => {
       const response = await secureAxios.post(url, proyectoData, { headers });
       return response;
     } catch (error) {
-      console.error("Error al crear proyecto:", error.response?.data || error.message);
+      console.error(
+        "Error al crear proyecto:",
+        error.response?.data || error.message
+      );
       throw error.response?.data || { message: "Error al crear proyecto" };
     }
   };
@@ -77,7 +107,10 @@ const ProyectoService = () => {
       const response = await secureAxios.put(url, proyectoData, { headers });
       return response;
     } catch (error) {
-      console.error("Error al actualizar proyecto:", error.response?.data || error.message);
+      console.error(
+        "Error al actualizar proyecto:",
+        error.response?.data || error.message
+      );
       throw error.response?.data || { message: "Error al actualizar proyecto" };
     }
   };
@@ -90,7 +123,10 @@ const ProyectoService = () => {
       const response = await secureAxios.delete(url, { headers });
       return response;
     } catch (error) {
-      console.error("Error al eliminar proyecto:", error.response?.data || error.message);
+      console.error(
+        "Error al eliminar proyecto:",
+        error.response?.data || error.message
+      );
       throw error.response?.data || { message: "Error al eliminar proyecto" };
     }
   };
@@ -99,11 +135,16 @@ const ProyectoService = () => {
   const searchProyectos = async (query, page = 1, limit = 10) => {
     const headers = { Authorization: `Bearer ${token}` };
     try {
-      const url = `${API_URL}/proyectos/search?query=${encodeURIComponent(query)}&page=${page}&limit=${limit}`;
+      const url = `${API_URL}/proyectos/search?query=${encodeURIComponent(
+        query
+      )}&page=${page}&limit=${limit}`;
       const response = await secureAxios.get(url, { headers });
       return response.data;
     } catch (error) {
-      console.error("Error al buscar proyectos:", error.response?.data || error.message);
+      console.error(
+        "Error al buscar proyectos:",
+        error.response?.data || error.message
+      );
       throw error.response?.data || { message: "Error al buscar proyectos" };
     }
   };
@@ -111,6 +152,7 @@ const ProyectoService = () => {
   // Exportar todas las funciones del servicio
   return {
     getProyectos,
+    find,
     getAllProyectos,
     createProyecto,
     updateProyecto,
@@ -120,4 +162,3 @@ const ProyectoService = () => {
 };
 
 export default ProyectoService;
-
