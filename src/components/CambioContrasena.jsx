@@ -12,6 +12,7 @@ import { Toast } from "primereact/toast";
 import "../App.css";
 import { useDispatch } from "react-redux";
 import { clearLogout } from "../redux/authSlice";
+import "../pages/administrador/administrador.css";
 
 const CambioContrasena = () => {
   const [loading, setLoading] = useState(false);
@@ -28,12 +29,12 @@ const CambioContrasena = () => {
     },
     validationSchema: Yup.object({
       actual_password: Yup.string().required(
-        "La contraseña actual es obligatoria"
+        "La contraseña actual es obligatoria."
       ),
-      new_password: Yup.string().required("La nueva contraseña es obligatoria"),
+      new_password: Yup.string().required("La nueva contraseña es obligatoria."),
       confirm_password: Yup.string()
-        .oneOf([Yup.ref("new_password"), null], "Las contraseñas no coinciden")
-        .required("La confirmación de la contraseña es obligatoria"),
+        .oneOf([Yup.ref("new_password"), null], "Las contraseñas no coinciden.")
+        .required("La confirmación de la contraseña es obligatoria."),
     }),
     onSubmit: async (values) => {
       setLoading(true);
@@ -55,7 +56,7 @@ const CambioContrasena = () => {
       toast.current.show({
         severity: "success",
         summary: "Éxito",
-        detail: "Contraseña cambiada correctamente",
+        detail: "Contraseña cambiada con exito.",
         life: 3000,
       });
 
@@ -81,7 +82,7 @@ const CambioContrasena = () => {
       toast.current.show({
         severity: "error",
         summary: "Error",
-        detail: error.message || "Error al cambiar la contraseña",
+        detail: error.message || "Error al cambiar la contraseña.",
         life: 3000,
       });
     } finally {
@@ -104,40 +105,48 @@ const CambioContrasena = () => {
         }}
       >
         <div className="p-1 flex justify-content-center">
-          <h1>Cambio de Contraseña</h1>
-        </div>
-
-        <div className="p-1 flex justify-content-center">
-          <Card className="w-full md:w-5">
+          <Card
+            className="w-full md:w-5"
+            title={
+              <div className="flex align-items-center">
+                <Button
+                  icon="pi pi-arrow-left"
+                  className="p-button-text p-button-plain mr-2"
+                  onClick={() => navigate("/administrador")}
+                  tooltip="Volver a página anterior"
+                  tooltipOptions={{ position: "bottom" }}
+                />
+                <span>Cambio de Contraseña</span>
+              </div>
+            }
+          >
             <form className="p-fluid" onSubmit={formik.handleSubmit}>
               <div className="field mb-3">
                 <label htmlFor="actual_password">Contraseña actual</label>
                 <Password
                   inputId="actual_password"
+                  name="actual_password"
                   value={formik.values.actual_password}
                   onChange={formik.handleChange}
                   onBlur={formik.handleBlur}
                   className={`w-full ${
-                    formik.touched.actual_password &&
-                    formik.errors.actual_password
+                    formik.touched.actual_password && formik.errors.actual_password
                       ? "p-invalid"
                       : ""
                   }`}
                   toggleMask
                   feedback={false}
                 />
-                {formik.touched.actual_password &&
-                  formik.errors.actual_password && (
-                    <small className="p-error">
-                      {formik.errors.actual_password}
-                    </small>
-                  )}
+                {formik.touched.actual_password && formik.errors.actual_password && (
+                  <small className="p-error">{formik.errors.actual_password}</small>
+                )}
               </div>
 
               <div className="field mb-3">
                 <label htmlFor="new_password">Nueva Contraseña</label>
                 <Password
                   inputId="new_password"
+                  name="new_password"
                   value={formik.values.new_password}
                   onChange={formik.handleChange}
                   onBlur={formik.handleBlur}
@@ -150,9 +159,7 @@ const CambioContrasena = () => {
                   feedback={false}
                 />
                 {formik.touched.new_password && formik.errors.new_password && (
-                  <small className="p-error">
-                    {formik.errors.new_password}
-                  </small>
+                  <small className="p-error">{formik.errors.new_password}</small>
                 )}
               </div>
 
@@ -160,39 +167,38 @@ const CambioContrasena = () => {
                 <label htmlFor="confirm_password">Repetir Contraseña</label>
                 <Password
                   inputId="confirm_password"
+                  name="confirm_password"
                   value={formik.values.confirm_password}
                   onChange={formik.handleChange}
                   onBlur={formik.handleBlur}
                   className={`w-full ${
-                    formik.touched.confirm_password &&
-                    formik.errors.confirm_password
+                    formik.touched.confirm_password && formik.errors.confirm_password
                       ? "p-invalid"
                       : ""
                   }`}
                   toggleMask
                   feedback={false}
                 />
-                {formik.touched.confirm_password &&
-                  formik.errors.confirm_password && (
-                    <small className="p-error">
-                      {formik.errors.confirm_password}
-                    </small>
-                  )}
+                {formik.touched.confirm_password && formik.errors.confirm_password && (
+                  <small className="p-error">{formik.errors.confirm_password}</small>
+                )}
               </div>
-              <div className="flex justify-content-between gap-3">
+
+              <div className="flex justify-content-between gap-3 mt-4">
                 <Button
                   label="Guardar"
-                  icon="pi pi-check"
+                  icon="pi pi-save"
                   type="submit"
-                  className="p-button-success w-full"
+                  className="w-full custom-primary-button"
+                  loading={formik.isSubmitting}
                 />
-
                 <Button
                   label="Cancelar"
                   icon="pi pi-times"
                   type="button"
-                  className="p-button-danger w-full"
+                  className="w-full custom-danger-button"
                   onClick={handleCancel}
+                  disabled={formik.isSubmitting}
                 />
               </div>
             </form>

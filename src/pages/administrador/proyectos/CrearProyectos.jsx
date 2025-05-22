@@ -42,8 +42,8 @@ const CrearProyectos = () => {
     },
     // Esquema de validación con Yup
     validationSchema: Yup.object({
-      nombre: Yup.string().required("El nombre es obligatorio"),
-      canton_id: Yup.string().required("El cantón es obligatorio"),
+      nombre: Yup.string().required("Por favor, ingrese un nombre."),
+      canton_id: Yup.string().required("Por favor, ingrese seleccione un cantón."),
     }),
 
     /**
@@ -103,85 +103,99 @@ const CrearProyectos = () => {
   }, []);
 
   return (
-    <div className="p-1 flex justify-content-center">
-      <Toast ref={toast} />
-      <Card title="Registrar Nuevo Proyecto" className="w-full md:w-5">
-        <form onSubmit={formik.handleSubmit} className="p-fluid">
-          {/* Campo: Nombre */}
-          <div className="field mb-3">
-            <label htmlFor="nombre">Nombre</label>
-            <InputText
-              id="nombre"
-              name="nombre"
-              value={formik.values.nombre}
-              onChange={formik.handleChange}
-              onBlur={formik.handleBlur}
-              className={`w-full ${
-                formik.touched.nombre && formik.errors.nombre ? "p-invalid" : ""
-              }`}
-            />
-            {formik.touched.nombre && formik.errors.nombre && (
-              <small className="p-error">{formik.errors.nombre}</small>
-            )}
-          </div>
+  <div className="p-1 flex justify-content-center">
+    <Toast ref={toast} />
+    <Card
+      title={
+        <div className="flex align-items-center">
+          <Button
+            icon="pi pi-arrow-left"
+            className="p-button-text p-button-plain mr-2"
+            onClick={() => navigate("/administrador/consultar-proyecto")}
+            tooltip="Volver a página anterior"
+            tooltipOptions={{ position: "top" }}
+          />
+          <span>Registrar Nuevo Proyecto</span>
+        </div>
+      }
+      className="w-full md:w-5"
+    >
+      <form onSubmit={formik.handleSubmit} className="p-fluid">
+        {/* Campo: Nombre */}
+        <div className="field mb-3">
+          <label htmlFor="nombre">Nombre</label>
+          <InputText
+            id="nombre"
+            name="nombre"
+            value={formik.values.nombre}
+            onChange={formik.handleChange}
+            onBlur={formik.handleBlur}
+            className={`w-full ${
+              formik.touched.nombre && formik.errors.nombre ? "p-invalid" : ""
+            }`}
+          />
+          {formik.touched.nombre && formik.errors.nombre && (
+            <small className="p-error">{formik.errors.nombre}</small>
+          )}
+        </div>
 
-          {/* Campo: Provincia */}
-          <div className="field mb-3">
-            <label htmlFor="urbanizacion">Urbanización</label>
-            <InputText
-              id="urbanizacion"
-              name="urbanizacion"
-              value={formik.values.urbanizacion}
-              onChange={formik.handleChange}
-              className="w-full"
-            />
-          </div>
+        {/* Campo: Urbanización */}
+        <div className="field mb-3">
+          <label htmlFor="urbanizacion">Urbanización</label>
+          <InputText
+            id="urbanizacion"
+            name="urbanizacion"
+            value={formik.values.urbanizacion}
+            onChange={formik.handleChange}
+            className="w-full"
+          />
+        </div>
 
-          <div className="field">
-            <label>Cantón</label>
-            <Dropdown
-              id="canton_id"
-              name="canton_id"
-              value={formik.values.canton_id}
-              onChange={formik.handleChange}
-              onBlur={formik.handleBlur}
-              options={cantones}
-              optionLabel="nombre"
-              optionValue="id"
-              placeholder="Seleccione un cantón"
-              className={`w-full ${
-                formik.touched.canton_id && formik.errors.canton_id
-                  ? "p-invalid"
-                  : ""
-              }`}
-            />
-            {formik.touched.canton_id && formik.errors.canton_id && (
-              <small className="p-error">{formik.errors.canton_id}</small>
-            )}
-          </div>
+        {/* Campo: Cantón */}
+        <div className="field mb-3">
+          <label htmlFor="canton_id">Cantón</label>
+          <Dropdown
+            id="canton_id"
+            name="canton_id"
+            value={formik.values.canton_id}
+            onChange={formik.handleChange}
+            onBlur={formik.handleBlur}
+            options={cantones}
+            optionLabel="nombre"
+            optionValue="id"
+            placeholder="Seleccione un cantón"
+            className={`w-full ${
+              formik.touched.canton_id && formik.errors.canton_id ? "p-invalid" : ""
+            }`}
+          />
+          {formik.touched.canton_id && formik.errors.canton_id && (
+            <small className="p-error">{formik.errors.canton_id}</small>
+          )}
+        </div>
 
-          {/* Botones: Guardar y Cancelar */}
-          <div className="flex justify-content-between gap-3">
-            <Button
-              label="Guardar"
-              icon="pi pi-check"
-              type="submit"
-              className="p-button-success w-full"
-              loading={formik.isSubmitting} // Desactiva mientras se envía
-            />
-            <Button
-              label="Cancelar"
-              icon="pi pi-times"
-              type="button"
-              className="p-button-danger w-full"
-              onClick={() => navigate("/administrador/consultar-proyecto")}
-              disabled={formik.isSubmitting}
-            />
-          </div>
-        </form>
-      </Card>
-    </div>
-  );
+        {/* Botones: Guardar y Cancelar */}
+        <div className="flex justify-content-between gap-3 mt-4">
+          <Button
+            label="Guardar"
+            icon="pi pi-save"
+            type="submit"
+            className="w-full custom-primary-button"
+            loading={formik.isSubmitting}
+          />
+          <Button
+            label="Cancelar"
+            icon="pi pi-times"
+            type="button"
+            className="w-full custom-danger-button"
+            onClick={() => navigate("/administrador/consultar-proyecto")}
+            disabled={formik.isSubmitting}
+          />
+        </div>
+      </form>
+    </Card>
+  </div>
+);
+
 };
 
 export default CrearProyectos;

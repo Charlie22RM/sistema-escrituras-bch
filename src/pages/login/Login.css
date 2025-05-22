@@ -1,5 +1,135 @@
 .p-icon-field {
     width: 100%;
   }
-
   
+  .login-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+ background: linear-gradient(135deg, #3c5fa3 0%, #5a7dc7 100%);
+
+  padding: 1rem;
+}
+
+.login-card {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  padding: 2.5rem;
+  width: 100%;
+  max-width: 420px;
+  transition: all 0.3s ease;
+}
+
+.login-card:hover {
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+}
+
+.login-header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.login-avatar {
+  margin-bottom: 1rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.login-title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #2d3748;
+  margin-bottom: 0.25rem;
+}
+
+.login-subtitle {
+  font-size: 0.875rem;
+  color: #718096;
+  margin-bottom: 0;
+}
+
+.login-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.form-field {
+  position: relative;
+}
+
+.error-message {
+  color: #e53e3e;
+  font-size: 0.75rem;
+  margin-top: 0.25rem;
+  display: block;
+}
+
+.login-button {
+  background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+  border: none;
+  padding: 0.75rem;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+.login-button:hover {
+background: linear-gradient(135deg, #16345f 0%, #1f477d 100%);
+  transform: translateY(-2px);
+}
+
+.login-button:active {
+  transform: translateY(0);
+}
+
+.login-footer {
+  text-align: center;
+  margin-top: 0.5rem;
+}
+
+.forgot-password {
+  color: #667eea;
+  font-size: 0.875rem;
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.forgot-password:hover {
+  color: #5a6fd1;
+  text-decoration: underline;
+}
+
+/* PrimeReact overrides */
+.p-float-label label {
+  color: #4a5568;
+}
+
+.p-inputtext {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border-radius: 8px;
+  border: 1px solid #e2e8f0;
+  transition: all 0.3s;
+}
+
+.p-inputtext:enabled:hover {
+  border-color: #cbd5e0;
+}
+
+.p-inputtext:enabled:focus {
+  box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.2);
+  border-color: #667eea;
+}
+
+.p-password-input {
+  width: 100%;
+}
+
+.p-invalid .p-inputtext {
+  border-color: #e53e3e;
+}
+
+.p-invalid .p-float-label label {
+  color: #e53e3e;
+}

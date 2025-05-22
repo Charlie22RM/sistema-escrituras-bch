@@ -13,7 +13,7 @@ import ClienteService from "../../../services/ClienteService";
 
 // Componente para editar un cliente existente
 const EditarClientes = () => {
-  const { id } = useParams(); 
+  const { id } = useParams();
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const toast = useRef(null);
@@ -28,10 +28,10 @@ const EditarClientes = () => {
       direccion: '',
     },
     validationSchema: Yup.object({
-      nombre: Yup.string().required("El nombre es obligatorio"),
+      nombre: Yup.string().required("Por favor, ingrese un nombre."),
       email: Yup.string()
-        .email("Correo tiene un formato inválido")
-        .required("El correo electrónico es obligatorio"),
+        .email("El email tiene un formato inválido.")
+        .required("Por favor, ingrese un email."),
     }),
     onSubmit: async (values) => {
       try {
@@ -115,85 +115,101 @@ const EditarClientes = () => {
     fetchCliente();
   }, [id, dispatch, navigate]);
 
-  return (
-    <div className="p-1 flex justify-content-center">
-      <Toast ref={toast} />
-      <Card title="Editar Cliente" className="w-full md:w-5">
-        <form onSubmit={formik.handleSubmit} className="p-fluid">
-          <div className="field mb-3">
-            <label htmlFor="nombre">Nombre</label>
-            <InputText
-              id="nombre"
-              name="nombre"
-              value={formik.values.nombre}
-              onChange={formik.handleChange}
-              onBlur={formik.handleBlur}
-              className={`w-full ${formik.touched.nombre && formik.errors.nombre ? "p-invalid" : ""}`}
-            />
-            {formik.touched.nombre && formik.errors.nombre && (
-              <small className="p-error">{formik.errors.nombre}</small>
-            )}
-          </div>
+    return (
+      <div className="p-1 flex justify-content-center">
+        <Toast ref={toast} />
+        <Card
+          className="w-full md:w-5"
+          title={
+            <div className="flex align-items-center">
+              <Button
+                icon="pi pi-arrow-left"
+                className="p-button-text p-button-plain mr-2"
+                onClick={() => navigate('/administrador/consultar-cliente')}
+                tooltip="Volver a página anterior"
+                tooltipOptions={{ position: "bottom" }}
+              />
+              <span>Editar Cliente</span>
+            </div>
+          }
+        >
+          <form onSubmit={formik.handleSubmit} className="p-fluid">
+            <div className="field mb-3">
+              <label htmlFor="nombre">Nombre</label>
+              <InputText
+                id="nombre"
+                name="nombre"
+                value={formik.values.nombre}
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+                className={`w-full ${formik.touched.nombre && formik.errors.nombre ? "p-invalid" : ""
+                  }`}
+              />
+              {formik.touched.nombre && formik.errors.nombre && (
+                <small className="p-error">{formik.errors.nombre}</small>
+              )}
+            </div>
 
-          <div className="field mb-3">
-            <label htmlFor="telefono">Teléfono</label>
-            <InputText
-              id="telefono"
-              name="telefono"
-              value={formik.values.telefono}
-              onChange={formik.handleChange}
-              maxLength={10}
-              className="w-full"
-            />
-          </div>
+            <div className="field mb-3">
+              <label htmlFor="telefono">Teléfono</label>
+              <InputText
+                id="telefono"
+                name="telefono"
+                value={formik.values.telefono}
+                onChange={formik.handleChange}
+                maxLength={10}
+                className="w-full"
+              />
+            </div>
 
-          <div className="field mb-3">
-            <label htmlFor="email">Email</label>
-            <InputText
-              id="email"
-              name="email"
-              value={formik.values.email}
-              onChange={formik.handleChange}
-              onBlur={formik.handleBlur}
-              className={`w-full ${formik.touched.email && formik.errors.email ? "p-invalid" : ""}`}
-            />
-            {formik.touched.email && formik.errors.email && (
-              <small className="p-error">{formik.errors.email}</small>
-            )}
-          </div>
+            <div className="field mb-3">
+              <label htmlFor="email">Email</label>
+              <InputText
+                id="email"
+                name="email"
+                value={formik.values.email}
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+                className={`w-full ${formik.touched.email && formik.errors.email ? "p-invalid" : ""
+                  }`}
+              />
+              {formik.touched.email && formik.errors.email && (
+                <small className="p-error">{formik.errors.email}</small>
+              )}
+            </div>
 
-          <div className="field mb-3">
-            <label htmlFor="direccion">Dirección</label>
-            <InputText
-              id="direccion"
-              name="direccion"
-              value={formik.values.direccion}
-              onChange={formik.handleChange}
-              className="w-full"
-            />
-          </div>
+            <div className="field mb-3">
+              <label htmlFor="direccion">Dirección</label>
+              <InputText
+                id="direccion"
+                name="direccion"
+                value={formik.values.direccion}
+                onChange={formik.handleChange}
+                className="w-full"
+              />
+            </div>
 
-          <div className="flex justify-content-between gap-3">
-            <Button
-              label="Guardar"
-              icon="pi pi-check"
-              type="submit"
-              className="p-button-success w-full"
-              loading={formik.isSubmitting}
-            />
-            <Button
-              label="Cancelar"
-              icon="pi pi-times"
-              type="button"
-              className="p-button-danger w-full"
-              onClick={() => navigate('/administrador/consultar-cliente')}
-              disabled={formik.isSubmitting}
-            />
-          </div>
-        </form>
-      </Card>
-    </div>
-  );
-};
+            <div className="flex justify-content-between gap-3 mt-4">
+              <Button
+                label="Guardar"
+                icon="pi pi-save"
+                type="submit"
+                className="w-full custom-primary-button"
+                loading={formik.isSubmitting}
+              />
+              <Button
+                label="Cancelar"
+                icon="pi pi-times"
+                type="button"
+                className="w-full custom-danger-button"
+                onClick={() => navigate('/administrador/consultar-cliente')}
+                disabled={formik.isSubmitting}
+              />
+            </div>
+          </form>
+        </Card>
+      </div>
+    );
+  };
 
 export default EditarClientes;

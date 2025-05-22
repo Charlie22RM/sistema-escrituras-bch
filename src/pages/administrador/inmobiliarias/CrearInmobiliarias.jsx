@@ -42,8 +42,8 @@ const CrearInmobiliarias = () => {
     },
     // Esquema de validación con Yup
     validationSchema: Yup.object({
-      nombre: Yup.string().required("El nombre es obligatorio"),
-      cliente_id: Yup.string().required("El cliente es obligatorio"),
+      nombre: Yup.string().required("Por favor, ingrese un nombre."),
+      cliente_id: Yup.string().required("Por favor, seleccione un cliente."),
     }),
 
     /**
@@ -124,74 +124,90 @@ const CrearInmobiliarias = () => {
     };
     fetchData();
   },[])
+
+
   return (
-    <div className="p-1 flex justify-content-center">
-      <Toast ref={toast} />
-      <Card title="Registrar Nueva Inmobiliaria " className="w-full md:w-5">
-        <form onSubmit={formik.handleSubmit} className="p-fluid">
-          {/* Campo: Nombre */}
-          <div className="field mb-3">
-            <label htmlFor="nombre">Nombre</label>
-            <InputText
-              id="nombre"
-              name="nombre"
-              value={formik.values.nombre}
-              onChange={formik.handleChange}
-              onBlur={formik.handleBlur}
-              className={`w-full ${
-                formik.touched.nombre && formik.errors.nombre ? "p-invalid" : ""
-              }`}
-            />
-            {formik.touched.nombre && formik.errors.nombre && (
-              <small className="p-error">{formik.errors.nombre}</small>
-            )}
-          </div>
+  <div className="p-1 flex justify-content-center">
+    <Toast ref={toast} />
+    <Card
+      title={
+        <div className="flex align-items-center">
+          <Button
+            icon="pi pi-arrow-left"
+            className="p-button-text p-button-plain mr-2"
+            onClick={() => navigate("/administrador/consultar-inmobiliaria")}
+            tooltip="Volver a página anterior"
+            tooltipOptions={{ position: "top" }}
+          />
+          <span>Registrar Nueva Inmobiliaria</span>
+        </div>
+      }
+      className="w-full md:w-5"
+    >
+      <form onSubmit={formik.handleSubmit} className="p-fluid">
+        {/* Campo: Nombre */}
+        <div className="field mb-3">
+          <label htmlFor="nombre">Nombre</label>
+          <InputText
+            id="nombre"
+            name="nombre"
+            value={formik.values.nombre}
+            onChange={formik.handleChange}
+            onBlur={formik.handleBlur}
+            className={`w-full ${
+              formik.touched.nombre && formik.errors.nombre ? "p-invalid" : ""
+            }`}
+          />
+          {formik.touched.nombre && formik.errors.nombre && (
+            <small className="p-error">{formik.errors.nombre}</small>
+          )}
+        </div>
 
-          <div className="field">
-            <label htmlFor="cliente_id">Cliente</label>
-            <Dropdown
-              id="cliente_id"
-              name="cliente_id"
-              value={formik.values.cliente_id}
-              onChange={formik.handleChange}
-              onBlur={formik.handleBlur}
-              options={clientes} 
-              optionLabel="nombre" 
-              optionValue="id" 
-              placeholder="Seleccione un cliente"
-              className={`w-full ${
-                formik.touched.cliente_id && formik.errors.cliente_id
-                  ? "p-invalid"
-                  : ""
-              }`}
-            />
-            {formik.touched.cliente_id && formik.errors.cliente_id && (
-              <small className="p-error">{formik.errors.cliente_id}</small>
-            )}
-          </div>
+        {/* Campo: Cliente */}
+        <div className="field mb-3">
+          <label htmlFor="cliente_id">Cliente</label>
+          <Dropdown
+            id="cliente_id"
+            name="cliente_id"
+            value={formik.values.cliente_id}
+            onChange={formik.handleChange}
+            onBlur={formik.handleBlur}
+            options={clientes}
+            optionLabel="nombre"
+            optionValue="id"
+            placeholder="Seleccione un cliente"
+            className={`w-full ${
+              formik.touched.cliente_id && formik.errors.cliente_id ? "p-invalid" : ""
+            }`}
+          />
+          {formik.touched.cliente_id && formik.errors.cliente_id && (
+            <small className="p-error">{formik.errors.cliente_id}</small>
+          )}
+        </div>
 
-          {/* Botones: Guardar y Cancelar */}
-          <div className="flex justify-content-between gap-3">
-            <Button
-              label="Guardar"
-              icon="pi pi-check"
-              type="submit"
-              className="p-button-success w-full"
-              loading={formik.isSubmitting} // Desactiva mientras se envía
-            />
-            <Button
-              label="Cancelar"
-              icon="pi pi-times"
-              type="button"
-              className="p-button-danger w-full"
-              onClick={() => navigate("/administrador/consultar-inmobiliaria")}
-              disabled={formik.isSubmitting}
-            />
-          </div>
-        </form>
-      </Card>
-    </div>
-  );
+        {/* Botones: Guardar y Cancelar */}
+        <div className="flex justify-content-between gap-3 mt-4">
+          <Button
+            label="Guardar"
+            icon="pi pi-save"
+            type="submit"
+            className="w-full custom-primary-button"
+            loading={formik.isSubmitting}
+          />
+          <Button
+            label="Cancelar"
+            icon="pi pi-times"
+            type="button"
+            className="w-full custom-danger-button"
+            onClick={() => navigate("/administrador/consultar-inmobiliaria")}
+            disabled={formik.isSubmitting}
+          />
+        </div>
+      </form>
+    </Card>
+  </div>
+);
+
 };
 
 export default CrearInmobiliarias;

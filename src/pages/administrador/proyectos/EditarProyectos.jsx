@@ -29,8 +29,8 @@ const EditarProyectos = () => {
       canton_id: "",
     },
     validationSchema: Yup.object({
-      nombre: Yup.string().required("El nombre es obligatorio"),
-      canton_id: Yup.string().required("El cantón es obligatorio"),
+      nombre: Yup.string().required("Por favor, ingrese un nombre"),
+      canton_id: Yup.string().required("Por favor, seleccione un cantón"),
     }),
     onSubmit: async (values) => {
       try {
@@ -154,7 +154,21 @@ const EditarProyectos = () => {
   return (
     <div className="p-1 flex justify-content-center">
       <Toast ref={toast} />
-      <Card title="Editar Proyecto" className="w-full md:w-5">
+      <Card
+        className="w-full md:w-5"
+        title={
+          <div className="flex align-items-center">
+            <Button
+              icon="pi pi-arrow-left"
+              className="p-button-text p-button-plain mr-2"
+              onClick={() => navigate("/administrador/consultar-proyecto")}
+              tooltip="Volver a página anterior"
+              tooltipOptions={{ position: "bottom" }}
+            />
+            <span>Editar Proyecto</span>
+          </div>
+        }
+      >
         <form onSubmit={formik.handleSubmit} className="p-fluid">
           <div className="field mb-3">
             <label htmlFor="nombre">Nombre</label>
@@ -184,8 +198,8 @@ const EditarProyectos = () => {
             />
           </div>
 
-          <div className="field">
-            <label>Cantón</label>
+          <div className="field mb-3">
+            <label htmlFor="canton_id">Cantón</label>
             <Dropdown
               id="canton_id"
               name="canton_id"
@@ -206,19 +220,20 @@ const EditarProyectos = () => {
               <small className="p-error">{formik.errors.canton_id}</small>
             )}
           </div>
-          <div className="flex justify-content-between gap-3">
+
+          <div className="flex justify-content-between gap-3 mt-4">
             <Button
               label="Guardar"
-              icon="pi pi-check"
+              icon="pi pi-save"
               type="submit"
-              className="p-button-success w-full"
+              className="w-full custom-primary-button"
               loading={formik.isSubmitting}
             />
             <Button
               label="Cancelar"
               icon="pi pi-times"
               type="button"
-              className="p-button-danger w-full"
+              className="w-full custom-danger-button"
               onClick={() => navigate("/administrador/consultar-proyecto")}
               disabled={formik.isSubmitting}
             />

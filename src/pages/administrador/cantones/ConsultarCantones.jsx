@@ -123,91 +123,122 @@ const ConsultarCantones = () => {
    * Si se confirma, se llama al servicio y se actualiza el estado local
    * @param {number} id ID del cantón a eliminar
    */
-  const handleDelete = (id) => {
-    confirmDialog({
-      message: '¿Estás seguro de que deseas eliminar este cantón?',
-      header: 'Confirmar eliminación',
-      icon: 'pi pi-exclamation-triangle',
-      acceptLabel: 'Sí',
-      rejectLabel: 'Cancelar',
-      acceptClassName: 'p-button-danger',
-      rejectClassName: 'p-button-secondary',
-      accept: async () => {
-        try {
-          await cantonService.deleteCanton(id);
-          setCantones(prev => prev.filter(canton => canton.id !== id));
-          toast.current.show({
-            severity: 'success',
-            summary: 'Éxito',
-            detail: 'Cantón eliminado correctamente',
-            life: 3000,
-          });
-        } catch (error) {
-          handleError(error);
-        }
-      },
-    });
-  };
+const handleDelete = (id) => {
+  // Crear elemento de diálogo personalizado
+  const dialog = document.createElement('div');
+  dialog.className = 'custom-dialog';
+  
+  dialog.innerHTML = `
+    <div class="dialog-overlay"></div>
+    <div class="dialog-container">
+      <div class="dialog-header">
+        <i class="dialog-icon pi pi-exclamation-triangle"></i>
+        <h3>Confirmar eliminación</h3>
+      </div>
+      <div class="dialog-content">
+        <p>¿Estás seguro de que deseas eliminar este cantón?</p>
+      </div>
+      <div class="dialog-footer">
+        <button class="dialog-btn cancel-btn">Cancelar</button>
+        <button class="dialog-btn confirm-btn">Sí, eliminar</button>
+      </div>
+    </div>
+  `;
 
-  return (
-    <div className="p-4">
-      <Toast ref={toast} />
-      <ConfirmDialog />
-      <h2 className="section-title">Cantones</h2>
+  // Agregar a DOM
+  document.body.appendChild(dialog);
+  
+  // Manejar clic en confirmar
+  dialog.querySelector('.confirm-btn').addEventListener('click', async () => {
+    try {
+      await cantonService.deleteCanton(id);
+      setCantones(prev => prev.filter(canton => canton.id !== id));
+      
+      // Mantener el toast de PrimeReact original
+      toast.current.show({
+        severity: 'success',
+        summary: 'Éxito',
+        detail: 'Cantón eliminado correctamente',
+        life: 3000
+      });
+      
+    } catch (error) {
+      handleError(error);
+    } finally {
+      // Cerrar diálogo
+      dialog.remove();
+    }
+  });
+  
+  // Manejar clic en cancelar
+  dialog.querySelector('.cancel-btn').addEventListener('click', () => {
+    dialog.remove();
+  });
+  
+  // Cerrar al hacer clic fuera del diálogo
+  dialog.querySelector('.dialog-overlay').addEventListener('click', () => {
+    dialog.remove();
+  });
+};
+return (
+  <div className="consultar-container">
+    <Toast ref={toast} />
+    <ConfirmDialog />
 
-      {/* Barra de búsqueda y botón para crear cantón */}
-      <div className="search-container">
-         <div className="p-inputgroup custom-inputgroup">
-                  <InputText
-                    value={searchInput}
-                    onChange={(e) => setSearchInput(e.target.value)}
-                    onKeyDown={(e) => {
-                      if (e.key === 'Enter') {
-                        handleSearchClick();
-                      }
-                    }}
-                    placeholder="Buscar Cliente"
-                    className="p-inputtext-sm"
-                  />
-        
-                  {searchInput && (
-                    <Button
-                      icon="pi pi-times"
-                      className="p-button-danger p-button-sm"
-                      onClick={() => {
-                        setSearchInput('');
-                        setSearch('');
-                        setLazyState({
-                          ...lazyState,
-                          first: 0,
-                          page: 1,
-                        });
-                      }}
-                    />
-                  )}
-        
-                  <Button
-                    icon="pi pi-search"
-                    className="p-button-success"
-                    onClick={handleSearchClick}
-                  />
-                </div>
+    <div className="consultar-header">
+      <h2 className="consultar-title">Cantones</h2>
+
+      <div className="consultar-actions">
+        <div className="search-wrapper">
+          <div className="search-group">
+            <InputText
+              value={searchInput}
+              onChange={(e) => setSearchInput(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') {
+                  handleSearchClick();
+                }
+              }}
+              placeholder="Buscar cantón"
+              className="search-input"
+            />
+            <Button
+              icon="pi pi-search"
+              className="search-button"
+              onClick={handleSearchClick}
+            />
+            {searchInput && (
+              <Button
+                icon="pi pi-times"
+                className="clear-button"
+                onClick={() => {
+                  setSearchInput('');
+                  setSearch('');
+                  setLazyState({
+                    ...lazyState,
+                    first: 0,
+                    page: 1,
+                  });
+                }}
+              />
+            )}
+          </div>
+        </div>
 
         <Button
           label="Agregar Cantón"
-          icon="pi pi-plus"
-          className="p-button-sm p-button-success create-btn"
+          className="add-button"
           onClick={() => navigate('/administrador/crear-canton')}
         />
       </div>
+    </div>
 
-      {/* Spinner de carga mientras se obtienen los datos */}
-      {loading ? (
-        <div className="flex justify-content-center">
-          <ProgressSpinner />
-        </div>
-      ) : (
-        // Tabla de cantones con paginación, ordenamiento y acciones
+    {loading ? (
+      <div className="loading-spinner">
+        <ProgressSpinner />
+      </div>
+    ) : (
+      <div className="table-container">
         <DataTable
           value={cantones}
           showGridlines
@@ -219,34 +250,38 @@ const ConsultarCantones = () => {
           onPage={onPageChange}
           loading={loading}
           rowsPerPageOptions={[5, 10, 20, 30]}
-          className="p-datatable-striped"
+          className="consultar-table"
           emptyMessage="No se encontraron cantones"
         >
           <Column field="nombre" header="Nombre" />
           <Column field="provincia" header="Provincia" />
           <Column
+            header="Acciones"
             body={(rowData) => (
-              <div>
+              <div className="actions-cell">
                 <Button
                   icon="pi pi-pencil"
-                  rounded text
-                  className="custom-edit-btn"
+                  rounded
+                  text
+                  className="edit-button"
                   onClick={() => handleEdit(rowData.id)}
                 />
                 <Button
                   icon="pi pi-trash"
-                  rounded text
-                  className="custom-delete-btn"
+                  rounded
+                  text
+                  className="delete-button"
                   onClick={() => handleDelete(rowData.id)}
                 />
               </div>
             )}
-            header="Funciones"
           />
         </DataTable>
-      )}
-    </div>
-  );
+      </div>
+    )}
+  </div>
+);
+
 };
 
 export default ConsultarCantones;

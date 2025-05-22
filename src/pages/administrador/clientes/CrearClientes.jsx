@@ -27,10 +27,10 @@ const CrearClientes = () => {
     },
     // Esquema de validación con Yup
     validationSchema: Yup.object({
-      nombre: Yup.string().required("El nombre es obligatorio"),
+      nombre: Yup.string().required("Por favor, ingrese un nombre."),
       email: Yup.string()
-        .email("Correo tiene un formato inválido")
-        .required("El correo electrónico es obligatorio"),
+        .email("El email tiene un formato inválido")
+        .required("Por favor, ingrese un email."),
     }),
 
     /**
@@ -73,11 +73,24 @@ const CrearClientes = () => {
       }
     },
   });
-
-  return (
+return (
     <div className="p-1 flex justify-content-center">
       <Toast ref={toast} />
-      <Card title="Registrar Nuevo Cliente" className="w-full md:w-5">
+      <Card 
+        title={
+          <div className="flex align-items-center">
+            <Button 
+              icon="pi pi-arrow-left" 
+              className="p-button-text p-button-plain mr-2" 
+              onClick={() => navigate("/administrador/consultar-cliente")}
+              tooltip="Volver a página anterior"
+              tooltipOptions={{ position: 'top' }}
+            />
+            <span>Registrar Nuevo Cliente</span>
+          </div>
+        } 
+        className="w-full md:w-5"
+      >
         <form onSubmit={formik.handleSubmit} className="p-fluid">
           {/* Campo: Nombre */}
           <div className="field mb-3">
@@ -137,19 +150,19 @@ const CrearClientes = () => {
           </div>
 
           {/* Botones: Guardar y Cancelar */}
-          <div className="flex justify-content-between gap-3">
+          <div className="flex justify-content-between gap-3 mt-4">
             <Button
               label="Guardar"
-              icon="pi pi-check"
+              icon="pi pi-save"
               type="submit"
-              className="p-button-success w-full"
-              loading={formik.isSubmitting} // Desactiva mientras se envía
+              className="w-full custom-primary-button"
+              loading={formik.isSubmitting}
             />
             <Button
               label="Cancelar"
               icon="pi pi-times"
               type="button"
-              className="p-button-danger w-full"
+              className="w-full custom-danger-button"
               onClick={() => navigate("/administrador/consultar-cliente")}
               disabled={formik.isSubmitting}
             />
@@ -159,5 +172,6 @@ const CrearClientes = () => {
     </div>
   );
 };
+
 
 export default CrearClientes;

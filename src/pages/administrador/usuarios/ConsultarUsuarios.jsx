@@ -119,138 +119,172 @@ const ConsultarUsuarios = () => {
     navigate(`/administrador/editar-usuario/${id}`);
   };
 
-  const handleDelete = (id) => {
-    confirmDialog({
-      message: "¿Está seguro de que desea eliminar este usuario?",
-      header: "Confirmación",
-      icon: "pi pi-exclamation-triangle",
-      acceptLabel: 'Sí',
-      rejectLabel: 'Cancelar',
-      acceptClassName: 'p-button-danger',
-      rejectClassName: 'p-button-secondary',
-      accept: async () => {
-        try {
-          setLoading(true);
-          await userService.deleteValue(id);
-          toast.current.show({
-            severity: "success",
-            summary: "Éxito",
-            detail: "Usuario eliminado correctamente.",
-            life: 3000,
-          });
-          setLazyState((prev) => ({
-            ...prev,
-            first: 0,
-            page: 1,
-          }));
-          await getClientes();
-          setLoading(false);
-        } catch (error) {
-          handleError(error);
-          setLoading(false);
-        }
-      },
-    });
-  };
+ const handleDelete = (id) => {
+  // Evitar abrir múltiples diálogos
+  if (document.querySelector('.custom-dialog')) return;
+
+  // Crear diálogo personalizado
+  const dialog = document.createElement('div');
+  dialog.className = 'custom-dialog';
+
+  dialog.innerHTML = `
+    <div class="dialog-overlay"></div>
+    <div class="dialog-container">
+      <div class="dialog-header">
+        <i class="dialog-icon pi pi-exclamation-triangle"></i>
+        <h3>Confirmación</h3>
+      </div>
+      <div class="dialog-content">
+        <p>¿Está seguro de que desea eliminar este usuario?</p>
+      </div>
+      <div class="dialog-footer">
+        <button class="dialog-btn cancel-btn">Cancelar</button>
+        <button class="dialog-btn confirm-btn p-button-danger">Sí, eliminar</button>
+      </div>
+    </div>
+  `;
+
+  // Agregar al DOM
+  document.body.appendChild(dialog);
+
+  // Confirmar eliminación
+  dialog.querySelector('.confirm-btn').addEventListener('click', async () => {
+    try {
+      setLoading(true);
+      await userService.deleteValue(id);
+
+      toast.current.show({
+        severity: 'success',
+        summary: 'Éxito',
+        detail: 'Usuario eliminado correctamente.',
+        life: 3000,
+      });
+
+      setLazyState(prev => ({
+        ...prev,
+        first: 0,
+        page: 1,
+      }));
+
+      await getClientes();
+    } catch (error) {
+      handleError(error);
+    } finally {
+      setLoading(false);
+      dialog.remove();
+    }
+  });
+
+  // Cancelar eliminación
+  dialog.querySelector('.cancel-btn').addEventListener('click', () => {
+    dialog.remove();
+  });
+
+  // Cerrar al hacer clic fuera del diálogo
+  dialog.querySelector('.dialog-overlay').addEventListener('click', () => {
+    dialog.remove();
+  });
+};
+
   return (
-    <div className="p-4">
+    <div className="consultar-container">
       <Toast ref={toast} />
       <ConfirmDialog />
 
+      <div className="consultar-header">
+        <h2 className="consultar-title">Usuarios</h2>
 
-      <h2 className="section-title">Usuarios</h2>
-
-      <div className="search-container">
-
-        <div className="p-inputgroup custom-inputgroup">
-          <InputText
-            placeholder="Buscar Usuario"
-            value={inputSearch}
-            onChange={(e) => setInputSearch(e.target.value)}
-            onKeyDown={(e) => {
-              if (e.key === 'Enter') {
-                handleSearch();
-              }
-            }}
-            className="p-inputtext-sm"
-          />
-
-          {inputSearch && (
-            <Button
-              icon="pi pi-times"
-              className="p-button-danger p-button-sm"
-              onClick={() => {
-                setInputSearch('');
-                setLazyState((prev) => ({
-                  ...prev,
-                  searchTerm: '',
-                  page: 1,
-                  first: 0,
-                }));
-              }}
-            />
-          )}
+        <div className="consultar-actions">
+          <div className="search-wrapper">
+            <div className="search-group">
+              <InputText
+                value={inputSearch}
+                onChange={(e) => setInputSearch(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') {
+                    handleSearch();
+                  }
+                }}
+                placeholder="Buscar usuario"
+                className="search-input"
+              />
+              <Button
+                icon="pi pi-search"
+                className="search-button"
+                onClick={handleSearch}
+              />
+              {inputSearch && (
+                <Button
+                  icon="pi pi-times"
+                  className="clear-button"
+                  onClick={() => {
+                    setInputSearch('');
+                    setLazyState((prev) => ({
+                      ...prev,
+                      searchTerm: '',
+                      page: 1,
+                      first: 0,
+                    }));
+                  }}
+                />
+              )}
+            </div>
+          </div>
 
           <Button
-            icon="pi pi-search"
-            className="p-button-success"
-            onClick={handleSearch}
+            label="Agregar Usuario"
+            className="add-button"
+            onClick={() => navigate('/administrador/crear-usuario')}
           />
         </div>
-
-
-
-        <Button
-          label="Agregar usuario"
-          icon="pi pi-plus"
-          className="p-button-sm p-button-success create-btn"
-          onClick={() => navigate("/administrador/crear-usuario")}
-        />
       </div>
 
       {loading ? (
-        <div className="flex justify-content-center">
+        <div className="loading-spinner">
           <ProgressSpinner />
         </div>
       ) : (
-
-        <DataTable
-          value={usuarios}
-          showGridlines
-          lazy
-          paginator
-          first={lazyState.first}
-          rows={lazyState.rows}
-          totalRecords={totalRecords}
-          onPage={onPageChange}
-          className="p-datatable-striped"
-          emptyMessage="No se encontraron usuarios"
-        >
-          <Column field="email" header="Correo Electrónico" />
-          <Column field="nombre" header="Nombre" />
-          <Column field="rol.nombre" header="Rol" />
-          <Column
-            body={(rowData) => (
-              <div>
-                <Button
-                  icon="pi pi-pencil"
-                  rounded
-                  text
-                  className="custom-edit-btn"
-                  onClick={() => handleEdit(rowData.id)}
-                />
-                <Button
-                  icon="pi pi-trash"
-                  rounded
-                  text
-                  className="custom-delete-btn"
-                  onClick={() => handleDelete(rowData.id)}
-                />
-              </div>
-            )}
-            header="Acciones"
-          />
-        </DataTable>
+        <div className="table-container">
+          <DataTable
+            value={usuarios}
+            showGridlines
+            lazy
+            paginator
+            first={lazyState.first}
+            rows={lazyState.rows}
+            totalRecords={totalRecords}
+            onPage={onPageChange}
+            loading={loading}
+            rowsPerPageOptions={[5, 10, 20, 30]}
+            className="consultar-table"
+            emptyMessage="No se encontraron usuarios"
+          >
+            <Column field="email" header="Correo Electrónico" />
+            <Column field="nombre" header="Nombre" />
+            <Column field="rol.nombre" header="Rol" />
+            <Column
+              header="Acciones"
+              body={(rowData) => (
+                <div className="actions-cell">
+                  <Button
+                    icon="pi pi-pencil"
+                    rounded
+                    text
+                    className="edit-button"
+                    onClick={() => handleEdit(rowData.id)}
+                  />
+                  <Button
+                    icon="pi pi-trash"
+                    rounded
+                    text
+                    className="delete-button"
+                    onClick={() => handleDelete(rowData.id)}
+                  />
+                </div>
+              )}
+            />
+          </DataTable>
+        </div>
       )}
     </div>
   );

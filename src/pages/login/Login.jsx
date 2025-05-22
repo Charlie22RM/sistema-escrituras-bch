@@ -10,168 +10,173 @@ import AuthService from "../../services/AuthService";
 import "./Login.css";
 import { Toast } from "primereact/toast";
 import { useDispatch } from 'react-redux';
-import { setLogin} from "../../redux/authSlice";
+import { setLogin } from "../../redux/authSlice";
 import { useNavigate } from "react-router-dom";
 
 const Login = () => {
-  const dispatch = useDispatch();
-  const toast = useRef(null);
-  const navigateTo = useNavigate();
-  const authService = AuthService();
+    const dispatch = useDispatch();
+    const toast = useRef(null);
+    const navigateTo = useNavigate();
+    const authService = AuthService();
 
-  const formik = useFormik({
-    initialValues: {
-      email: "",
-      password: "",
-    },
-    validationSchema: Yup.object({
-      email: Yup.string()
-        .email("Correo tiene un formato inválido")
-        .required("El correo electrónico es obligatorio"),
-      password: Yup.string().required("La contraseña es obligatoria"),
-    }),
-    onSubmit: (values) => {
-      console.log("Datos enviados:", values);
-      handleLogin(values);
-    },
-  });
+    const formik = useFormik({
+        initialValues: {
+            email: "",
+            password: "",
+        },
+        validationSchema: Yup.object({
+            email: Yup.string()
+                .email("El email tiene un formato inválido.")
+                .required("Por favor, ingrese su email."),
+            password: Yup.string().required("Por favor, ingrese su contraseña"),
+        }),
+        onSubmit: (values, { setSubmitting }) => {
+            console.log("Datos enviados:", values);
+            handleLogin(values, { setSubmitting });
+        },
+    });
 
-  const handleLogin = async (values) => {
-    try {
-      const response = await authService.login(values.email, values.password);
-      console.log("Login exitoso:", response);
-      // Aquí puedes redirigir al usuario a otra página o realizar otras acciones
-      toast.current.show({
-        severity: "success",
-        summary: "Éxito",
-        detail: "Inicio de sesión exitoso",
-        life: 3000, // El mensaje durará 3 segundos
-      });
-      const payload = {
-        token: response.data.access_token,
-        userId: response.data.user.id,
-        perfilId: response.data.user.rol_id,
-      };
-      dispatch(setLogin(payload)); 
-      const perfilId = parseInt(response.data.user.rol_id);
+    const handleLogin = async (values, { setSubmitting }) => {
+        try {
+            const response = await authService.login(values.email, values.password);
+            console.log("Login exitoso:", response);
 
-      switch (perfilId) {
-        case 1:
-          navigateTo("/administrador/");
-          break;
-        case 2:
-          navigateTo("/operador/");
-          break;
-        case 3:
-          navigateTo("/cliente/");
-          break;
-        default:
-          navigateTo("/");
-      }
+            toast.current.show({
+                severity: "success",
+                summary: "Éxito",
+                detail: "Inicio de sesión exitoso",
+                life: 3000,
+            });
 
-    } catch (error) {
-      console.error("Error en el login:", error);
-      if (error.statusCode == 404) {
-        toast.current.show({
-          severity: "error",
-          summary: "Error",
-          detail: error.message,
-          life: 3000, // El mensaje durará 3 segundos
-        });
-        return;
-      }
-      toast.current.show({
-        severity: "error",
-        summary: "Error",
-        detail: error.message,
-        life: 3000, // El mensaje durará 3 segundos
-      });
-      // Aquí puedes mostrar un mensaje de error al usuario
-    }
-  };
+            const payload = {
+                token: response.data.access_token,
+                userId: response.data.user.id,
+                perfilId: response.data.user.rol_id,
+            };
 
-  return (
-    <div className="flex align-items-center justify-content-center min-h-screen bg-gray-100">
-      <div
-        className="flex flex-column align-items-center gap-4 p-4 shadow-2 border-round bg-white"
-        style={{ width: "100%", maxWidth: "400px" }}
-      >
-        {/* Título */}
-        <h2 className="text-xl font-semibold text-center mb-2">
-          Sistema de Escrituras BCHASESORES S.A.
-        </h2>
+            dispatch(setLogin(payload));
+            const perfilId = parseInt(response.data.user.rol_id);
 
-        {/* Avatar */}
-        <div className="flex justify-content-center">
-          <Avatar
-            icon="pi pi-user"
-            size="xlarge"
-            shape="square"
-            className="bg-gray-300"
-          />
+            switch (perfilId) {
+                case 1:
+                    navigateTo("/administrador/");
+                    break;
+                case 2:
+                    navigateTo("/operador/");
+                    break;
+                case 3:
+                    navigateTo("/cliente/");
+                    break;
+                default:
+                    navigateTo("/");
+            }
+
+        } catch (error) {
+            console.error("Error en el login:", error);
+
+            // Resetear el estado de envío
+            setSubmitting(false);
+
+            if (error.statusCode == 404) {
+                toast.current.show({
+                    severity: "error",
+                    summary: "Error",
+                    detail: error.message,
+                    life: 3000,
+                });
+                return;
+            }
+
+            toast.current.show({
+                severity: "error",
+                summary: "Error",
+                detail: error.message,
+                life: 3000,
+            });
+        }
+    };
+
+    return (
+        <div className="login-container">
+            <div className="login-card">
+                {/* Logo and Title */}
+                <div className="login-header">
+                    <Avatar
+                        icon="pi pi-file-edit"
+                        size="xlarge"
+                        shape="circle"
+                        className="login-avatar bg-indigo-500 text-black"
+                    />
+                    <h2 className="login-title">Sistema de Escrituras</h2>
+                    <p className="login-subtitle">BCHASESORES S.A.</p>
+                </div>
+
+                {/* Toast for messages */}
+                <Toast ref={toast} position="top-right" />
+
+                {/* Login Form */}
+                <form onSubmit={formik.handleSubmit} className="login-form">
+                    {/* Email Field */}
+                    <div className="form-field">
+                        <FloatLabel>
+                            <InputText
+                                id="email"
+                                name="email"
+                                className={`w-full ${formik.touched.email && formik.errors.email ? "p-invalid" : ""}`}
+                                value={formik.values.email}
+                                onChange={formik.handleChange}
+                                onBlur={formik.handleBlur}
+                                autoComplete="username"
+                            />
+                            <label htmlFor="email">Email</label>
+                        </FloatLabel>
+                        {formik.touched.email && formik.errors.email && (
+                            <small className="error-message">{formik.errors.email}</small>
+                        )}
+                    </div>
+
+                    {/* Password Field */}
+                    <div className="form-field">
+                        <FloatLabel>
+                            <Password
+                                inputId="password"
+                                name="password"
+                                className={`w-full ${formik.touched.password && formik.errors.password ? "p-invalid" : ""}`}
+                                value={formik.values.password}
+                                onChange={formik.handleChange}
+                                onBlur={formik.handleBlur}
+                                toggleMask
+                                feedback={false}
+                                autoComplete="current-password"
+                            />
+                            <label htmlFor="password">Contraseña</label>
+                        </FloatLabel>
+                        {formik.touched.password && formik.errors.password && (
+                            <small className="error-message">{formik.errors.password}</small>
+                        )}
+                    </div>
+
+                    {/* Login Button */}
+                    <Button
+                        label="Iniciar Sesión"
+                        type="submit"
+                        className="login-button"
+                        icon="pi pi-sign-in"
+                        iconPos="right"
+                        loading={formik.isSubmitting}
+                    />
+
+                    {/* Forgot Password Link */}
+                    <div className="login-footer">
+                        <small className="login-subtitle">
+                            Recuerda mantener tus credenciales seguras
+                        </small>
+                    </div>
+
+                </form>
+            </div>
         </div>
-
-        {/* Toast para mensajes */}
-        <Toast ref={toast} />
-
-        {/* Formulario */}
-        <form
-          onSubmit={formik.handleSubmit}
-          className="flex flex-column gap-4 w-full"
-        >
-          {/* Correo */}
-          <div className="flex justify-content-center w-full">
-            <FloatLabel className="w-full">
-              <InputText
-                id="email"
-                name="email"
-                className={`w-full ${
-                  formik.touched.email && formik.errors.email ? "p-invalid" : ""
-                }`}
-                value={formik.values.email}
-                onChange={formik.handleChange}
-                onBlur={formik.handleBlur}
-                style={{ minWidth: "100%" }}
-              />
-              <label htmlFor="email">Correo Electrónico</label>
-            </FloatLabel>
-          </div>
-          {formik.touched.email && formik.errors.email && (
-            <small className="p-error">{formik.errors.email}</small>
-          )}
-
-          {/* Contraseña */}
-          <div className="card flex justify-content-center">
-            <FloatLabel className="w-full">
-              <Password
-                inputId="password"
-                name="password"
-                className={`w-full ${
-                  formik.touched.password && formik.errors.password
-                    ? "p-invalid"
-                    : ""
-                }`}
-                value={formik.values.password}
-                onChange={formik.handleChange}
-                onBlur={formik.handleBlur}
-                toggleMask
-                feedback={false}
-                style={{ minWidth: "100%" }}
-                inputStyle={{ minWidth: "100%" }}
-              />
-              <label htmlFor="password">Contraseña</label>
-            </FloatLabel>
-          </div>
-          {formik.touched.password && formik.errors.password && (
-            <small className="p-error">{formik.errors.password}</small>
-          )}
-
-          {/* Botón de Login */}
-          <Button label="Iniciar Sesión" type="submit" className="p-button-success w-full" />
-        </form>
-      </div>
-    </div>
-  );
+    );
 };
 
 export default Login;

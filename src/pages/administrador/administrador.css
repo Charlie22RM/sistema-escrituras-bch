@@ -1,75 +1,626 @@
-/* Asegura que el contenedor tenga espacio entre el buscador y el botón */
-.search-container {
-    display: flex;
-    justify-content: space-between;
+/* Contenedor principal */
+.consultar-container {
+  padding: 2rem;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+/* Header section */
+.consultar-header {
+  margin-bottom: 2.5rem;
+}
+
+.consultar-title {
+  font-size: 1.8rem;
+  font-weight: 600;
+  color: #2c3e50;
+  margin-bottom: 1.5rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid #eaeaea;
+}
+
+.consultar-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+/* Search group */
+.search-wrapper {
+  flex-grow: 1;
+  max-width: 500px;
+}
+
+.search-group {
+  display: flex;
+  align-items: center;
+  height: 40px;
+  border-radius: 6px;
+  overflow: hidden;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+}
+
+.search-input {
+  flex-grow: 1;
+  height: 100%;
+  padding: 0 1rem;
+  border: 1px solid #e0e0e0;
+  border-right: none;
+  border-radius: 6px 0 0 6px;
+  font-size: 0.9rem;
+  transition: all 0.3s ease;
+}
+
+.search-input:focus {
+  outline: none;
+  border-color: #2a5298;
+  box-shadow: 0 0 0 2px rgba(42, 82, 152, 0.2);
+}
+
+.search-button {
+  height: 100%;
+  width: 45px;
+  background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+  border: none;
+  border-radius: 0 6px 6px 0;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.search-button:hover {
+  background: linear-gradient(135deg, #172b4d 0%, #1e3c72 100%);
+}
+
+.clear-button {
+  height: 100%;
+  width: 40px;
+  background: #f5f5f5;
+  border: none;
+  border-left: 1px solid #e0e0e0;
+  color: #666;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.clear-button:hover {
+  background: #eaeaea;
+  color: #333;
+}
+
+/* Add button */
+.add-button {
+  height: 40px;
+  padding: 0 1.5rem;
+  background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+  border: none;
+  border-radius: 6px;
+  color: white;
+  font-size: 0.9rem;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+}
+
+.add-button:hover {
+  background: linear-gradient(135deg, #172b4d 0%, #1e3c72 100%);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.12);
+}
+
+/* Table styles */
+.table-container {
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+}
+
+.consultar-table {
+  font-size: 0.9rem;
+}
+
+.consultar-table .p-datatable-thead > tr > th {
+  background-color: #f8f9fa;
+  color: #495057;
+  font-weight: 600;
+  padding: 1rem;
+  border-bottom: 1px solid #e9ecef;
+}
+
+.consultar-table .p-datatable-tbody > tr > td {
+  padding: 0.8rem 1rem;
+  border-bottom: 1px solid #e9ecef;
+}
+
+.consultar-table .p-datatable-tbody > tr:hover > td {
+  background-color: #f8f9fa !important;
+}
+
+/* Action buttons */
+.actions-cell {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.edit-button {
+  color: #1e3c72 !important;
+  transition: all 0.2s ease;
+}
+
+.edit-button:hover {
+  color: #1e3c72 !important;
+  background-color: rgba(42, 82, 152, 0.1) !important;
+}
+
+.delete-button {
+  color: #b22234 !important;
+  transition: all 0.2s ease;
+}
+
+.delete-button:hover {
+  color: #c0392b !important;
+  background-color: rgba(231, 76, 60, 0.1) !important;
+}
+
+/* Loading spinner */
+.loading-spinner {
+  display: flex;
+  justify-content: center;
+  padding: 3rem;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .clientes-actions {
+    flex-direction: column;
+    gap: 1rem;
+  }
+  
+  .search-wrapper {
+    width: 100%;
+    max-width: none;
+  }
+  
+  .add-button {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+/* Estilos generales */
+.crear-cliente-container {
+  background-color: #f8f9fa;
+  min-height: 100vh;
+  padding: 20px;
+}
+
+.form-wrapper {
+  display: flex;
+  justify-content: center;
+}
+
+/* Botón de retroceso */
+.back-button {
+  display: flex;
+  align-items: center;
+  background: none;
+  border: none;
+  color: #4f46e5;
+  font-size: 14px;
+  cursor: pointer;
+  padding: 8px 12px;
+  border-radius: 4px;
+  margin-bottom: 20px;
+  transition: all 0.3s ease;
+}
+
+.back-button:hover {
+  color: #3730a3;
+  background-color: #e0e7ff;
+}
+
+.back-button i {
+  margin-right: 8px;
+}
+
+/* Tarjeta del formulario */
+.client-form-card {
+  width: 100%;
+  max-width: 600px;
+  border-radius: 8px !important;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  border: none !important;
+}
+
+.client-form-card .p-card-title {
+  font-size: 1.5rem;
+  color: #1f2937;
+  padding-bottom: 16px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.client-form-card .p-card-body {
+  padding: 2rem;
+}
+
+/* Campos del formulario */
+.form-field {
+  margin-bottom: 1.5rem;
+}
+
+.form-field label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 500;
+  color: #374151;
+}
+
+.form-field .p-inputtext {
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: 6px;
+  border: 1px solid #d1d5db;
+  transition: border-color 0.3s;
+}
+
+.form-field .p-inputtext:focus {
+  outline: none;
+  border-color: #4f46e5;
+  box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+}
+
+.required {
+  color: #ef4444;
+}
+
+.error-message {
+  color: #ef4444;
+  font-size: 0.875rem;
+  margin-top: 4px;
+  display: block;
+}
+
+/* Grupo de botones */
+.button-group {
+  display: flex;
+  gap: 16px;
+  margin-top: 2rem;
+}
+
+.button-group button {
+  flex: 1;
+  padding: 12px;
+  border-radius: 6px;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  border: none;
+}
+
+.save-button {
+  background: linear-gradient(to right, #0d9488, #0f766e);
+  color: white !important;
+}
+
+.save-button:hover {
+  background: linear-gradient(to right, #0f766e, #115e59) !important;
+  transform: translateY(-1px);
+}
+
+.cancel-button {
+  background: linear-gradient(to right, #6b7280, #4b5563);
+  color: white !important;
+}
+
+.cancel-button:hover:not(:disabled) {
+  background: linear-gradient(to right, #4b5563, #374151) !important;
+  transform: translateY(-1px);
+}
+
+/* Estilos responsivos */
+@media (max-width: 640px) {
+  .button-group {
+    flex-direction: column;
+  }
+  
+  .client-form-card .p-card-body {
+    padding: 1.5rem;
+  }
+}
+
+.custom-primary-button {
+  background-color: #1e3c72 !important;
+  border-color: #1e3c72 !important;
+}
+
+.custom-primary-button:hover {
+  background-color: #162c54 !important;
+  border-color: #162c54 !important;
+}
+
+.custom-danger-button {
+  background-color: #b22234 !important;
+  border-color: #b22234 !important;
+}
+
+.custom-danger-button:hover {
+  background-color: #8b1a28 !important;
+  border-color: #8b1a28 !important;
+}
+
+/* Cambiar el color de todos los mensajes de error */
+.p-error {
+  color: #e53935; /* Rojo más suave, puedes cambiarlo a cualquier color */
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+/* Diálogo personalizado */
+.custom-dialog {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1000;
+}
+
+.dialog-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+.dialog-container {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  width: 90%;
+  max-width: 400px;
+  overflow: hidden;
+  animation: dialog-fade-in 0.3s ease-out;
+}
+
+.dialog-header {
+  padding: 1.5rem 1.5rem 0;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.dialog-header h3 {
+  margin: 0;
+  font-size: 1.25rem;
+  color: #2c3e50;
+}
+
+.dialog-icon {
+  font-size: 1.5rem;
+  color: #b22234;
+}
+
+.dialog-content {
+  padding: 1.5rem;
+  color: #34495e;
+  line-height: 1.5;
+}
+
+.dialog-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  padding: 1rem 1.5rem;
+  background-color: #f8f9fa;
+  border-top: 1px solid #e9ecef;
+}
+
+.dialog-btn {
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 4px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.dialog-btn:hover {
+  transform: translateY(-1px);
+}
+
+.cancel-btn {
+  background-color: #f1f3f5;
+  color: #495057;
+}
+
+.cancel-btn:hover {
+  background-color: #e9ecef;
+}
+
+.confirm-btn {
+  background-color: #b22234;
+  color: white;
+}
+
+.confirm-btn:hover {
+  background-color: #d6283e;
+}
+
+/* Animaciones */
+@keyframes dialog-fade-in {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -60%);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, -50%);
+  }
+}
+
+/* ========== GENERAL RESPONSIVE IMPROVEMENTS ========== */
+
+/* Container adjustments */
+.consultar-container {
+  padding: 1.5rem;
+}
+
+@media (max-width: 576px) {
+  .consultar-container {
+    padding: 1rem;
+  }
+}
+
+/* Header responsive behavior */
+.consultar-header {
+  margin-bottom: 1.5rem;
+}
+
+.consultar-title {
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+}
+
+/* Actions section - major responsive overhaul */
+.consultar-actions {
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.search-wrapper {
+  max-width: 100%;
+  width: 100%;
+}
+
+@media (min-width: 768px) {
+  .consultar-actions {
+    flex-direction: row;
     align-items: center;
-    margin-bottom: 2.3rem;
   }
   
-  /* Estilo del input para hacerlo más ancho */
-  .search-input {
-    height: 2.5rem;
-    width: 200px;
+  .search-wrapper {
+    flex-grow: 1;
+    max-width: 400px;
   }
+}
 
-  .custom-inputgroup {
-    height: 2.5rem;
-    width: 250px;
+/* Search group mobile optimization */
+.search-group {
+  height: 36px;
+}
+
+.search-input {
+  font-size: 0.85rem;
+  padding: 0 0.75rem;
+}
+
+.search-button, 
+.clear-button {
+  width: 40px;
+}
+
+/* Add button mobile optimization */
+.add-button {
+  height: 36px;
+  padding: 0 1rem;
+  font-size: 0.85rem;
+  width: 100%;
+}
+
+@media (min-width: 768px) {
+  .add-button {
+    width: auto;
+  }
+}
+
+/* Table responsive optimizations */
+.table-container {
+  border-radius: 6px;
+  overflow-x: auto;
+}
+
+.consultar-table {
+  min-width: 600px; /* Prevents table from collapsing too much */
+  font-size: 0.85rem;
+}
+
+.consultar-table .p-datatable-thead > tr > th,
+.consultar-table .p-datatable-tbody > tr > td {
+  padding: 0.75rem;
+}
+
+@media (max-width: 768px) {
+  .consultar-table .p-datatable-thead > tr > th,
+  .consultar-table .p-datatable-tbody > tr > td {
+    padding: 0.5rem;
+  }
+}
+
+/* Action buttons mobile optimization */
+.actions-cell {
+  gap: 0.25rem;
+}
+
+.edit-button, 
+.delete-button {
+  width: 30px;
+  height: 30px;
+}
+
+/* Loading spinner */
+.loading-spinner {
+  padding: 2rem;
+}
+
+/* ========== SPECIFIC MOBILE OPTIMIZATIONS ========== */
+@media (max-width: 480px) {
+  /* Further reduce padding and font sizes */
+  .consultar-container {
+    padding: 0.75rem;
   }
   
-  /* Estilo del botón para hacerlo más ancho */
-  .create-btn {
-    height: 2.5rem;
-    width: 200px; 
-    margin-left: 1rem; 
+  .consultar-title {
+    font-size: 1.3rem;
+    margin-bottom: 0.75rem;
   }
   
-  /* Título de la sección */
-.section-title {
-  font-size: 2.3rem;
-  font-weight: bold;
-   margin: 0 0 1rem 0; /* Elimina margen superior heredado */
-  padding-top: 0.5rem; /* Espacio controlado */
-  margin-bottom: 2rem;
-  text-align: left;
-  color: #606060;
+  /* More compact search */
+  .search-group {
+    height: 34px;
+  }
+  
+  /* Smaller buttons */
+  .add-button {
+    height: 34px;
+    padding: 0 0.75rem;
+  }
+  
+  /* More compact table cells */
+  .consultar-table .p-datatable-thead > tr > th,
+  .consultar-table .p-datatable-tbody > tr > td {
+    padding: 0.4rem;
+  }
+  
+  /* Smaller action buttons */
+  .actions-cell {
+    gap: 0.15rem;
+  }
+  
+  .edit-button, 
+  .delete-button {
+    width: 28px;
+    height: 28px;
+  }
 }
-
-.custom-edit-btn {
-  color: #07bc0c !important; /* Rosa brillante */
-}
-
-.custom-edit-btn:hover {
-  color: #0f8339 !important;
-  background-color: rgba(255, 0, 255, 0.04) !important;
-}
-
-.custom-delete-btn {
-  color: #ff5b5b !important; /* Rosa brillante */
-}
-
-.custom-delete-btn:hover {
-  color: #da2a2a !important;
-  background-color: rgba(255, 0, 255, 0.04) !important;
-}
-
-/* Estilo para la tabla, reducir el tamaño general */
-.p-datatable {
-  font-size: 0.85rem; /* Reducir el tamaño de la fuente */
-}
-
-/* Reducir el tamaño de las celdas */
-.p-datatable .p-column-body {
-  padding: 0.5rem; /* Reducir el padding dentro de las celdas */
-}
-
-/* Reducir el alto de las filas */
-.p-datatable .p-datatable-tbody > tr > td {
-  height: 2.5rem; /* Reducir la altura de las filas */
-}
-
-/* Estilo para los botones dentro de la tabla */
-.p-button-sm {
-    padding: 0.4rem 0.6rem; /* Reducir el tamaño del padding */
-}
-

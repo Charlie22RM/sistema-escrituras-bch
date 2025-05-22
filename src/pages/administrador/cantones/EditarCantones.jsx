@@ -26,7 +26,7 @@ const EditarCantones = () => {
       provincia: '',
     },
     validationSchema: Yup.object({
-      nombre: Yup.string().required("El nombre es obligatorio"),
+      nombre: Yup.string().required("Por favor, ingrese un nombre."),
     }),
     onSubmit: async (values) => {
       try {
@@ -109,10 +109,24 @@ const EditarCantones = () => {
     fetchCanton();
   }, [id, dispatch, navigate]);
 
-  return (
+   return (
     <div className="p-1 flex justify-content-center">
       <Toast ref={toast} />
-      <Card title="Editar Cantón" className="w-full md:w-5">
+      <Card
+        className="w-full md:w-5"
+        title={
+          <div className="flex align-items-center">
+            <Button
+              icon="pi pi-arrow-left"
+              className="p-button-text p-button-plain mr-2"
+              onClick={() => navigate('/administrador/consultar-canton')}
+              tooltip="Volver a página anterior"
+              tooltipOptions={{ position: "bottom" }}
+            />
+            <span>Editar Cantón</span>
+          </div>
+        }
+      >
         <form onSubmit={formik.handleSubmit} className="p-fluid">
           <div className="field mb-3">
             <label htmlFor="nombre">Nombre</label>
@@ -122,7 +136,9 @@ const EditarCantones = () => {
               value={formik.values.nombre}
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
-              className={`w-full ${formik.touched.nombre && formik.errors.nombre ? "p-invalid" : ""}`}
+              className={`w-full ${
+                formik.touched.nombre && formik.errors.nombre ? "p-invalid" : ""
+              }`}
             />
             {formik.touched.nombre && formik.errors.nombre && (
               <small className="p-error">{formik.errors.nombre}</small>
@@ -140,19 +156,19 @@ const EditarCantones = () => {
             />
           </div>
 
-          <div className="flex justify-content-between gap-3">
+          <div className="flex justify-content-between gap-3 mt-4">
             <Button
               label="Guardar"
-              icon="pi pi-check"
+              icon="pi pi-save"
               type="submit"
-              className="p-button-success w-full"
+              className="w-full custom-primary-button"
               loading={formik.isSubmitting}
             />
             <Button
               label="Cancelar"
               icon="pi pi-times"
               type="button"
-              className="p-button-danger w-full"
+              className="w-full custom-danger-button"
               onClick={() => navigate('/administrador/consultar-canton')}
               disabled={formik.isSubmitting}
             />
