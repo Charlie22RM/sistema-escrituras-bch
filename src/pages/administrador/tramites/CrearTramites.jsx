@@ -94,7 +94,7 @@ const CrearTramites = () => {
       } catch (error) {
         console.error("Error al enviar el formulario:", error);
         handleError(error);
-        
+
       }
       console.log("Formulario enviado:", values);
     },
@@ -201,79 +201,62 @@ const CrearTramites = () => {
   }, [formik.values.canton_id]);
 
   useEffect(() => {
-  if (inmobiliaria && formik.errors.inmobiliaria_id) {
-    formik.setFieldTouched("inmobiliaria_id", true);
-    //formik.validateForm();
-  }
-}, [inmobiliaria]);
+    if (inmobiliaria && formik.errors.inmobiliaria_id) {
+      formik.setFieldTouched("inmobiliaria_id", true);
+      //formik.validateForm();
+    }
+  }, [inmobiliaria]);
   return (
     <>
       <Toast ref={toast} />
-      <div className="flex flex-column align-items-center gap-4 p-4">
-        <Card title="Registrar Nuevo Trámite" className="w-full md:w-5">
-          <form onSubmit={formik.handleSubmit} className="p-fluid">
-            <div
-              className="flex flex-column gap-5 w-full"
-              style={{ maxWidth: "650px" }}
-            >
+      <div className="tramite-form-container">
+        <Card
+          title={
+            <div className="flex align-items-center">
+              <Button
+                icon="pi pi-arrow-left"
+                className="p-button-text p-button-plain mr-2"
+                onClick={() => navigate("/administrador/consultar-tramite")}
+                tooltip="Volver a página anterior"
+                tooltipOptions={{ position: "top" }}
+              />
+              <span>Registrar nuevo Trámite</span>
+            </div>
+          }
+          className="tramite-form-card"
+        >
+          <form onSubmit={formik.handleSubmit} className="tramite-form">
+            <div className="tramite-form-content">
               {/* Input Cliente */}
-              <div className="flex flex-column gap-2">
-                <div className="flex align-items-center gap-3">
-                  <div style={{ minWidth: "400px", cursor: "not-allowed" }}>
-                    <InputText
-                      value={cliente?.nombre || ""}
-                      placeholder="Cliente"
-                      disabled
-                      className={`p-inputtext-sm w-full ${
-                        formik.touched.cliente_id && formik.errors.cliente_id
-                          ? "p-invalid"
-                          : ""
-                      }`}
-                      style={{
-                        ...blockedInputStyle,
-                        borderColor:
-                          formik.touched.cliente_id && formik.errors.cliente_id
-                            ? "#e24c4c"
-                            : "#ddd",
-                      }}
-                    />
-                  </div>
+              <div className="tramite-form-group">
+                <div className="tramite-input-group">
+                  <InputText
+                    value={cliente?.nombre || ""}
+                    placeholder="Cliente"
+                    disabled
+                    className={`tramite-input ${formik.touched.cliente_id && formik.errors.cliente_id ? "p-invalid" : ""}`}
+                  />
                   <Button
-                    icon="pi pi-user"
+                    icon="pi pi-search"
                     label="Buscar Cliente"
                     onClick={() => setModalVisible(true)}
-                    className="p-button-primary flex-grow-1"
+                    className="tramite-button tramite-search-button"
                   />
                 </div>
                 {formik.touched.cliente_id && formik.errors.cliente_id && (
-                  <small className="p-error">{formik.errors.cliente_id}</small>
+                  <small className="tramite-error">{formik.errors.cliente_id}</small>
                 )}
               </div>
 
               {/* Input Inmobiliaria */}
-              <div className="flex flex-column gap-2">
-                <div className="flex align-items-center gap-3">
-                  <div style={{ minWidth: "400px", cursor: "not-allowed" }}>
-                    <InputText
-                      value={inmobiliaria?.nombre || ""}
-                      placeholder="Inmobiliaria"
-                      disabled
-                      className={`p-inputtext-sm w-full ${
-                        formik.touched.inmobiliaria_id &&
-                        formik.errors.inmobiliaria_id
-                          ? "p-invalid"
-                          : ""
-                      }`}
-                      style={{
-                        ...blockedInputStyle,
-                        borderColor:
-                          formik.touched.inmobiliaria_id &&
-                          formik.errors.inmobiliaria_id
-                            ? "#e24c4c"
-                            : "#ddd",
-                      }}
-                    />
-                  </div>
+              <div className="tramite-form-group">
+                <div className="tramite-input-group">
+                  <InputText
+                    value={inmobiliaria?.nombre || ""}
+                    placeholder="Inmobiliaria"
+                    disabled
+                    className={`tramite-input ${formik.touched.inmobiliaria_id && formik.errors.inmobiliaria_id ? "p-invalid" : ""}`}
+                  />
                   <Button
                     icon="pi pi-search"
                     label="Buscar Inmobiliaria"
@@ -289,18 +272,16 @@ const CrearTramites = () => {
                       }
                       setModalInmobiliariaVisible(true);
                     }}
-                    className="p-button-primary flex-grow-1"
+                    className="tramite-button tramite-search-button"
                   />
                 </div>
-                {formik.touched.inmobiliaria_id &&
-                  formik.errors.inmobiliaria_id && (
-                    <small className="p-error">
-                      {formik.errors.inmobiliaria_id}
-                    </small>
-                  )}
+                {formik.touched.inmobiliaria_id && formik.errors.inmobiliaria_id && (
+                  <small className="tramite-error">{formik.errors.inmobiliaria_id}</small>
+                )}
               </div>
-              <div className="field" onClick={showDisabledMessage}>
-                <label>Cantón</label>
+
+              {/* Input Cantón */}
+              <div className="tramite-form-group" onClick={showDisabledMessage}>
                 <Dropdown
                   id="canton_id"
                   name="canton_id"
@@ -311,159 +292,109 @@ const CrearTramites = () => {
                   optionLabel="nombre"
                   optionValue="id"
                   placeholder="Seleccione un cantón"
-                  className={`w-full ${
-                    formik.touched.canton_id && formik.errors.canton_id
-                      ? "p-invalid"
-                      : ""
-                  }`}
-                  disabled={!cliente || !inmobiliaria} // Deshabilitar si no hay cliente o inmobiliaria
+                  className={`tramite-dropdown ${formik.touched.canton_id && formik.errors.canton_id ? "p-invalid" : ""}`}
+                  disabled={!cliente || !inmobiliaria}
                 />
                 {formik.touched.canton_id && formik.errors.canton_id && (
-                  <small className="p-error">{formik.errors.canton_id}</small>
+                  <small className="tramite-error">{formik.errors.canton_id}</small>
                 )}
               </div>
 
               {/* Input Proyecto */}
-              <div className="flex flex-column gap-2">
-                <div className="flex align-items-center gap-3">
-                  <div style={{ minWidth: "400px", cursor: "not-allowed" }}>
-                    <InputText
-                      value={proyecto?.nombre || ""}
-                      placeholder="Proyecto"
-                      disabled
-                      className={`p-inputtext-sm w-full ${
-                        formik.touched.proyecto_id && formik.errors.proyecto_id
-                          ? "p-invalid"
-                          : ""
-                      }`}
-                      style={{
-                        ...blockedInputStyle,
-                        borderColor:
-                          formik.touched.proyecto_id &&
-                          formik.errors.proyecto_id
-                            ? "#e24c4c"
-                            : "#ddd",
-                      }}
-                    />
-                  </div>
+              <div className="tramite-form-group">
+                <div className="tramite-input-group">
+                  <InputText
+                    value={proyecto?.nombre || ""}
+                    placeholder="Proyecto"
+                    disabled
+                    className={`tramite-input ${formik.touched.proyecto_id && formik.errors.proyecto_id ? "p-invalid" : ""}`}
+                  />
                   <Button
                     icon="pi pi-search"
                     label="Buscar Proyecto"
                     onClick={handleModalProyecto}
-                    className="p-button-primary flex-grow-1"
+                    className="tramite-button tramite-search-button"
                   />
                 </div>
                 {formik.touched.proyecto_id && formik.errors.proyecto_id && (
-                  <small className="p-error">{formik.errors.proyecto_id}</small>
+                  <small className="tramite-error">{formik.errors.proyecto_id}</small>
                 )}
               </div>
+
               {/* Input Nombre del Beneficiario */}
-              <div className="flex align-items-center gap-3">
-                <div style={{ minWidth: "400px" }}>
-                  <InputText
-                    id="nombre_beneficiario"
-                    name="nombre_beneficiario"
-                    value={formik.values.nombre_beneficiario}
-                    onChange={formik.handleChange}
-                    onBlur={formik.handleBlur}
-                    placeholder="Nombre del beneficiario"
-                    className={`p-inputtext-sm w-full ${
-                      formik.touched.nombre_beneficiario &&
-                      formik.errors.nombre_beneficiario
-                        ? "p-invalid"
-                        : ""
-                    }`}
-                  />
-                  {formik.touched.nombre_beneficiario &&
-                    formik.errors.nombre_beneficiario && (
-                      <small className="p-error">
-                        {formik.errors.nombre_beneficiario}
-                      </small>
-                    )}
-                </div>
+              <div className="tramite-form-group">
+                <InputText
+                  id="nombre_beneficiario"
+                  name="nombre_beneficiario"
+                  value={formik.values.nombre_beneficiario}
+                  onChange={formik.handleChange}
+                  onBlur={formik.handleBlur}
+                  placeholder="Nombre del beneficiario"
+                  className={`tramite-input ${formik.touched.nombre_beneficiario && formik.errors.nombre_beneficiario ? "p-invalid" : ""}`}
+                />
+                {formik.touched.nombre_beneficiario && formik.errors.nombre_beneficiario && (
+                  <small className="tramite-error">{formik.errors.nombre_beneficiario}</small>
+                )}
               </div>
 
               {/* Input Cédula del Beneficiario */}
-
-              <div className="flex align-items-center gap-3">
-                <div style={{ minWidth: "400px" }}>
-                  <InputText
-                    id="cedula_beneficiario"
-                    name="cedula_beneficiario"
-                    value={formik.values.cedula_beneficiario}
-                    onChange={(e) => {
-                      // Solo permite números
-                      const value = e.target.value.replace(/[^0-9]/g, "");
-                      formik.setFieldValue("cedula_beneficiario", value);
-                    }}
-                    onBlur={formik.handleBlur}
-                    placeholder="Cédula del beneficiario"
-                    className={`p-inputtext-sm w-full ${
-                      formik.touched.cedula_beneficiario &&
-                      formik.errors.cedula_beneficiario
-                        ? "p-invalid"
-                        : ""
-                    }`}
-                    maxLength={10}
-                  />
-                  {formik.touched.cedula_beneficiario &&
-                    formik.errors.cedula_beneficiario && (
-                      <small className="p-error">
-                        {formik.errors.cedula_beneficiario}
-                      </small>
-                    )}
-                </div>
+              <div className="tramite-form-group">
+                <InputText
+                  id="cedula_beneficiario"
+                  name="cedula_beneficiario"
+                  value={formik.values.cedula_beneficiario}
+                  onChange={(e) => {
+                    const value = e.target.value.replace(/[^0-9]/g, "");
+                    formik.setFieldValue("cedula_beneficiario", value);
+                  }}
+                  onBlur={formik.handleBlur}
+                  placeholder="Cédula del beneficiario"
+                  className={`tramite-input ${formik.touched.cedula_beneficiario && formik.errors.cedula_beneficiario ? "p-invalid" : ""}`}
+                  maxLength={10}
+                />
+                {formik.touched.cedula_beneficiario && formik.errors.cedula_beneficiario && (
+                  <small className="tramite-error">{formik.errors.cedula_beneficiario}</small>
+                )}
               </div>
 
-              <div className="flex align-items-center gap-3">
-                <div style={{ minWidth: "400px" }}>
-                  <label htmlFor="fecha_asignacion">Fecha del trámite</label>
-                  <Calendar
-                    id="fecha_asignacion"
-                    name="fecha_asignacion"
-                    value={formik.values.fecha_asignacion}
-                    onChange={(e) =>
-                      formik.setFieldValue("fecha_asignacion", e.value)
-                    }
-                    onBlur={formik.handleBlur}
-                    dateFormat="dd/mm/yy"
-                    showIcon
-                    className={`w-full ${
-                      formik.touched.fecha_asignacion &&
-                      formik.errors.fecha_asignacion
-                        ? "p-invalid"
-                        : ""
-                    }`}
-                  />
-                  {formik.touched.fecha_asignacion &&
-                    formik.errors.fecha_asignacion && (
-                      <small className="p-error">
-                        {formik.errors.fecha_asignacion}
-                      </small>
-                    )}
-                </div>
+              {/* Input Fecha del trámite */}
+              <div className="tramite-form-group">
+                <Calendar
+                  id="fecha_asignacion"
+                  name="fecha_asignacion"
+                  value={formik.values.fecha_asignacion}
+                  onChange={(e) => formik.setFieldValue("fecha_asignacion", e.value)}
+                  dateFormat="dd/mm/yy"
+                  showIcon
+                  placeholder="Fecha del trámite"
+                  className={`tramite-calendar ${formik.submitCount > 0 && formik.errors.fecha_asignacion ? "p-invalid" : ""}`}
+                />
+                {formik.submitCount > 0 && formik.errors.fecha_asignacion && (
+                  <small className="tramite-error">{formik.errors.fecha_asignacion}</small>
+                )}
               </div>
 
-              <div className="flex justify-content-between gap-3">
+              <div className="tramite-form-actions">
                 <Button
                   label="Guardar"
-                  icon="pi pi-check"
+                  icon="pi pi-save"
                   type="submit"
-                  className="p-button-success w-full"
-                  loading={formik.isSubmitting} // Desactiva mientras se envía
+                  className="tramite-button tramite-submit"
+                  loading={formik.isSubmitting}
                 />
                 <Button
                   label="Cancelar"
                   icon="pi pi-times"
                   type="button"
-                  className="p-button-danger w-full"
-                  onClick={() => navigate("/administrador/consultar-cliente")}
+                  className="tramite-button tramite-cancel"
+                  onClick={() => navigate("/administrador/consultar-tramite")}
                   disabled={formik.isSubmitting}
                 />
               </div>
             </div>
           </form>
         </Card>
+
         <ClienteModal
           visible={modalVisible}
           onHide={handleModalHide}
@@ -473,7 +404,7 @@ const CrearTramites = () => {
           visible={modalInmobiliariaVisible}
           onHide={() => setModalInmobiliariaVisible(false)}
           setInmobiliaria={handleSetInmobiliaria}
-          cliente_id={cliente?.id} // Asegúrate de pasar el ID del cliente seleccionado
+          cliente_id={cliente?.id}
         />
         <ProyectoModal
           visible={modalProyectoVisible}

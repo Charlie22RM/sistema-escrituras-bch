@@ -114,7 +114,7 @@ const CambioContrasena = () => {
                   className="p-button-text p-button-plain mr-2"
                   onClick={() => navigate("/administrador")}
                   tooltip="Volver a página anterior"
-                  tooltipOptions={{ position: "bottom" }}
+                  tooltipOptions={{ position: "top" }}
                 />
                 <span>Cambio de Contraseña</span>
               </div>

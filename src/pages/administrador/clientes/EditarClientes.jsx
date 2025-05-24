@@ -127,7 +127,7 @@ const EditarClientes = () => {
                 className="p-button-text p-button-plain mr-2"
                 onClick={() => navigate('/administrador/consultar-cliente')}
                 tooltip="Volver a página anterior"
-                tooltipOptions={{ position: "bottom" }}
+                tooltipOptions={{ position: "top" }}
               />
               <span>Editar Cliente</span>
             </div>

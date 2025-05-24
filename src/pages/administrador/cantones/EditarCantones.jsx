@@ -121,7 +121,7 @@ const EditarCantones = () => {
               className="p-button-text p-button-plain mr-2"
               onClick={() => navigate('/administrador/consultar-canton')}
               tooltip="Volver a página anterior"
-              tooltipOptions={{ position: "bottom" }}
+              tooltipOptions={{ position: "top" }}
             />
             <span>Editar Cantón</span>
           </div>
