@@ -44,7 +44,7 @@ const AdminRoutes = () => {
                 <Route path="crear-proyecto" element={<CrearProyectos />} />
                 <Route path="editar-proyecto/:id" element={<EditarProyectos />} />
                 <Route path="crear-tramite" element={<CrearTramites />} />
-                <Route path="editar-tramite" element={<EditarTramites />} />
+                <Route path="editar-tramite/:id" element={<EditarTramites />} />
                 <Route path="config" element={<Parametros />} />
                 <Route path="cambio-contrasena" element={<CambioContrasena />} />
                 <Route path="*" element={<Navigate to="/administrador/" replace />} />

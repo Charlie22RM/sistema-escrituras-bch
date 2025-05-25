@@ -52,13 +52,38 @@ const TramiteService = () => {
     }
   };
 
+  const findOne = async (id) =>{
+    try {
+      const headers = { Authorization: `Bearer ${token}` };
+      const response = await axios.get(`${API_URL}/tramites/${id}`, { headers });
+      return response.data;
+    } catch (error) {
+      console.error("Error al obtener trámite:", error);
+      throw error;
+    }
+  }
 
+    const update = async (id, data) => {
+    try {
+      const headers = { Authorization: `Bearer ${token}` };
+      const response = await axios.put(`${API_URL}/tramites/${id}`, data, { headers });
+      return response.data;
+    } catch (error) {
+      console.error("Error al actualizar trámite:", error);
+      throw error;
+    }
+  };
   return {
     createTramite,
     searchTramites,
     getTramites,
-    deleteTramite
+    deleteTramite,
+    findOne,
+    update,
   };
 };
+
+
+
 
 export default TramiteService;
