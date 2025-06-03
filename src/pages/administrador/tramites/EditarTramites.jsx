@@ -16,6 +16,10 @@ import { Calendar } from "primereact/calendar";
 import { clearLogout } from "../../../redux/authSlice";
 import CantonService from "../../../services/CantonService";
 import * as Yup from "yup";
+import { Checkbox } from "primereact/checkbox";
+import { FileUpload } from "primereact/fileupload";
+import PdfService from "../../../services/PdfService";
+import Swal from "sweetalert2";
 
 // Estilo reutilizable para inputs bloqueados
 const blockedInputStyle = {
@@ -38,6 +42,8 @@ const EditarTramites = () => {
       nombre_beneficiario: "",
       cedula_beneficiario: "",
       fecha_asignacion: null,
+      fecha_revision_titulo: null,
+      fecha_envio_liquidar_impuesto: null,
     },
     validationSchema: Yup.object({
       cliente_id: Yup.string().required("Cliente es requerido"),
@@ -81,6 +87,11 @@ const EditarTramites = () => {
   const [cantones, setCantones] = useState([]);
   const tramiteService = TramiteService();
   const cantonService = CantonService();
+  const pdfService = PdfService();
+  const [pdfCatastroId, setPdfCatastroId] = useState(null);
+  const [pdfTituloId, setPdfTituloId] = useState(null);
+  const [pdfFacturasId, setPdfFacturasId] = useState([]);
+  const [uploading, setUploading] = useState(false);
 
   const getTramite = async () => {
     try {
@@ -90,6 +101,18 @@ const EditarTramites = () => {
         setCliente(tramite.cliente);
         setInmobiliaria(tramite.inmobiliaria);
         setProyecto(tramite.proyecto);
+        if (tramite.pdfs) {
+          const pdfs = tramite.pdfs;
+          pdfs.forEach((pdf) => {
+            if (pdf.is_catastro) {
+              setPdfCatastroId(pdf.id);
+            } else if (pdf.is_titulo) {
+              setPdfTituloId(pdf.id);
+            } else if (pdf.is_factura) {
+              setPdfFacturasId((prev) => [...prev, pdf.id]);
+            }
+          });
+        }
         // Convertir la fecha de string a objeto Date
         const fechaAsignacion = tramite.fecha_asignacion
           ? new Date(tramite.fecha_asignacion)
@@ -170,8 +193,27 @@ const EditarTramites = () => {
   };
 
   const handleSetCliente = (clienteSeleccionado) => {
+    // Resetear todo en una sola operación
+    formik.setValues({
+      ...formik.values,
+      cliente_id: clienteSeleccionado.id,
+      inmobiliaria_id: null,
+      canton_id: null,
+      proyecto_id: null,
+    });
+
+    // Actualizar estados locales
     setCliente(clienteSeleccionado);
-    formik.setFieldValue("cliente_id", clienteSeleccionado.id);
+    setInmobiliaria("null");
+    setProyecto(null);
+    setModalVisible(false);
+
+    // Marcar campos como "touched" si es necesario
+    formik.setTouched({
+      ...formik.touched,
+      inmobiliaria_id: false,
+      proyecto_id: false,
+    });
   };
 
   const handleSetInmobiliaria = (inmobiliariaSeleccionada) => {
@@ -194,14 +236,97 @@ const EditarTramites = () => {
     };
     fetchData();
   }, []);
+
+  const handleUpload = async (event, additionalData) => {
+    const { files } = event;
+    if (!files || files.length === 0) return;
+
+    try {
+      setUploading(true);
+      const uploadRes = await pdfService.uploadPdf(files[0], {
+        tramite_id: id,
+        ...additionalData,
+      });
+
+      const pdfId = uploadRes.data.id; // Asegúrate de retornar el ID en el backend
+      if (additionalData.is_catastro) {
+        setPdfCatastroId(pdfId);
+      } else if (additionalData.is_titulo) {
+        setPdfTituloId(pdfId);
+      } else if (additionalData.is_factura) {
+        setPdfFacturasId((prev) => [...prev, pdfId]);
+      }
+
+      toast.current.show({
+        severity: "success",
+        summary: "Éxito",
+        detail: "PDF subido correctamente",
+        life: 3000,
+      });
+      //console.error("Error subiendo PDF", error);
+      //alert("Error al subir el archivo");
+    } finally {
+      setUploading(false);
+    }
+  };
+
+  const getPdfUrl = async () => {
+    try {
+      const pdfId = pdfCatastroId;
+      const response = await pdfService.getPdf(pdfId);
+      window.open(response.data.url, "_blank");
+    } catch (error) {
+      handleError(error);
+    }
+  };
+
+  const handleDeletePdf = async (id, tipo) => {
+    const result = await Swal.fire({
+      title: "¿Estás seguro?",
+      text: "¡No podrás revertir esta acción!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Sí, eliminar",
+      cancelButtonText: "Cancelar",
+    });
+
+    if (result.isConfirmed) {
+      try {
+        await pdfService.deletePdf(id);
+        Swal.fire("¡Eliminado!", "El PDF ha sido borrado.", "success");
+        switch (tipo) {
+          case "catastro":
+            setPdfCatastroId(null);
+            break;
+          case "titulo":
+            setPdfTituloId(null);
+            break;
+          case "factura":
+            setPdfFacturasId((prev) => prev.filter((pdfId) => pdfId !== id));
+            break;
+          default:
+            console.error("Tipo de PDF no reconocido:", tipo);
+            break;
+        }
+      } catch (error) {
+        //Swal.fire("Error", "No se pudo eliminar el PDF", "error");
+        handleError(error);
+      }
+    }
+  };
   return (
-    <>
+    <div className="p-fluid">
       <Toast ref={toast} />
-      <TabView>
-        <TabPanel header="Información general">
-          <div className="flex flex-column align-items-center gap-4 p-4">
-            <Card title="Registrar Nuevo Trámite" className="w-full md:w-5">
-              <form onSubmit={formik.handleSubmit} className="p-fluid">
+
+      {/* Formulario principal que envuelve todos los tabs */}
+      <form onSubmit={formik.handleSubmit}>
+        <TabView>
+          {/* TAB 1: INFORMACIÓN GENERAL */}
+          <TabPanel header="Información general">
+            <div className="flex flex-column align-items-center gap-4 p-4">
+              <Card title="Registrar Nuevo Trámite" className="w-full md:w-5">
                 <div
                   className="flex flex-column gap-5 w-full"
                   style={{ maxWidth: "650px" }}
@@ -231,6 +356,7 @@ const EditarTramites = () => {
                         />
                       </div>
                       <Button
+                        type="button"
                         icon="pi pi-user"
                         label="Buscar Cliente"
                         onClick={() => setModalVisible(true)}
@@ -269,6 +395,7 @@ const EditarTramites = () => {
                         />
                       </div>
                       <Button
+                        type="button"
                         icon="pi pi-search"
                         label="Buscar Inmobiliaria"
                         onClick={() => {
@@ -293,6 +420,8 @@ const EditarTramites = () => {
                         </small>
                       )}
                   </div>
+
+                  {/* Input Cantón */}
                   <div className="field" onClick={showDisabledMessage}>
                     <label>Cantón</label>
                     <Dropdown
@@ -310,7 +439,7 @@ const EditarTramites = () => {
                           ? "p-invalid"
                           : ""
                       }`}
-                      disabled={!cliente || !inmobiliaria} // Deshabilitar si no hay cliente o inmobiliaria
+                      disabled={!cliente || !inmobiliaria}
                     />
                     {formik.touched.canton_id && formik.errors.canton_id && (
                       <small className="p-error">
@@ -344,6 +473,7 @@ const EditarTramites = () => {
                         />
                       </div>
                       <Button
+                        type="button"
                         icon="pi pi-search"
                         label="Buscar Proyecto"
                         onClick={handleModalProyecto}
@@ -357,6 +487,7 @@ const EditarTramites = () => {
                         </small>
                       )}
                   </div>
+
                   {/* Input Nombre del Beneficiario */}
                   <div className="flex align-items-center gap-3">
                     <div style={{ minWidth: "400px" }}>
@@ -384,7 +515,6 @@ const EditarTramites = () => {
                   </div>
 
                   {/* Input Cédula del Beneficiario */}
-
                   <div className="flex align-items-center gap-3">
                     <div style={{ minWidth: "400px" }}>
                       <InputText
@@ -392,7 +522,6 @@ const EditarTramites = () => {
                         name="cedula_beneficiario"
                         value={formik.values.cedula_beneficiario}
                         onChange={(e) => {
-                          // Solo permite números
                           const value = e.target.value.replace(/[^0-9]/g, "");
                           formik.setFieldValue("cedula_beneficiario", value);
                         }}
@@ -415,6 +544,7 @@ const EditarTramites = () => {
                     </div>
                   </div>
 
+                  {/* Input Fecha del trámite */}
                   <div className="flex align-items-center gap-3">
                     <div style={{ minWidth: "400px" }}>
                       <label htmlFor="fecha_asignacion">
@@ -445,48 +575,339 @@ const EditarTramites = () => {
                         )}
                     </div>
                   </div>
+                </div>
+              </Card>
+            </div>
+          </TabPanel>
 
-                  <div className="flex justify-content-between gap-3">
-                    <Button
-                      label="Guardar"
-                      icon="pi pi-check"
-                      type="submit"
-                      className="p-button-success w-full"
-                      loading={formik.isSubmitting} // Desactiva mientras se envía
+          {/* TAB 2: LIQUIDACIÓN DE IMPUESTO */}
+          <TabPanel
+            header="Liquidación de impuesto"
+            disabled={
+              !formik.values.proyecto_id ||
+              !formik.values.canton_id ||
+              formik.values.fecha_asignacion === null
+            }
+          >
+            <div className="flex flex-column align-items-center gap-4 p-4">
+              <Card title="Liquidación de Impuestos" className="w-full md:w-5">
+                {/* Campo: Revisión de título */}
+                <div className="field">
+                  <label>Fecha revisión título*</label>
+                  <Calendar
+                    name="fecha_revision_titulo"
+                    value={formik.values.fecha_revision_titulo}
+                    onChange={(e) =>
+                      formik.setFieldValue("fecha_revision_titulo", e.value)
+                    }
+                    onBlur={formik.handleBlur}
+                    dateFormat="dd/mm/yy"
+                    showIcon
+                    className={`w-full ${
+                      formik.touched.fecha_revision_titulo &&
+                      formik.errors.fecha_revision_titulo
+                        ? "p-invalid"
+                        : ""
+                    }`}
+                    minDate={formik.values.fecha_asignacion} // Fecha mínima = fecha_asignacion
+                  />
+                  {formik.touched.fecha_revision_titulo &&
+                    formik.errors.fecha_revision_titulo && (
+                      <small className="p-error">
+                        {formik.errors.fecha_revision_titulo}
+                      </small>
+                    )}
+                </div>
+
+                {/* Campo: Envío para liquidar impuestos */}
+                <div className="field">
+                  <label>Envío para liquidar impuestos*</label>
+                  <Calendar
+                    name="envio_liquidar_impuestos"
+                    value={formik.values.fecha_envio_liquidar_impuesto}
+                    onChange={(e) =>
+                      formik.setFieldValue(
+                        "fecha_envio_liquidar_impuesto",
+                        e.value
+                      )
+                    }
+                    onBlur={formik.handleBlur}
+                    dateFormat="dd/mm/yy"
+                    showIcon
+                    className={`w-full ${
+                      formik.touched.fecha_envio_liquidar_impuesto &&
+                      formik.errors.fecha_envio_liquidar_impuesto
+                        ? "p-invalid"
+                        : ""
+                    }`}
+                    minDate={formik.values.fecha_revision_titulo} // Fecha mínima = revision_titulo
+                    disabled={!formik.values.fecha_revision_titulo} // Deshabilitado si no hay fecha de revisión
+                  />
+                  {formik.touched.fecha_envio_liquidar_impuesto &&
+                    formik.errors.fecha_envio_liquidar_impuesto && (
+                      <small className="p-error">
+                        {formik.errors.fecha_envio_liquidar_impuesto}
+                      </small>
+                    )}
+                </div>
+              </Card>
+            </div>
+          </TabPanel>
+
+          {/* TAB 3: APROBACIÓN DE PROFORMA */}
+          <TabPanel
+            header="Aprobación de proforma"
+            disabled={!formik.values.liquidacion_valor}
+          >
+            <div className="p-4">
+              <Card title="Aprobación de Proforma" className="w-full md:w-5">
+                <div
+                  className="flex flex-column gap-5 w-full"
+                  style={{ maxWidth: "650px" }}
+                >
+                  <div className="field">
+                    <Checkbox
+                      inputId="proforma_aprobada"
+                      name="proforma_aprobada"
+                      checked={formik.values.proforma_aprobada}
+                      onChange={formik.handleChange}
+                      className={`mr-2 ${
+                        formik.touched.proforma_aprobada &&
+                        formik.errors.proforma_aprobada
+                          ? "p-invalid"
+                          : ""
+                      }`}
                     />
-                    <Button
-                      label="Cancelar"
-                      icon="pi pi-times"
-                      type="button"
-                      className="p-button-danger w-full"
-                      onClick={() =>
-                        navigate("/administrador/consultar-cliente")
+                    <label htmlFor="proforma_aprobada" className="ml-2">
+                      Proforma aprobada*
+                    </label>
+                    {formik.touched.proforma_aprobada &&
+                      formik.errors.proforma_aprobada && (
+                        <small className="p-error block">
+                          {formik.errors.proforma_aprobada}
+                        </small>
+                      )}
+                  </div>
+
+                  <div className="field">
+                    <label>Fecha de aprobación</label>
+                    <Calendar
+                      name="proforma_fecha"
+                      value={formik.values.proforma_fecha}
+                      onChange={(e) =>
+                        formik.setFieldValue("proforma_fecha", e.value)
                       }
-                      disabled={formik.isSubmitting}
+                      onBlur={formik.handleBlur}
+                      dateFormat="dd/mm/yy"
+                      showIcon
+                      className="w-full"
                     />
                   </div>
                 </div>
-              </form>
-            </Card>
-            <ClienteModal
-              visible={modalVisible}
-              setCliente={handleSetCliente}
-              onHide={() => setModalVisible(false)}
-            />
-            <InmobiliariaModal
-              visible={modalInmobiliariaVisible}
-              setInmobiliaria={handleSetInmobiliaria}
-              onHide={() => setModalInmobiliariaVisible(false)}
-            />
-            <ProyectoModal
-              visible={modalProyectoVisible}
-              setProyecto={handleSetProyecto}
-              onHide={() => setModalProyectoVisible(false)}
-            />
-          </div>
-        </TabPanel>
-      </TabView>
-    </>
+              </Card>
+            </div>
+          </TabPanel>
+
+          {/* Resto de tabs (puedes añadir más campos según necesites) */}
+          <TabPanel header="En firma matriz">
+            <div className="p-4">
+              <Card title="Firma Matriz" className="w-full md:w-5">
+                <div className="field">
+                  <Checkbox
+                    inputId="firma_matriz"
+                    name="firma_matriz"
+                    checked={formik.values.firma_matriz}
+                    onChange={formik.handleChange}
+                  />
+                  <label htmlFor="firma_matriz" className="ml-2">
+                    Documentos firmados
+                  </label>
+                </div>
+              </Card>
+            </div>
+          </TabPanel>
+
+          <TabPanel header="En inscripción">
+            {/* Contenido del tab... */}
+          </TabPanel>
+
+          <TabPanel header="En catastro">{/* Contenido del tab... */}</TabPanel>
+
+          <TabPanel header="Finalizado">{/* Contenido del tab... */}</TabPanel>
+
+          <TabPanel header="Documentación">
+            {/* Sección Catastro (mantienes lo que ya tienes) */}
+            <div className="p-fluid">
+              {!pdfCatastroId ? (
+                <FileUpload
+                  name="file"
+                  accept="application/pdf"
+                  maxFileSize={5 * 1024 * 1024}
+                  mode="basic"
+                  chooseLabel={
+                    uploading ? "Subiendo..." : "Seleccionar PDF Catastro"
+                  }
+                  customUpload
+                  auto
+                  uploadHandler={(e) =>
+                    handleUpload(e, {
+                      is_catastro: true,
+                      is_titulo: false,
+                      is_factura: false,
+                    })
+                  }
+                  disabled={uploading}
+                />
+              ) : (
+                <div className="flex flex-row justify-content-between gap-3 mt-3">
+                  <Button
+                    type="button"
+                    label="Ver PDF del catastro"
+                    icon="pi pi-eye"
+                    onClick={() => getPdfUrl(pdfCatastroId)}
+                  />
+                  <Button
+                    type="button"
+                    label="Eliminar PDF del catastro"
+                    icon="pi pi-trash"
+                    className="p-button-danger"
+                    onClick={() => handleDeletePdf(pdfCatastroId, "catastro")}
+                  />
+                </div>
+              )}
+            </div>
+
+            {/* Sección Título (mantienes lo que ya tienes) */}
+            <div className="p-fluid" style={{ marginTop: "2rem" }}>
+              {!pdfTituloId ? (
+                <FileUpload
+                  name="file"
+                  accept="application/pdf"
+                  maxFileSize={5 * 1024 * 1024}
+                  mode="basic"
+                  chooseLabel={
+                    uploading ? "Subiendo..." : "Seleccionar PDF Título"
+                  }
+                  customUpload
+                  auto
+                  uploadHandler={(e) =>
+                    handleUpload(e, {
+                      is_catastro: false,
+                      is_titulo: true,
+                      is_factura: false,
+                    })
+                  }
+                  disabled={uploading}
+                />
+              ) : (
+                <div className="flex flex-row justify-content-between gap-3 mt-3">
+                  <Button
+                    type="button"
+                    label="Ver PDF del título"
+                    icon="pi pi-eye"
+                    onClick={() => getPdfUrl(pdfTituloId,"titulo")}
+                  />
+                  <Button
+                    type="button"
+                    label="Eliminar PDF del título"
+                    icon="pi pi-trash"
+                    className="p-button-danger"
+                    onClick={() => handleDeletePdf(pdfTituloId)}
+                  />
+                </div>
+              )}
+            </div>
+
+            {/* Nueva sección para Facturas */}
+            <div className="p-fluid" style={{ marginTop: "2rem" }}>
+              <h4>Facturas</h4>
+
+              {/* Botón para subir nueva factura */}
+              <FileUpload
+                name="file"
+                accept="application/pdf"
+                maxFileSize={5 * 1024 * 1024}
+                mode="basic"
+                chooseLabel={uploading ? "Subiendo..." : "Subir Nueva Factura"}
+                customUpload
+                auto
+                uploadHandler={(e) =>
+                  handleUpload(e, {
+                    is_catastro: false,
+                    is_titulo: false,
+                    is_factura: true,
+                  })
+                }
+                disabled={uploading}
+              />
+
+              {/* Lista de facturas subidas */}
+              {pdfFacturasId.length > 0 && (
+                <div style={{ marginTop: "1rem" }}>
+                  {pdfFacturasId.map((facturaId, index) => (
+                    <div
+                      key={facturaId}
+                      className="flex flex-row justify-content-between gap-3 mt-3"
+                    >
+                      <Button
+                        type="button"
+                        label={`Ver Factura ${index + 1}`}
+                        icon="pi pi-eye"
+                        onClick={() => getPdfUrl(facturaId)}
+                      />
+                      <Button
+                        type="button"
+                        label="Eliminar Factura"
+                        icon="pi pi-trash"
+                        className="p-button-danger"
+                        onClick={() => handleDeletePdf(facturaId,"factura")}
+                      />
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          </TabPanel>
+        </TabView>
+
+        {/* Botones de acción fuera de los tabs pero dentro del form */}
+        <div className="flex justify-content-between gap-3 p-4">
+          <Button
+            label="Cancelar"
+            icon="pi pi-times"
+            type="button"
+            className="p-button-danger"
+            onClick={() => window.history.back()}
+          />
+          <Button
+            label="Guardar Todo"
+            icon="pi pi-check"
+            type="submit"
+            className="p-button-success"
+            loading={formik.isSubmitting}
+          />
+        </div>
+      </form>
+
+      {/* Modales (fuera del formulario) */}
+      <ClienteModal
+        visible={modalVisible}
+        setCliente={handleSetCliente}
+        onHide={() => setModalVisible(false)}
+      />
+      <InmobiliariaModal
+        visible={modalInmobiliariaVisible}
+        setInmobiliaria={handleSetInmobiliaria}
+        onHide={() => setModalInmobiliariaVisible(false)}
+        cliente_id={cliente?.id}
+      />
+      <ProyectoModal
+        visible={modalProyectoVisible}
+        setProyecto={handleSetProyecto}
+        onHide={() => setModalProyectoVisible(false)}
+        canton_id={formik.values.canton_id}
+      />
+    </div>
   );
 };
 
