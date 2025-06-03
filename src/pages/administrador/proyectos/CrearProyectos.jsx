@@ -11,7 +11,7 @@ import { useFormik } from "formik";
 import * as Yup from "yup";
 import ProyectoService from "../../../services/ProyectoService";
 import CantonService from "../../../services/CantonService";
-
+import InmobiliariaService from "../../../services/InmobiliariaService";
 // Componente que permite registrar un nuevo proyecto
 const CrearProyectos = () => {
   const dispatch = useDispatch(); // Hook para disparar acciones de Redux
@@ -19,7 +19,9 @@ const CrearProyectos = () => {
   const toast = useRef(null); // Referencia para mostrar mensajes tipo Toast
   const proyectoService = ProyectoService(); // Servicio de proyectos
   const cantonService = CantonService();
+  const inmobiliariaService = InmobiliariaService();
   const [cantones, setCantones] = useState([]);
+  const [inmobiliarias, setInmobiliarias] = useState([]);
   const [loading, setLoading] = useState(false);
 
   const getTags = async () => {
@@ -33,17 +35,30 @@ const CrearProyectos = () => {
     }
   };
 
+    const getTags2 = async () => {
+    try {
+      const response = await inmobiliariaService.getTags2();
+      console.log("tags", response);
+      setInmobiliarias(response.data);
+    } catch (error) {
+      console.error("Error al traer los tags:", error);
+      handleError(error);
+    }
+  };
+
   // Hook Formik para manejo del formulario, validación y envío
   const formik = useFormik({
     initialValues: {
       nombre: "",
-      urbanizacion: "",
+      etapa: "",
       canton_id: "",
+      inmobiliaria_id: "",
     },
     // Esquema de validación con Yup
     validationSchema: Yup.object({
       nombre: Yup.string().required("Por favor, ingrese un nombre."),
       canton_id: Yup.string().required("Por favor, ingrese seleccione un cantón."),
+      inmobiliaria_id: Yup.string().required("Por favor, ingrese seleccione una inmobiliaria."),
     }),
 
     /**
@@ -97,6 +112,7 @@ const CrearProyectos = () => {
     setLoading(true);
     const fetchData = async () => {
       await getTags();
+      await getTags2();
       setLoading(false);
     };
     fetchData();
@@ -139,16 +155,38 @@ const CrearProyectos = () => {
           )}
         </div>
 
-        {/* Campo: Urbanización */}
+        {/* Campo: Etapa */}
         <div className="field mb-3">
-          <label htmlFor="urbanizacion">Urbanización</label>
+          <label htmlFor="etapa">Etapa</label>
           <InputText
-            id="urbanizacion"
-            name="urbanizacion"
+            id="etapa"
+            name="etapa"
             value={formik.values.urbanizacion}
             onChange={formik.handleChange}
             className="w-full"
           />
+        </div>
+
+              {/* Campo: Inmobiliaria */}
+        <div className="field mb-3">
+          <label htmlFor="inmobiliaria_id">Inmobiliaria</label>
+          <Dropdown
+            id="inmobiliaria_id"
+            name="inmobiliaria_id"
+            value={formik.values.inmobiliaria_id}
+            onChange={formik.handleChange}
+            onBlur={formik.handleBlur}
+            options={inmobiliarias}
+            optionLabel="nombre"
+            optionValue="id"
+            placeholder="Seleccione una Inmobiliaria"
+            className={`w-full ${
+              formik.touched.inmobiliaria_id && formik.errors.inmobiliaria_id ? "p-invalid" : ""
+            }`}
+          />
+          {formik.touched.inmobiliaria_id && formik.errors.inmobiliaria_id && (
+            <small className="p-error">{formik.errors.inmobiliaria_id}</small>
+          )}
         </div>
 
         {/* Campo: Cantón */}

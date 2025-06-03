@@ -132,7 +132,21 @@ const InmobiliariaService = () => {
       throw error.response?.data || { message: "Error al obtener inmobiliarias por cliente" };
       
     }
+    
   }
+
+    const getTags2 = async () => {
+    const headers = { Authorization: `Bearer ${token}` };
+    try {
+      const url = `${API_URL}/inmobiliarias/tags`;
+      const response = await secureAxios.get(url, { headers });
+      return response.data;
+    } catch (error) {
+      console.error("Error al obtener todos los tags:", error.response?.data || error.message);
+      throw error.response?.data || { message: "Error al obtener todos los tags" };
+    }
+  }
+
 
   // Exportar todas las funciones del servicio
   return {
@@ -144,6 +158,7 @@ const InmobiliariaService = () => {
     updateInmobiliaria,
     deleteInmobiliaria,
     searchInmobiliarias,
+    getTags2
   };
 };
 

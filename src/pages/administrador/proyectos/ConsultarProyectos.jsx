@@ -255,7 +255,8 @@ const handleDelete = (id) => {
             emptyMessage="No se encontraron proyectos"
           >
             <Column field="nombre" header="Nombre" />
-            <Column field="urbanizacion" header="Urbanización" />
+            <Column field="etapa" header="Etapa" />
+            <Column field="inmobiliaria.nombre" header="Inmobiliaria" />
             <Column field="canton.nombre" header="Cantón" />
             <Column
               header="Acciones"

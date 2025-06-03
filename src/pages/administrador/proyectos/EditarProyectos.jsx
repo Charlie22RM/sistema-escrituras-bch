@@ -10,6 +10,7 @@ import { useFormik } from "formik";
 import * as Yup from "yup";
 import ProyectoService from "../../../services/ProyectoService";
 import CantonService from "../../../services/CantonService";
+import InmobiliariaService from "../../../services/InmobiliariaService";
 import { Dropdown } from "primereact/dropdown";
 
 // Componente para editar un proyecto existente
@@ -18,18 +19,22 @@ const EditarProyectos = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const toast = useRef(null);
+  const [inmobiliarias, setInmobiliarias] = useState([]);
   const [cantones, setCantones] = useState([]);
-  const proyectoService = ProyectoService(); // Instanciar el servicio
+  const proyectoService = ProyectoService(); // Instanciar el servicio+
+  const inmobiliariaService = InmobiliariaService();
   const cantonService = CantonService();
 
   const formik = useFormik({
     initialValues: {
       nombre: "",
-      urbanizacion: "",
+      etapa: "",
+      inmobiliaria_id: "",
       canton_id: "",
     },
     validationSchema: Yup.object({
       nombre: Yup.string().required("Por favor, ingrese un nombre"),
+      inmobiliaria_id: Yup.string().required("Por favor, seleccione una inmobiliaria"),
       canton_id: Yup.string().required("Por favor, seleccione un cantón"),
     }),
     onSubmit: async (values) => {
@@ -76,6 +81,18 @@ const EditarProyectos = () => {
       handleError(error);
     }
   };
+
+  const getTags2 = async () => {
+    try {
+      const response = await inmobiliariaService.getTags2();
+      console.log("tags", response);
+      setInmobiliarias(response.data);
+    } catch (error) {
+      console.error("Error al traer los tags:", error);
+      handleError(error);
+    }
+  };
+
   const handleError = (error) => {
     console.error("Error al cargar los clientes:", error.statusCode);
     if (error?.response?.data?.statusCode === 401 || error.statusCode === 401) {
@@ -108,10 +125,11 @@ const EditarProyectos = () => {
         const proyecto = response.data.find((c) => c.id === parseInt(id));
 
         if (proyecto) {
-          const { nombre, urbanizacion } = proyecto;
+          const { nombre, etapa } = proyecto;
           formik.setValues({
             nombre: nombre || "",
-            urbanizacion: urbanizacion || "",
+            etapa: etapa || "",
+            inmobiliaria_id: proyecto.inmobiliaria_id || "",
             canton_id: proyecto.canton_id || "",
           });
         } else {
@@ -146,7 +164,7 @@ const EditarProyectos = () => {
     };
 
     const fetchData = async () => {
-      await Promise.all([fetchProyecto(), getTags()]);
+      await Promise.all([fetchProyecto(), getTags(), getTags2()]);
     };
     fetchData();
   }, [id, dispatch, navigate]);
@@ -178,9 +196,8 @@ const EditarProyectos = () => {
               value={formik.values.nombre}
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
-              className={`w-full ${
-                formik.touched.nombre && formik.errors.nombre ? "p-invalid" : ""
-              }`}
+              className={`w-full ${formik.touched.nombre && formik.errors.nombre ? "p-invalid" : ""
+                }`}
             />
             {formik.touched.nombre && formik.errors.nombre && (
               <small className="p-error">{formik.errors.nombre}</small>
@@ -188,14 +205,36 @@ const EditarProyectos = () => {
           </div>
 
           <div className="field mb-3">
-            <label htmlFor="urbanizacion">Urbanización</label>
+            <label htmlFor="etapa">Etapa</label>
             <InputText
-              id="urbanizacion"
-              name="urbanizacion"
-              value={formik.values.urbanizacion}
+              id="etapa"
+              name="etapa"
+              value={formik.values.etapa}
               onChange={formik.handleChange}
               className="w-full"
             />
+          </div>
+
+          <div className="field mb-3">
+            <label htmlFor="inmobiliaria_id">Inmobiliaria</label>
+            <Dropdown
+              id="inmobiliaria_id"
+              name="inmobiliaria_id"
+              value={formik.values.inmobiliaria_id}
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
+              options={inmobiliarias}
+              optionLabel="nombre"
+              optionValue="id"
+              placeholder="Seleccione una inmobiliaria"
+              className={`w-full ${formik.touched.inmobiliaria_id && formik.errors.inmobiliaria_id
+                  ? "p-invalid"
+                  : ""
+                }`}
+            />
+            {formik.touched.inmobiliaria_id && formik.errors.inmobiliaria_id && (
+              <small className="p-error">{formik.errors.inmobiliaria_id}</small>
+            )}
           </div>
 
           <div className="field mb-3">
@@ -210,11 +249,10 @@ const EditarProyectos = () => {
               optionLabel="nombre"
               optionValue="id"
               placeholder="Seleccione un cantón"
-              className={`w-full ${
-                formik.touched.canton_id && formik.errors.canton_id
+              className={`w-full ${formik.touched.canton_id && formik.errors.canton_id
                   ? "p-invalid"
                   : ""
-              }`}
+                }`}
             />
             {formik.touched.canton_id && formik.errors.canton_id && (
               <small className="p-error">{formik.errors.canton_id}</small>

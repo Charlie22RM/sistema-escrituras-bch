@@ -123,6 +123,7 @@ const CrearUsuarios = () => {
   };
 return (
   <div className="p-1 flex justify-content-center">
+      <Toast ref={toast} />
     <Card
       style={{ minWidth: "600px", width: "100%" }}
       className="w-full md:w-5"
@@ -135,7 +136,7 @@ return (
             tooltip="Volver a página anterior"
             tooltipOptions={{ position: "top" }}
           />
-          <span>Crear Usuario</span>
+          <span>Registrar Usuario</span>
         </div>
       }
     >
