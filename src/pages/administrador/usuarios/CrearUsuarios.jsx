@@ -98,7 +98,13 @@ const CrearUsuarios = () => {
       email: Yup.string()
         .email("Email inválido")
         .required("Por favor, ingrese un email."),
-      password: Yup.string().required("Por favor, ingrese una contraseña."),
+      //password: Yup.string().required("Por favor, ingrese una contraseña."),
+        password: Yup.string()
+    .required("Por favor, ingrese una contraseña.")
+    .matches(
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/,
+      "Mínimo 8 caracteres, una mayúscula, una minúscula, un número y un símbolo."
+    ),
       repeat_password: Yup.string()
         .oneOf([Yup.ref("password"), null], "Las contraseñas no coinciden.")
         .required("Debe repetir la contraseña."),

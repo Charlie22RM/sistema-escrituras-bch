@@ -31,11 +31,17 @@ const CambioContrasena = () => {
       actual_password: Yup.string().required(
         "La contraseña actual es obligatoria."
       ),
-      new_password: Yup.string().required("La nueva contraseña es obligatoria."),
+      new_password: Yup.string()
+        .required("La nueva contraseña es obligatoria.")
+        .matches(
+          /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/,
+          "Mínimo 8 caracteres, una mayúscula, una minúscula, un número y un símbolo."
+        ),
       confirm_password: Yup.string()
         .oneOf([Yup.ref("new_password"), null], "Las contraseñas no coinciden.")
         .required("La confirmación de la contraseña es obligatoria."),
     }),
+
     onSubmit: async (values) => {
       setLoading(true);
       try {
@@ -45,7 +51,7 @@ const CambioContrasena = () => {
         setLoading(false); // siempre se ejecuta
       }
     }
-    
+
   });
 
   const handleChangePassword = async (values) => {
@@ -129,11 +135,10 @@ const CambioContrasena = () => {
                   value={formik.values.actual_password}
                   onChange={formik.handleChange}
                   onBlur={formik.handleBlur}
-                  className={`w-full ${
-                    formik.touched.actual_password && formik.errors.actual_password
+                  className={`w-full ${formik.touched.actual_password && formik.errors.actual_password
                       ? "p-invalid"
                       : ""
-                  }`}
+                    }`}
                   toggleMask
                   feedback={false}
                 />
@@ -150,11 +155,10 @@ const CambioContrasena = () => {
                   value={formik.values.new_password}
                   onChange={formik.handleChange}
                   onBlur={formik.handleBlur}
-                  className={`w-full ${
-                    formik.touched.new_password && formik.errors.new_password
+                  className={`w-full ${formik.touched.new_password && formik.errors.new_password
                       ? "p-invalid"
                       : ""
-                  }`}
+                    }`}
                   toggleMask
                   feedback={false}
                 />
@@ -171,11 +175,10 @@ const CambioContrasena = () => {
                   value={formik.values.confirm_password}
                   onChange={formik.handleChange}
                   onBlur={formik.handleBlur}
-                  className={`w-full ${
-                    formik.touched.confirm_password && formik.errors.confirm_password
+                  className={`w-full ${formik.touched.confirm_password && formik.errors.confirm_password
                       ? "p-invalid"
                       : ""
-                  }`}
+                    }`}
                   toggleMask
                   feedback={false}
                 />
