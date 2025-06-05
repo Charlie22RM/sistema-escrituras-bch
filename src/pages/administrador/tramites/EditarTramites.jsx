@@ -16,10 +16,10 @@ import { Calendar } from "primereact/calendar";
 import { clearLogout } from "../../../redux/authSlice";
 import CantonService from "../../../services/CantonService";
 import * as Yup from "yup";
-import { Checkbox } from "primereact/checkbox";
 import { FileUpload } from "primereact/fileupload";
 import PdfService from "../../../services/PdfService";
 import Swal from "sweetalert2";
+import { InputTextarea } from "primereact/inputtextarea";
 
 // Estilo reutilizable para inputs bloqueados
 const blockedInputStyle = {
@@ -44,6 +44,20 @@ const EditarTramites = () => {
       fecha_asignacion: null,
       fecha_revision_titulo: null,
       fecha_envio_liquidar_impuesto: null,
+      observaciones_liquidacion_impuesto: null,
+      fecha_envio_aprobacion_proforma: null,
+      fecha_aprobacion_proforma: null,
+      observaciones_proforma: null,
+      fecha_firma_matriz_cliente: null,
+      fecha_retorno_matriz_firmada: null,
+      observaciones_matriz_firmada: null,
+      fecha_ingreso_registro: null,
+      fecha_tentativa_inscripcion: null,
+      fecha_inscripcion: null,
+      fecha_ingreso_catastro: null,
+      fecha_tentativa_catastro: null,
+      fecha_catastro: null,
+      observaciones_catastro: null,
     },
     validationSchema: Yup.object({
       cliente_id: Yup.string().required("Cliente es requerido"),
@@ -60,6 +74,124 @@ const EditarTramites = () => {
       fecha_asignacion: Yup.date().required(
         "La fecha del trámite es requerida"
       ),
+      fecha_revision_titulo: Yup.date()
+        .nullable()
+        .test(
+          "requerido-si-envio-existe",
+          "No puede estar vacío si ya llenaste la fecha de envío para liquidar impuestos",
+          function (value) {
+            const { fecha_envio_liquidar_impuesto } = this.parent;
+            if (fecha_envio_liquidar_impuesto && !value) return false;
+            return true;
+          }
+        ),
+      fecha_envio_aprobacion_proforma: Yup.date()
+        .nullable()
+        .test(
+          "requerido-si-envio-existe",
+          "No puede estar vacío si ya llenaste la fecha de envío para aprobación de proforma",
+          function (value) {
+            const { fecha_aprobacion_proforma } = this.parent;
+            if (fecha_aprobacion_proforma && !value) return false;
+            return true;
+          }
+        ),
+
+      fecha_aprobacion_proforma: Yup.date()
+        .nullable()
+        .test(
+          "requerido-si-envio-existe",
+          "No puede estar vacío si ya llenaste la fecha de aprobación de proforma",
+          function (value) {
+            const { fecha_firma_matriz_cliente } = this.parent;
+            if (fecha_firma_matriz_cliente && !value) return false;
+            return true;
+          }
+        ),
+
+      fecha_firma_matriz_cliente: Yup.date()
+        .nullable()
+        .test(
+          "requerido-si-envio-existe",
+          "No puede estar vacío si ya llenaste la fecha de retorno de matriz firmada",
+          function (value) {
+            const { fecha_retorno_matriz_firmada } = this.parent;
+            if (fecha_retorno_matriz_firmada && !value) return false;
+            return true;
+          }
+        ),
+
+      fecha_retorno_matriz_firmada: Yup.date()
+        .nullable()
+        .test(
+          "requerido-si-envio-existe",
+          "No puede estar vacío si ya llenaste la fecha de ingreso al registro",
+          function (value) {
+            const { fecha_ingreso_registro } = this.parent;
+            if (fecha_ingreso_registro && !value) return false;
+            return true;
+          }
+        ),
+
+      fecha_ingreso_registro: Yup.date()
+        .nullable()
+        .test(
+          "requerido-si-envio-existe",
+          "No puede estar vacío si ya llenaste la fecha de tentativa de inscripción",
+          function (value) {
+            const { fecha_tentativa_inscripcion } = this.parent;
+            if (fecha_tentativa_inscripcion && !value) return false;
+            return true;
+          }
+        ),
+
+      fecha_tentativa_inscripcion: Yup.date()
+        .nullable()
+        .test(
+          "requerido-si-envio-existe",
+          "No puede estar vacío si ya llenaste la fecha de inscripción",
+          function (value) {
+            const { fecha_inscripcion } = this.parent;
+            if (fecha_inscripcion && !value) return false;
+            return true;
+          }
+        ),
+
+      fecha_inscripcion: Yup.date()
+        .nullable()
+        .test(
+          "requerido-si-envio-existe",
+          "No puede estar vacío si ya llenaste la fecha de ingreso al catastro",
+          function (value) {
+            const { fecha_ingreso_catastro } = this.parent;
+            if (fecha_ingreso_catastro && !value) return false;
+            return true;
+          }
+        ),
+
+      fecha_ingreso_catastro: Yup.date()
+        .nullable()
+        .test(
+          "requerido-si-envio-existe",
+          "No puede estar vacío si ya llenaste la fecha tentativa de catastro",
+          function (value) {
+            const { fecha_tentativa_catastro } = this.parent;
+            if (fecha_tentativa_catastro && !value) return false;
+            return true;
+          }
+        ),
+
+      fecha_tentativa_catastro: Yup.date()
+        .nullable()
+        .test(
+          "requerido-si-envio-existe",
+          "No puede estar vacío si ya llenaste la fecha de catastro",
+          function (value) {
+            const { fecha_catastro } = this.parent;
+            if (fecha_catastro && !value) return false;
+            return true;
+          }
+        ),
     }),
     onSubmit: async (values) => {
       try {
@@ -117,6 +249,46 @@ const EditarTramites = () => {
         const fechaAsignacion = tramite.fecha_asignacion
           ? new Date(tramite.fecha_asignacion)
           : null;
+        const fecha_revision_titulo = tramite.fecha_revision_titulo
+          ? new Date(tramite.fecha_revision_titulo)
+          : null;
+        const fecha_envio_liquidar_impuesto =
+          tramite.fecha_envio_liquidar_impuesto
+            ? new Date(tramite.fecha_envio_liquidar_impuesto)
+            : null;
+        const fecha_firma_matriz_cliente = tramite.fecha_firma_matriz_cliente
+          ? new Date(tramite.fecha_firma_matriz_cliente)
+          : null;
+        const fecha_retorno_matriz_firmada =
+          tramite.fecha_retorno_matriz_firmada
+            ? new Date(tramite.fecha_retorno_matriz_firmada)
+            : null;
+        const fecha_ingreso_registro = tramite.fecha_ingreso_registro
+          ? new Date(tramite.fecha_ingreso_registro)
+          : null;
+        const fecha_tentativa_inscripcion = tramite.fecha_tentativa_inscripcion
+          ? new Date(tramite.fecha_tentativa_inscripcion)
+          : null;
+        const fecha_inscripcion = tramite.fecha_inscripcion
+          ? new Date(tramite.fecha_inscripcion)
+          : null;
+        const fecha_ingreso_catastro = tramite.fecha_ingreso_catastro
+          ? new Date(tramite.fecha_ingreso_catastro)
+          : null;
+        const fecha_tentativa_catastro = tramite.fecha_tentativa_catastro
+          ? new Date(tramite.fecha_tentativa_catastro)
+          : null;
+        const fecha_catastro = tramite.fecha_catastro
+          ? new Date(tramite.fecha_catastro)
+          : null;
+        const fecha_envio_aprobacion_proforma =
+          tramite.fecha_envio_aprobacion_proforma
+            ? new Date(tramite.fecha_envio_aprobacion_proforma)
+            : null;
+        const fecha_aprobacion_proforma = tramite.fecha_aprobacion_proforma
+          ? new Date(tramite.fecha_aprobacion_proforma)
+          : null;
+
         formik.setValues({
           cliente_id: tramite.cliente_id,
           inmobiliaria_id: tramite.inmobiliaria_id,
@@ -125,6 +297,24 @@ const EditarTramites = () => {
           nombre_beneficiario: tramite.nombre_beneficiario || "",
           cedula_beneficiario: tramite.cedula_beneficiario,
           fecha_asignacion: fechaAsignacion,
+          fecha_revision_titulo: fecha_revision_titulo,
+          fecha_envio_liquidar_impuesto: fecha_envio_liquidar_impuesto,
+          fecha_aprobacion_proforma: fecha_aprobacion_proforma,
+          fecha_envio_aprobacion_proforma: fecha_envio_aprobacion_proforma,
+          observaciones_proforma: tramite.observaciones_proforma || "",
+          observaciones_liquidacion_impuesto:
+            tramite.observaciones_liquidacion_impuesto || "",
+          fecha_firma_matriz_cliente: fecha_firma_matriz_cliente,
+          fecha_retorno_matriz_firmada: fecha_retorno_matriz_firmada,
+          observaciones_matriz_firmada:
+            tramite.observaciones_matriz_firmada || "",
+          fecha_ingreso_registro: fecha_ingreso_registro,
+          fecha_tentativa_inscripcion: fecha_tentativa_inscripcion,
+          fecha_inscripcion: fecha_inscripcion,
+          fecha_ingreso_catastro: fecha_ingreso_catastro,
+          fecha_tentativa_catastro: fecha_tentativa_catastro,
+          fecha_catastro: fecha_catastro,
+          observaciones_catastro: tramite.observaciones_catastro || "",
         });
       }
     } catch (error) {
@@ -650,6 +840,38 @@ const EditarTramites = () => {
                       </small>
                     )}
                 </div>
+
+                <div className="field mt-4">
+                  <label>Comentarios</label>
+                  <InputTextarea
+                    name="observaciones_liquidacion_impuesto"
+                    value={
+                      formik.values.observaciones_liquidacion_impuesto || ""
+                    }
+                    onChange={(e) => {
+                      formik.setFieldValue(
+                        "observaciones_liquidacion_impuesto",
+                        e.target.value
+                      );
+                    }}
+                    onBlur={formik.handleBlur}
+                    rows={5} // Número de filas visibles
+                    autoResize // Ajusta la altura automáticamente
+                    className={`w-full ${
+                      formik.touched.observaciones_liquidacion_impuesto &&
+                      formik.errors.observaciones_liquidacion_impuesto
+                        ? "p-invalid"
+                        : ""
+                    }`}
+                    placeholder="Ingrese observaciones sobre la liquidación..."
+                  />
+                  {formik.touched.observaciones_liquidacion_impuesto &&
+                    formik.errors.observaciones_liquidacion_impuesto && (
+                      <small className="p-error">
+                        {formik.errors.observaciones_liquidacion_impuesto}
+                      </small>
+                    )}
+                </div>
               </Card>
             </div>
           </TabPanel>
@@ -657,83 +879,430 @@ const EditarTramites = () => {
           {/* TAB 3: APROBACIÓN DE PROFORMA */}
           <TabPanel
             header="Aprobación de proforma"
-            disabled={!formik.values.liquidacion_valor}
+            disabled={!formik.values.fecha_envio_liquidar_impuesto}
           >
-            <div className="p-4">
+            <div className="flex flex-column align-items-center gap-4 p-4">
               <Card title="Aprobación de Proforma" className="w-full md:w-5">
                 <div
                   className="flex flex-column gap-5 w-full"
                   style={{ maxWidth: "650px" }}
                 >
                   <div className="field">
-                    <Checkbox
-                      inputId="proforma_aprobada"
-                      name="proforma_aprobada"
-                      checked={formik.values.proforma_aprobada}
-                      onChange={formik.handleChange}
-                      className={`mr-2 ${
-                        formik.touched.proforma_aprobada &&
-                        formik.errors.proforma_aprobada
+                    <label>Envio de Aprobación de proforma*</label>
+                    <Calendar
+                      name="fecha_envio_aprobacion_proforma"
+                      value={formik.values.fecha_envio_aprobacion_proforma}
+                      onChange={(e) =>
+                        formik.setFieldValue(
+                          "fecha_envio_aprobacion_proforma",
+                          e.value
+                        )
+                      }
+                      onBlur={formik.handleBlur}
+                      dateFormat="dd/mm/yy"
+                      showIcon
+                      className={`w-full ${
+                        formik.touched.fecha_envio_aprobacion_proforma &&
+                        formik.errors.fecha_envio_aprobacion_proforma
                           ? "p-invalid"
                           : ""
                       }`}
+                      minDate={formik.values.fecha_envio_liquidar_impuesto}
                     />
-                    <label htmlFor="proforma_aprobada" className="ml-2">
-                      Proforma aprobada*
-                    </label>
-                    {formik.touched.proforma_aprobada &&
-                      formik.errors.proforma_aprobada && (
-                        <small className="p-error block">
-                          {formik.errors.proforma_aprobada}
+                    {formik.touched.fecha_envio_aprobacion_proforma &&
+                      formik.errors.fecha_envio_aprobacion_proforma && (
+                        <small className="p-error">
+                          {formik.errors.fecha_envio_aprobacion_proforma}
                         </small>
                       )}
                   </div>
 
                   <div className="field">
-                    <label>Fecha de aprobación</label>
+                    <label>Fecha de Aprobación de proforma*</label>
                     <Calendar
-                      name="proforma_fecha"
-                      value={formik.values.proforma_fecha}
+                      name="fecha_aprobacion_proforma"
+                      value={formik.values.fecha_aprobacion_proforma}
                       onChange={(e) =>
-                        formik.setFieldValue("proforma_fecha", e.value)
+                        formik.setFieldValue(
+                          "fecha_aprobacion_proforma",
+                          e.value
+                        )
                       }
                       onBlur={formik.handleBlur}
                       dateFormat="dd/mm/yy"
                       showIcon
-                      className="w-full"
+                      className={`w-full ${
+                        formik.touched.fecha_aprobacion_proforma &&
+                        formik.errors.fecha_aprobacion_proforma
+                          ? "p-invalid"
+                          : ""
+                      }`}
+                      disabled={
+                        formik.values.fecha_envio_aprobacion_proforma == null
+                      } // Deshabilitado si no hay fecha de envío de aprobación de proforma
+                      minDate={formik.values.fecha_envio_aprobacion_proforma}
                     />
+                    {formik.touched.fecha_aprobacion_proforma &&
+                      formik.errors.fecha_aprobacion_proforma && (
+                        <small className="p-error">
+                          {formik.errors.fecha_aprobacion_proforma}
+                        </small>
+                      )}
+                  </div>
+
+                  <div className="field mt-4">
+                    <label>Comentarios</label>
+                    <InputTextarea
+                      name="observaciones_proforma"
+                      value={formik.values.observaciones_proforma || ""}
+                      onChange={(e) => {
+                        formik.setFieldValue(
+                          "observaciones_proforma",
+                          e.target.value
+                        );
+                      }}
+                      onBlur={formik.handleBlur}
+                      rows={5} // Número de filas visibles
+                      autoResize // Ajusta la altura automáticamente
+                      className={`w-full ${
+                        formik.touched.observaciones_proforma &&
+                        formik.errors.observaciones_proforma
+                          ? "p-invalid"
+                          : ""
+                      }`}
+                      placeholder="Ingrese observaciones sobre la proforma..."
+                    />
+                    {formik.touched.observaciones_proforma &&
+                      formik.errors.observaciones_proforma && (
+                        <small className="p-error">
+                          {formik.errors.observaciones_proforma}
+                        </small>
+                      )}
                   </div>
                 </div>
               </Card>
             </div>
           </TabPanel>
 
-          {/* Resto de tabs (puedes añadir más campos según necesites) */}
-          <TabPanel header="En firma matriz">
-            <div className="p-4">
-              <Card title="Firma Matriz" className="w-full md:w-5">
+          <TabPanel
+            header="En firma matriz"
+            disabled={formik.values.fecha_aprobacion_proforma == null}
+          >
+            <div className="flex flex-column align-items-center gap-4 p-4">
+              <Card title="Liquidación de Impuestos" className="w-full md:w-5">
                 <div className="field">
-                  <Checkbox
-                    inputId="firma_matriz"
-                    name="firma_matriz"
-                    checked={formik.values.firma_matriz}
-                    onChange={formik.handleChange}
+                  <label>Fecha de firma de matriz cliente*</label>
+                  <Calendar
+                    name="fecha_firma_matriz_cliente"
+                    value={formik.values.fecha_firma_matriz_cliente}
+                    onChange={(e) =>
+                      formik.setFieldValue(
+                        "fecha_firma_matriz_cliente",
+                        e.value
+                      )
+                    }
+                    onBlur={formik.handleBlur}
+                    dateFormat="dd/mm/yy"
+                    showIcon
+                    className={`w-full ${
+                      formik.touched.fecha_firma_matriz_cliente &&
+                      formik.errors.fecha_firma_matriz_cliente
+                        ? "p-invalid"
+                        : ""
+                    }`}
+                    disabled={
+                      formik.values.fecha_retorno_matriz_firmada != null
+                    } // Deshabilitado si hay fecha de retorno
+                    minDate={formik.values.fecha_aprobacion_proforma}
                   />
-                  <label htmlFor="firma_matriz" className="ml-2">
-                    Documentos firmados
-                  </label>
+                  {formik.touched.fecha_firma_matriz_cliente &&
+                    formik.errors.fecha_firma_matriz_cliente && (
+                      <small className="p-error">
+                        {formik.errors.fecha_firma_matriz_cliente}
+                      </small>
+                    )}
+                </div>
+
+                <div className="field">
+                  <label>Fecha de retorno de la matriz firmada*</label>
+                  <Calendar
+                    name="fecha_retorno_matriz_firmada"
+                    value={formik.values.fecha_retorno_matriz_firmada}
+                    onChange={(e) =>
+                      formik.setFieldValue(
+                        "fecha_retorno_matriz_firmada",
+                        e.value
+                      )
+                    }
+                    onBlur={formik.handleBlur}
+                    dateFormat="dd/mm/yy"
+                    showIcon
+                    className={`w-full ${
+                      formik.touched.fecha_retorno_matriz_firmada &&
+                      formik.errors.fecha_retorno_matriz_firmada
+                        ? "p-invalid"
+                        : ""
+                    }`}
+                    disabled={formik.values.fecha_firma_matriz_cliente == null} // Deshabilitado si no hay fecha de firma
+                    minDate={formik.values.fecha_firma_matriz_cliente} // Fecha mínima = fecha_firma_matriz_cliente
+                  />
+                  {formik.touched.fecha_retorno_matriz_firmada &&
+                    formik.errors.fecha_retorno_matriz_firmada && (
+                      <small className="p-error">
+                        {formik.errors.fecha_retorno_matriz_firmada}
+                      </small>
+                    )}
+                </div>
+
+                <div className="field mt-4">
+                  <label>Comentarios</label>
+                  <InputTextarea
+                    name="observaciones_matriz_firmada"
+                    value={formik.values.observaciones_matriz_firmada || ""}
+                    onChange={(e) => {
+                      formik.setFieldValue(
+                        "observaciones_matriz_firmada",
+                        e.target.value
+                      );
+                    }}
+                    onBlur={formik.handleBlur}
+                    rows={5} // Número de filas visibles
+                    autoResize // Ajusta la altura automáticamente
+                    className={`w-full ${
+                      formik.touched.observaciones_matriz_firmada &&
+                      formik.errors.observaciones_matriz_firmada
+                        ? "p-invalid"
+                        : ""
+                    }`}
+                    placeholder="Ingrese observaciones sobre la matriz firmada..."
+                  />
+                  {formik.touched.observaciones_matriz_firmada &&
+                    formik.errors.observaciones_matriz_firmada && (
+                      <small className="p-error">
+                        {formik.errors.observaciones_matriz_firmada}
+                      </small>
+                    )}
                 </div>
               </Card>
             </div>
           </TabPanel>
 
-          <TabPanel header="En inscripción">
-            {/* Contenido del tab... */}
+          <TabPanel
+            header="En inscripción"
+            disabled={!formik.values.fecha_retorno_matriz_firmada}
+          >
+            <div className="flex flex-column align-items-center gap-4 p-4">
+              <Card title="En inscripción" className="w-full md:w-5">
+                <div className="field">
+                  <label>Fecha de ingreso al registro</label>
+                  <Calendar
+                    name="fecha_ingreso_registro"
+                    value={formik.values.fecha_ingreso_registro}
+                    onChange={(e) =>
+                      formik.setFieldValue("fecha_ingreso_registro", e.value)
+                    }
+                    onBlur={formik.handleBlur}
+                    dateFormat="dd/mm/yy"
+                    showIcon
+                    className={`w-full ${
+                      formik.touched.fecha_ingreso_registro &&
+                      formik.errors.fecha_ingreso_registro
+                        ? "p-invalid"
+                        : ""
+                    }`}
+                    minDate={formik.values.fecha_retorno_matriz_firmada} // Fecha mínima = fecha_retorno_matriz_firmada
+                  />
+                  {formik.touched.fecha_ingreso_registro &&
+                    formik.errors.fecha_ingreso_registro && (
+                      <small className="p-error">
+                        {formik.errors.fecha_ingreso_registro}
+                      </small>
+                    )}
+                </div>
+
+                <div className="field">
+                  <label>Fecha tentativa de inscripción</label>
+                  <Calendar
+                    name="fecha_tentativa_inscripcion"
+                    value={formik.values.fecha_tentativa_inscripcion}
+                    onChange={(e) =>
+                      formik.setFieldValue(
+                        "fecha_tentativa_inscripcion",
+                        e.value
+                      )
+                    }
+                    onBlur={formik.handleBlur}
+                    dateFormat="dd/mm/yy"
+                    showIcon
+                    className={`w-full ${
+                      formik.touched.fecha_tentativa_inscripcion &&
+                      formik.errors.fecha_tentativa_inscripcion
+                        ? "p-invalid"
+                        : ""
+                    }`}
+                    minDate={formik.values.fecha_ingreso_registro} // Fecha mínima = ingreso_registro
+                    disabled={!formik.values.fecha_ingreso_registro} // Deshabilitado si no hay fecha de ingreso
+                  />
+                  {formik.touched.fecha_tentativa_inscripcion &&
+                    formik.errors.fecha_tentativa_inscripcion && (
+                      <small className="p-error">
+                        {formik.errors.fecha_tentativa_inscripcion}
+                      </small>
+                    )}
+                </div>
+
+                <div className="field">
+                  <label>Fecha de inscripción</label>
+                  <Calendar
+                    name="fecha_inscripcion"
+                    value={formik.values.fecha_inscripcion}
+                    onChange={(e) =>
+                      formik.setFieldValue("fecha_inscripcion", e.value)
+                    }
+                    onBlur={formik.handleBlur}
+                    dateFormat="dd/mm/yy"
+                    showIcon
+                    className={`w-full ${
+                      formik.touched.fecha_inscripcion &&
+                      formik.errors.fecha_inscripcion
+                        ? "p-invalid"
+                        : ""
+                    }`}
+                    minDate={formik.values.fecha_tentativa_inscripcion} // Fecha mínima = tentativa_inscripcion
+                    disabled={!formik.values.fecha_tentativa_inscripcion} // Deshabilitado si no hay fecha de ingreso
+                  />
+                  {formik.touched.fecha_inscripcion &&
+                    formik.errors.fecha_inscripcion && (
+                      <small className="p-error">
+                        {formik.errors.fecha_inscripcion}
+                      </small>
+                    )}
+                </div>
+              </Card>
+            </div>
           </TabPanel>
 
-          <TabPanel header="En catastro">{/* Contenido del tab... */}</TabPanel>
+          <TabPanel
+            header="En catastro"
+            disabled={!formik.values.fecha_inscripcion}
+          >
+            <div className="flex flex-column align-items-center gap-4 p-4">
+              <Card title="En catastro" className="w-full md:w-5">
+                <div className="field">
+                  <label>Fecha de ingreso al catastro</label>
+                  <Calendar
+                    name="fecha_ingreso_catastro"
+                    value={formik.values.fecha_ingreso_catastro}
+                    onChange={(e) =>
+                      formik.setFieldValue("fecha_ingreso_catastro", e.value)
+                    }
+                    onBlur={formik.handleBlur}
+                    dateFormat="dd/mm/yy"
+                    showIcon
+                    className={`w-full ${
+                      formik.touched.fecha_ingreso_catastro &&
+                      formik.errors.fecha_ingreso_catastro
+                        ? "p-invalid"
+                        : ""
+                    }`}
+                    minDate={formik.values.fecha_inscripcion}
+                  />
+                  {formik.touched.fecha_ingreso_catastro &&
+                    formik.errors.fecha_ingreso_catastro && (
+                      <small className="p-error">
+                        {formik.errors.fecha_ingreso_catastro}
+                      </small>
+                    )}
+                </div>
 
-          <TabPanel header="Finalizado">{/* Contenido del tab... */}</TabPanel>
+                <div className="field">
+                  <label>Fecha tentativa de catastro</label>
+                  <Calendar
+                    name="fecha_tentativa_catastro"
+                    value={formik.values.fecha_tentativa_catastro}
+                    onChange={(e) =>
+                      formik.setFieldValue("fecha_tentativa_catastro", e.value)
+                    }
+                    onBlur={formik.handleBlur}
+                    dateFormat="dd/mm/yy"
+                    showIcon
+                    className={`w-full ${
+                      formik.touched.fecha_tentativa_catastro &&
+                      formik.errors.fecha_tentativa_catastro
+                        ? "p-invalid"
+                        : ""
+                    }`}
+                    minDate={formik.values.fecha_ingreso_catastro} // Fecha mínima = ingreso_catastro
+                    disabled={!formik.values.fecha_ingreso_catastro} // Deshabilitado si no hay fecha de ingreso
+                  />
+                  {formik.touched.fecha_tentativa_catastro &&
+                    formik.errors.fecha_tentativa_catastro && (
+                      <small className="p-error">
+                        {formik.errors.fecha_tentativa_catastro}
+                      </small>
+                    )}
+                </div>
+
+                <div className="field">
+                  <label>Fecha de catastro</label>
+                  <Calendar
+                    name="fecha_catastro"
+                    value={formik.values.fecha_catastro}
+                    onChange={(e) =>
+                      formik.setFieldValue("fecha_catastro", e.value)
+                    }
+                    onBlur={formik.handleBlur}
+                    dateFormat="dd/mm/yy"
+                    showIcon
+                    className={`w-full ${
+                      formik.touched.fecha_catastro &&
+                      formik.errors.fecha_catastro
+                        ? "p-invalid"
+                        : ""
+                    }`}
+                    minDate={formik.values.fecha_tentativa_catastro} // Fecha mínima = tentativa_catastro
+                    disabled={!formik.values.fecha_tentativa_catastro} // Deshabilitado si no hay fecha de ingreso
+                  />
+                  {formik.touched.fecha_catastro &&
+                    formik.errors.fecha_catastro && (
+                      <small className="p-error">
+                        {formik.errors.fecha_catastro}
+                      </small>
+                    )}
+                </div>
+
+                <div className="field mt-4">
+                  <label>Comentarios</label>
+                  <InputTextarea
+                    name="observaciones_catastro"
+                    value={formik.values.observaciones_catastro || ""}
+                    onChange={(e) => {
+                      formik.setFieldValue(
+                        "observaciones_catastro",
+                        e.target.value
+                      );
+                    }}
+                    onBlur={formik.handleBlur}
+                    rows={5} // Número de filas visibles
+                    autoResize // Ajusta la altura automáticamente
+                    className={`w-full ${
+                      formik.touched.observaciones_catastro &&
+                      formik.errors.observaciones_catastro
+                        ? "p-invalid"
+                        : ""
+                    }`}
+                    placeholder="Ingrese observaciones sobre la liquidación..."
+                  />
+                  {formik.touched.observaciones_catastro &&
+                    formik.errors.observaciones_catastro && (
+                      <small className="p-error">
+                        {formik.errors.observaciones_catastro}
+                      </small>
+                    )}
+                </div>
+              </Card>
+            </div>
+          </TabPanel>
 
           <TabPanel header="Documentación">
             {/* Sección Catastro (mantienes lo que ya tienes) */}
@@ -805,7 +1374,7 @@ const EditarTramites = () => {
                     type="button"
                     label="Ver PDF del título"
                     icon="pi pi-eye"
-                    onClick={() => getPdfUrl(pdfTituloId,"titulo")}
+                    onClick={() => getPdfUrl(pdfTituloId, "titulo")}
                   />
                   <Button
                     type="button"
@@ -860,7 +1429,7 @@ const EditarTramites = () => {
                         label="Eliminar Factura"
                         icon="pi pi-trash"
                         className="p-button-danger"
-                        onClick={() => handleDeletePdf(facturaId,"factura")}
+                        onClick={() => handleDeletePdf(facturaId, "factura")}
                       />
                     </div>
                   ))}
