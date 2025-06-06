@@ -1,41 +1,47 @@
-import React, { useEffect, useState, useRef } from 'react';
-import { useDispatch } from 'react-redux';
-import TramiteService from '../../../services/TramiteService';
-import { Button } from 'primereact/button';
-import { Column } from 'primereact/column';
-import { ConfirmDialog, confirmDialog } from 'primereact/confirmdialog';
-import { DataTable } from 'primereact/datatable';
-import { InputText } from 'primereact/inputtext';
-import { ProgressSpinner } from 'primereact/progressspinner';
-import { Toast } from 'primereact/toast';
-import { useNavigate } from 'react-router-dom';
-import { clearLogout } from '../../../redux/authSlice';
-import '../administrador.css';
+import React, { useEffect, useState, useRef } from "react";
+import { useDispatch } from "react-redux";
+import TramiteService from "../../../services/TramiteService";
+import { Button } from "primereact/button";
+import { Column } from "primereact/column";
+import { ConfirmDialog, confirmDialog } from "primereact/confirmdialog";
+import { DataTable } from "primereact/datatable";
+import { InputText } from "primereact/inputtext";
+import { ProgressSpinner } from "primereact/progressspinner";
+import { Toast } from "primereact/toast";
+import { useNavigate } from "react-router-dom";
+import { clearLogout } from "../../../redux/authSlice";
+import "../administrador.css";
+import InformeService from "../../../services/InformeService";
 
 const ConsultarTramites = () => {
   const [tramites, setTramites] = useState([]);
   const [lazyState, setLazyState] = useState({
     first: 0,
     rows: 10,
-    page: 1
+    page: 1,
   });
   const [loading, setLoading] = useState(true);
   const [totalRecords, setTotalRecords] = useState(0);
 
-  const [search, setSearch] = useState(''); // Se ejecuta la búsqueda con este valor
-  const [searchInput, setSearchInput] = useState(''); // Input controlado por el usuario
+  const [search, setSearch] = useState(""); // Se ejecuta la búsqueda con este valor
+  const [searchInput, setSearchInput] = useState(""); // Input controlado por el usuario
 
   const tramiteService = TramiteService();
+  const informeService = InformeService();
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const toast = useRef(null);
 
-  const loadTramites = async (page, limit, searchQuery = '') => {
+  const loadTramites = async (page, limit, searchQuery = "") => {
     setLoading(true);
     try {
       let response;
       if (searchQuery) {
-        response = await tramiteService.searchTramites(searchQuery, page, limit);
+        response = await tramiteService.searchTramites(
+          searchQuery,
+          page,
+          limit
+        );
       } else {
         response = await tramiteService.getTramites(page, limit);
       }
@@ -51,21 +57,21 @@ const ConsultarTramites = () => {
   const handleError = (error) => {
     if (error.response && error.response.status === 401) {
       toast.current.show({
-        severity: 'warn',
-        summary: 'Advertencia',
+        severity: "warn",
+        summary: "Advertencia",
         detail: "Su sesión ha expirado, inicie sesión de nuevo.",
         life: 5000,
       });
       setTimeout(() => {
         dispatch(clearLogout());
-        navigate('/');
+        navigate("/");
       }, 5000);
     } else {
-      console.error('Error al cargar los trámites:', error);
+      console.error("Error al cargar los trámites:", error);
       toast.current.show({
-        severity: 'error',
-        summary: 'Error',
-        detail: 'No se pudo cargar los trámites.',
+        severity: "error",
+        summary: "Error",
+        detail: "No se pudo cargar los trámites.",
         life: 5000,
       });
     }
@@ -98,12 +104,12 @@ const ConsultarTramites = () => {
   };
 
   const handleDelete = (id) => {
-    // Verificar si ya hay un diálogo abierto
-    if (document.querySelector('.custom-dialog')) return;
+  // Verificar si ya hay un diálogo abierto
+  if (document.querySelector('.custom-dialog')) return;
 
-    // Crear elemento de diálogo personalizado
-    const dialog = document.createElement('div');
-    dialog.className = 'custom-dialog';
+  // Crear elemento de diálogo personalizado
+  const dialog = document.createElement('div');
+  dialog.className = 'custom-dialog';
 
     dialog.innerHTML = `
     <div class="dialog-overlay"></div>
@@ -126,16 +132,16 @@ const ConsultarTramites = () => {
     document.body.appendChild(dialog);
 
     // Manejar clic en confirmar
-    dialog.querySelector('.confirm-btn').addEventListener('click', async () => {
+    dialog.querySelector(".confirm-btn").addEventListener("click", async () => {
       try {
         await tramiteServiceService.deleteTramite(id);
-        setClientes(prev => prev.filter(cliente => cliente.id !== id));
+        setClientes((prev) => prev.filter((cliente) => cliente.id !== id));
 
         // Mostrar notificación de éxito
         toast.current.show({
-          severity: 'success',
-          summary: 'Éxito',
-          detail: 'Trámite eliminado correctamente',
+          severity: "success",
+          summary: "Éxito",
+          detail: "Trámite eliminado correctamente",
           life: 3000,
         });
       } catch (error) {
@@ -147,23 +153,42 @@ const ConsultarTramites = () => {
     });
 
     // Manejar clic en cancelar
-    dialog.querySelector('.cancel-btn').addEventListener('click', () => {
+    dialog.querySelector(".cancel-btn").addEventListener("click", () => {
       dialog.remove();
     });
 
     // Cerrar al hacer clic fuera del contenedor del diálogo
-    dialog.querySelector('.dialog-overlay').addEventListener('click', () => {
+    dialog.querySelector(".dialog-overlay").addEventListener("click", () => {
       dialog.remove();
     });
   };
 
+  const donwloadExcel = async () => {
+    try {
+      const response = await informeService.getInformeTramite();
+      const blob = new Blob([response], {
+        type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      });
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.setAttribute("download", "tramites.xlsx");
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    } catch (error) {
+      handleError(error);
+    }
+  };
   return (
     <div className="consultar-container">
       <Toast ref={toast} />
       <ConfirmDialog />
 
+
       <div className="consultar-header">
         <h2 className="consultar-title">Trámites</h2>
+
 
         <div className="consultar-actions">
           <div className="search-wrapper">
@@ -172,7 +197,7 @@ const ConsultarTramites = () => {
                 value={searchInput}
                 onChange={(e) => setSearchInput(e.target.value)}
                 onKeyDown={(e) => {
-                  if (e.key === 'Enter') {
+                  if (e.key === "Enter") {
                     handleSearchClick();
                   }
                 }}
@@ -189,8 +214,8 @@ const ConsultarTramites = () => {
                   icon="pi pi-times"
                   className="clear-button"
                   onClick={() => {
-                    setSearchInput('');
-                    setSearch('');
+                    setSearchInput("");
+                    setSearch("");
                     setLazyState({
                       ...lazyState,
                       first: 0,
@@ -202,13 +227,20 @@ const ConsultarTramites = () => {
             </div>
           </div>
 
+
           <Button
             label="Agregar Trámite"
             className="add-button"
-            onClick={() => navigate('/administrador/crear-tramite')}
+            onClick={() => navigate("/administrador/crear-tramite")}
           />
         </div>
       </div>
+
+
+      <Button onClick={donwloadExcel} className="download-excel-button">
+        <i className="pi pi-file-excel" />
+        Descargar Excel
+      </Button>
 
       {loading ? (
         <div className="loading-spinner">
