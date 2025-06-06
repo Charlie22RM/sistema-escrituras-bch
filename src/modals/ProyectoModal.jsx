@@ -57,11 +57,11 @@ const ProyectoModal = ({ visible, onHide, setProyecto, canton_id }) => {
         navigate("/");
       }, 5000);
     } else {
-      console.error("Error al cargar los clientes:", error);
+      console.error("Error al cargar los proyectos:", error);
       toast.current.show({
         severity: "error",
         summary: "Error",
-        detail: "No se pudo cargar los clientes.",
+        detail: "No se pudo cargar los proyectos.",
         life: 5000,
       });
     }
@@ -152,7 +152,8 @@ const ProyectoModal = ({ visible, onHide, setProyecto, canton_id }) => {
           className="p-datatable-sm"
         >
           <Column field="nombre" header="Nombre" />
-          <Column field="urbanizacion" header="Urbanización" />
+          <Column field="etapa" header="Etapa" />
+
           <Column field="canton.nombre" header="Cantón" />
           <Column
             header="Acciones"
