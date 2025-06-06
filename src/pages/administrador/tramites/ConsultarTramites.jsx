@@ -104,12 +104,12 @@ const ConsultarTramites = () => {
   };
 
   const handleDelete = (id) => {
-  // Verificar si ya hay un diálogo abierto
-  if (document.querySelector('.custom-dialog')) return;
+    // Verificar si ya hay un diálogo abierto
+    if (document.querySelector(".custom-dialog")) return;
 
-  // Crear elemento de diálogo personalizado
-  const dialog = document.createElement('div');
-  dialog.className = 'custom-dialog';
+    // Crear elemento de diálogo personalizado
+    const dialog = document.createElement("div");
+    dialog.className = "custom-dialog";
 
     dialog.innerHTML = `
     <div class="dialog-overlay"></div>
