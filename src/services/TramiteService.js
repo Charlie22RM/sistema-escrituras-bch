@@ -5,6 +5,26 @@ const API_URL = import.meta.env.VITE_API_BASE_URL;
 const TramiteService = () => {
   const token = useSelector((state) => state.auth.token);
 
+    const secureAxios = axios.create();
+
+      // Interceptor para manejar errores globales (como 401 Unauthorized)
+      secureAxios.interceptors.response.use(
+        (response) => response,
+        (error) => {
+          if (error.response && error.response.status === 401) {
+            // Mostrar advertencia de sesión inválida (requiere ajustar toast aquí, no es compatible con react-toastify tal como está)
+            toast.warning("No tienes permiso para acceder a esta sección.");
+    
+            // Esperar y luego redirigir (nota: dispatch y navigate no están definidos aquí, deberías mover esta lógica a otro lugar)
+            setTimeout(() => {
+              dispatch(clearLogout()); // <-- Esto fallará si no se pasa dispatch como parámetro o contexto
+              navigate("/"); // <-- Igual que dispatch
+            }, 5000);
+          }
+          return Promise.reject(error);
+        }
+      );
+
   const createTramite = async (data) => {
     try {
       const headers = { Authorization: `Bearer ${token}` };

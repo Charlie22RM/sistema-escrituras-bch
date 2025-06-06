@@ -98,14 +98,14 @@ const ConsultarTramites = () => {
   };
 
   const handleDelete = (id) => {
-  // Verificar si ya hay un diálogo abierto
-  if (document.querySelector('.custom-dialog')) return;
+    // Verificar si ya hay un diálogo abierto
+    if (document.querySelector('.custom-dialog')) return;
 
-  // Crear elemento de diálogo personalizado
-  const dialog = document.createElement('div');
-  dialog.className = 'custom-dialog';
+    // Crear elemento de diálogo personalizado
+    const dialog = document.createElement('div');
+    dialog.className = 'custom-dialog';
 
-  dialog.innerHTML = `
+    dialog.innerHTML = `
     <div class="dialog-overlay"></div>
     <div class="dialog-container">
       <div class="dialog-header">
@@ -122,49 +122,49 @@ const ConsultarTramites = () => {
     </div>
   `;
 
-  // Agregar el diálogo al DOM
-  document.body.appendChild(dialog);
+    // Agregar el diálogo al DOM
+    document.body.appendChild(dialog);
 
-  // Manejar clic en confirmar
-  dialog.querySelector('.confirm-btn').addEventListener('click', async () => {
-    try {
-      await tramiteServiceService.deleteTramite(id);
-      setClientes(prev => prev.filter(cliente => cliente.id !== id));
+    // Manejar clic en confirmar
+    dialog.querySelector('.confirm-btn').addEventListener('click', async () => {
+      try {
+        await tramiteServiceService.deleteTramite(id);
+        setClientes(prev => prev.filter(cliente => cliente.id !== id));
 
-      // Mostrar notificación de éxito
-      toast.current.show({
-        severity: 'success',
-        summary: 'Éxito',
-        detail: 'Trámite eliminado correctamente',
-        life: 3000,
-      });
-    } catch (error) {
-      handleError(error);
-    } finally {
-      // Cerrar el diálogo
+        // Mostrar notificación de éxito
+        toast.current.show({
+          severity: 'success',
+          summary: 'Éxito',
+          detail: 'Trámite eliminado correctamente',
+          life: 3000,
+        });
+      } catch (error) {
+        handleError(error);
+      } finally {
+        // Cerrar el diálogo
+        dialog.remove();
+      }
+    });
+
+    // Manejar clic en cancelar
+    dialog.querySelector('.cancel-btn').addEventListener('click', () => {
       dialog.remove();
-    }
-  });
+    });
 
-  // Manejar clic en cancelar
-  dialog.querySelector('.cancel-btn').addEventListener('click', () => {
-    dialog.remove();
-  });
+    // Cerrar al hacer clic fuera del contenedor del diálogo
+    dialog.querySelector('.dialog-overlay').addEventListener('click', () => {
+      dialog.remove();
+    });
+  };
 
-  // Cerrar al hacer clic fuera del contenedor del diálogo
-  dialog.querySelector('.dialog-overlay').addEventListener('click', () => {
-    dialog.remove();
-  });
-};
-
-return (
+  return (
     <div className="consultar-container">
       <Toast ref={toast} />
       <ConfirmDialog />
-      
+
       <div className="consultar-header">
         <h2 className="consultar-title">Trámites</h2>
-        
+
         <div className="consultar-actions">
           <div className="search-wrapper">
             <div className="search-group">
@@ -201,7 +201,7 @@ return (
               )}
             </div>
           </div>
-          
+
           <Button
             label="Agregar Trámite"
             className="add-button"
@@ -210,7 +210,7 @@ return (
         </div>
       </div>
 
-      {/* {loading ? (
+      {loading ? (
         <div className="loading-spinner">
           <ProgressSpinner />
         </div>
@@ -230,10 +230,109 @@ return (
             className="consultar-table"
             emptyMessage="No se encontraron trámites"
           >
-            <Column field="nombre" header="Nombre" />
-            <Column field="telefono" header="Teléfono" />
-            <Column field="email" header="Correo Electrónico" />
-            <Column field="direccion" header="Dirección" />
+            <Column field="cedula_beneficiario" header="Cédula del Beneficiario" />
+            <Column field="nombre_beneficiario" header="Nombre del Beneficiario" />
+            <Column field="canton.nombre" header="Cantón" />
+            <Column field="fecha_asignacion" header="Revisión de Título" body={(rowData) =>
+              rowData.fecha_asignacion ? new Date(rowData.fecha_asignacion).toLocaleDateString('es-EC', {
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit',
+              })
+                : '' // o puedes poner 'Sin revisar' u otro texto
+            } />
+            <Column field="fecha_revision_titulo" header="Revisión de Título" body={(rowData) =>
+              rowData.fecha_revision_titulo ? new Date(rowData.fecha_revision_titulo).toLocaleDateString('es-EC', {
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit',
+              })
+                : '' // o puedes poner 'Sin revisar' u otro texto
+            } />
+            <Column field="fecha_envio_liquidar_impuesto" header="Envío a Liquidar Impuestos" body={(rowData) =>
+              rowData.fecha_envio_liquidar_impuesto ? new Date(rowData.fecha_envio_liquidar_impuesto).toLocaleDateString('es-EC', {
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit',
+              })
+                : '' // o puedes poner 'Sin revisar' u otro texto
+            } />
+            <Column field="observaciones_liquidacion_impuesto" header="Observaciones" />
+            <Column field="fecha_envio_aprobacion_proforma" header="Envío de Aprobación de Proforma" body={(rowData) =>
+              rowData.fecha_envio_aprobacion_proforma ? new Date(rowData.fecha_envio_aprobacion_proforma).toLocaleDateString('es-EC', {
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit',
+              })
+                : '' // o puedes poner 'Sin revisar' u otro texto
+            } />
+            <Column field="observaciones_proforma" header="Observaciones" />
+            <Column field="fecha_firma_matriz_cliente" header="Fecha de Firma Matriz Cliente" body={(rowData) =>
+              rowData.fecha_firma_matriz_cliente ? new Date(rowData.fecha_firma_matriz_cliente).toLocaleDateString('es-EC', {
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit',
+              })
+                : '' // o puedes poner 'Sin revisar' u otro texto
+            } />
+            <Column field="observaciones_matriz_firmada" header="Observaciones" />
+            <Column field="observaciones_proforma" header="Observaciones" />
+            <Column field="fecha_retorno_matriz_cliente" header="Fecha de Retorno de la Matriz Firmada" body={(rowData) =>
+              rowData.fecha_retorno_matriz_cliente ? new Date(rowData.fecha_retorno_matriz_cliente).toLocaleDateString('es-EC', {
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit',
+              })
+                : '' // o puedes poner 'Sin revisar' u otro texto
+            } />
+            <Column field="fecha_ingreso_registro" header="Fecha de Ingreso al Registro" body={(rowData) =>
+              rowData.fecha_ingreso_registro ? new Date(rowData.fecha_ingreso_registro).toLocaleDateString('es-EC', {
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit',
+              })
+                : '' // o puedes poner 'Sin revisar' u otro texto
+            } />
+            <Column field="fecha_tentativa_inscripcion" header="Fecha Tentativa de Inscripción" body={(rowData) =>
+              rowData.fecha_tentativa_inscripcion ? new Date(rowData.fecha_tentativa_inscripcion).toLocaleDateString('es-EC', {
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit',
+              })
+                : '' // o puedes poner 'Sin revisar' u otro texto
+            } />
+            <Column field="fecha_inscripcion" header="Fecha de Inscripción" body={(rowData) =>
+              rowData.fecha_inscripcion ? new Date(rowData.fecha_inscripcion).toLocaleDateString('es-EC', {
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit',
+              })
+                : '' // o puedes poner 'Sin revisar' u otro texto
+            } />
+            <Column field="fecha_ingreso_catastro" header="Fecha de Ingreso al Catastro" body={(rowData) =>
+              rowData.fecha_ingreso_catastro ? new Date(rowData.fecha_ingreso_catastro).toLocaleDateString('es-EC', {
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit',
+              })
+                : '' // o puedes poner 'Sin revisar' u otro texto
+            } />
+            <Column field="fecha_tentativa_catastro" header="Fecha Tentativa de Catastro" body={(rowData) =>
+              rowData.fecha_tentativa_catastro ? new Date(rowData.fecha_tentativa_catastro).toLocaleDateString('es-EC', {
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit',
+              })
+                : '' // o puedes poner 'Sin revisar' u otro texto
+            } />
+            <Column field="fecha_catastro" header="Fecha de Catastro" body={(rowData) =>
+              rowData.fecha_catastro ? new Date(rowData.fecha_catastro).toLocaleDateString('es-EC', {
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit',
+              })
+                : '' // o puedes poner 'Sin revisar' u otro texto
+            } />
             <Column
               body={(rowData) => (
                 <div className="actions-cell">
@@ -257,7 +356,7 @@ return (
             />
           </DataTable>
         </div>
-      )} */}
+      )}
     </div>
   );
 };
