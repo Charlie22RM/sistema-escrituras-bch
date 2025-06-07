@@ -512,7 +512,7 @@ const EditarTramites = () => {
 
       {/* Formulario principal que envuelve todos los tabs */}
       <form onSubmit={formik.handleSubmit}>
-        <TabView>
+        <TabView className="full-width-tabview">
           {/* TAB 1: INFORMACIÓN GENERAL */}
           <TabPanel header="Información Inicial">
 
@@ -1389,7 +1389,7 @@ const EditarTramites = () => {
                         ? "p-invalid"
                         : ""
                         }`}
-              
+
                     />
                     {formik.touched.observaciones_catastro &&
                       formik.errors.observaciones_catastro && (
@@ -1540,19 +1540,19 @@ const EditarTramites = () => {
 
         {/* Botones de acción fuera de los tabs pero dentro del form */}
 
-        <div className="tramite-form-actions">
+        <div className="tramite-form-actions2">
           <Button
             label="Guardar Todo"
             icon="pi pi-save"
             type="submit"
-            className="tramite-button tramite-submit"
+            className="tramite-button2 tramite-submit2"
             loading={formik.isSubmitting}
           />
           <Button
             label="Cancelar"
             icon="pi pi-times"
             type="button"
-            className="tramite-button tramite-cancel"
+            className="tramite-button2 tramite-cancel2"
             onClick={() => window.history.back()}
           />
         </div>
