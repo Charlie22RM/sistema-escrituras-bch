@@ -134,8 +134,8 @@ const ConsultarTramites = () => {
     // Manejar clic en confirmar
     dialog.querySelector(".confirm-btn").addEventListener("click", async () => {
       try {
-        await tramiteServiceService.deleteTramite(id);
-        setClientes((prev) => prev.filter((cliente) => cliente.id !== id));
+        await tramiteService.deleteTramite(id);
+        setTramites((prev) => prev.filter((cliente) => cliente.id !== id));
 
         // Mostrar notificación de éxito
         toast.current.show({
@@ -146,6 +146,7 @@ const ConsultarTramites = () => {
         });
       } catch (error) {
         handleError(error);
+        console.error("Error al eliminar el trámite:", error);
       } finally {
         // Cerrar el diálogo
         dialog.remove();
