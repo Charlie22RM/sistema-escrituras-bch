@@ -811,8 +811,8 @@
   justify-content: center;
   /* Centra las pestañas */
   width: 100%;
-  border: none;
   border-bottom: 2px solid #e0e0e0;
+
 }
 
 .full-width-tabview .p-tabview-nav-container {
@@ -870,4 +870,110 @@
   .full-width-tabview .p-tabview-nav-link {
     width: 100%;
   }
+}
+
+/* Documentación Panel */
+.documentation-panel {
+  padding: 1.5rem;
+}
+
+.document-section {
+  padding: 1rem;
+  border-radius: 6px;
+  background-color: #f8f9fa;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.section-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  color: #495057;
+}
+
+.section-icon {
+  font-size: 1.5rem;
+  margin-right: 0.75rem;
+  color: #6366f1;
+}
+
+.section-header h3 {
+  margin: 0;
+  font-size: 1.25rem;
+}
+
+.section-content {
+  padding: 0 0.5rem;
+}
+
+.upload-button .p-button {
+  width: 100%;
+  background-color: #6366f1;
+  border-color: #6366f1;
+}
+
+.upload-button .p-button:hover {
+  background-color: #4f46e5;
+  border-color: #4f46e5;
+}
+
+.file-actions {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.invoice-list {
+  margin-bottom: 1.5rem;
+
+
+}
+
+.invoice-item {
+  margin-top: 10px;
+  /* o 16px */
+
+}
+
+.action-buttons {
+  display: flex;
+  gap: 0.5rem;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .document-section {
+    padding: 1rem;
+  }
+
+  .file-actions {
+    flex-direction: column;
+  }
+
+  .file-actions .p-button {
+    width: 100%;
+  }
+}
+
+.upload-button .p-button {
+  background-color: #e8e7e7;
+  color: #464646;
+  /* texto azul sobre fondo claro */
+  font-weight: 600;
+  border-radius: 8px;
+  padding: 0.6rem 1.2rem;
+  border: none;
+  transition: background-color 0.3s ease;
+}
+
+.upload-button .p-button:hover {
+  background-color: #e0e0e0;
+
+}
+
+.section-icon {
+  font-size: 1.8rem;
+  color: #474747;
+  /* rojo bandera */
+  margin-right: 0.5rem;
+  vertical-align: middle;
 }

@@ -236,6 +236,9 @@ const EditarTramites = () => {
         setProyecto(tramite.proyecto);
         if (tramite.pdfs) {
           const pdfs = tramite.pdfs;
+          setPdfFacturasId([]);
+          setPdfCatastroId(null);
+          setPdfTituloId(null);
           pdfs.forEach((pdf) => {
             if (pdf.is_catastro) {
               setPdfCatastroId(pdf.id);
@@ -692,6 +695,7 @@ const EditarTramites = () => {
 
                     {/* Input Nombre del Beneficiario */}
                     <div className="tramite-form-group">
+                      <label>Nombre del Beneficiario</label>
                       <InputText
                         id="nombre_beneficiario"
                         name="nombre_beneficiario"
@@ -715,6 +719,7 @@ const EditarTramites = () => {
 
                     {/* Input Cédula del Beneficiario */}
                     <div className="tramite-form-group">
+                      <label>Cédula del Beneficiario</label>
                       <InputText
                         id="cedula_beneficiario"
                         name="cedula_beneficiario"
@@ -743,7 +748,7 @@ const EditarTramites = () => {
                     {/* Input Fecha del trámite */}
                     <div className="tramite-form-group">
                       <label htmlFor="fecha_asignacion">
-                        Fecha del trámite
+                        Fecha Inicial del Trámite
                       </label>
                       <Calendar
                         id="fecha_asignacion"
@@ -1503,141 +1508,196 @@ const EditarTramites = () => {
           </TabPanel>
 
           <TabPanel header="Documentación">
-            {/* Sección Catastro (mantienes lo que ya tienes) */}
-            <div className="p-fluid">
-              {!pdfCatastroId ? (
-                <FileUpload
-                  name="file"
-                  accept="application/pdf"
-                  maxFileSize={5 * 1024 * 1024}
-                  mode="basic"
-                  chooseLabel={
-                    uploading ? "Subiendo..." : "Seleccionar PDF Catastro"
-                  }
-                  customUpload
-                  auto
-                  uploadHandler={(e) =>
-                    handleUpload(e, {
-                      is_catastro: true,
-                      is_titulo: false,
-                      is_factura: false,
-                    })
-                  }
-                  key={fileKey}
-                  disabled={uploading}
-                />
-              ) : (
-                <div className="flex flex-row justify-content-between gap-3 mt-3">
-                  <Button
-                    type="button"
-                    label="Ver PDF del catastro"
-                    icon="pi pi-eye"
-                    onClick={() => getPdfUrl(pdfCatastroId)}
-                  />
-                  <Button
-                    type="button"
-                    label="Eliminar PDF del catastro"
-                    icon="pi pi-trash"
-                    className="p-button-danger"
-                    onClick={() => handleDeletePdf(pdfCatastroId, "catastro")}
-                  />
-                </div>
-              )}
-            </div>
-
-            {/* Sección Título (mantienes lo que ya tienes) */}
-            <div className="p-fluid" style={{ marginTop: "2rem" }}>
-              {!pdfTituloId ? (
-                <FileUpload
-                  name="file"
-                  accept="application/pdf"
-                  maxFileSize={5 * 1024 * 1024}
-                  mode="basic"
-                  chooseLabel={
-                    uploading ? "Subiendo..." : "Seleccionar PDF Título"
-                  }
-                  customUpload
-                  auto
-                  uploadHandler={(e) =>
-                    handleUpload(e, {
-                      is_catastro: false,
-                      is_titulo: true,
-                      is_factura: false,
-                    })
-                  }
-                  key={fileKey}
-                  disabled={uploading}
-                />
-              ) : (
-                <div className="flex flex-row justify-content-between gap-3 mt-3">
-                  <Button
-                    type="button"
-                    label="Ver PDF del título"
-                    icon="pi pi-eye"
-                    onClick={() => getPdfUrl(pdfTituloId)}
-                  />
-                  <Button
-                    type="button"
-                    label="Eliminar PDF del título"
-                    icon="pi pi-trash"
-                    className="p-button-danger"
-                    onClick={() => handleDeletePdf(pdfTituloId,"titulo")}
-                  />
-                </div>
-              )}
-            </div>
-
-            {/* Nueva sección para Facturas */}
-            <div className="p-fluid" style={{ marginTop: "2rem" }}>
-              <h4>Facturas</h4>
-
-              {/* Botón para subir nueva factura */}
-              <FileUpload
-                name="file"
-                accept="application/pdf"
-                maxFileSize={5 * 1024 * 1024}
-                mode="basic"
-                chooseLabel={uploading ? "Subiendo..." : "Subir Nueva Factura"}
-                customUpload
-                auto
-                uploadHandler={(e) =>
-                  handleUpload(e, {
-                    is_catastro: false,
-                    is_titulo: false,
-                    is_factura: true,
-                  })
+            <div className="tramite-form-container">
+              <Card
+                title={
+                  <div className="flex align-items-center">
+                    <Button
+                      icon="pi pi-arrow-left"
+                      className="p-button-text p-button-plain mr-2"
+                      onClick={() =>
+                        navigate("/administrador/consultar-tramite")
+                      }
+                      tooltip="Volver a página principal"
+                      tooltipOptions={{ position: "top" }}
+                    />
+                    <span>Documentación</span>
+                  </div>
                 }
-                key={fileKey}
-                disabled={uploading}
-              />
-
-              {/* Lista de facturas subidas */}
-              {pdfFacturasId.length > 0 && (
-                <div style={{ marginTop: "1rem" }}>
-                  {pdfFacturasId.map((facturaId, index) => (
-                    <div
-                      key={facturaId}
-                      className="flex flex-row justify-content-between gap-3 mt-3"
-                    >
-                      <Button
-                        type="button"
-                        label={`Ver Factura ${index + 1}`}
-                        icon="pi pi-eye"
-                        onClick={() => getPdfUrl(facturaId)}
+                className="w-full md:w-6"
+              >
+                {/* Sección Catastro */}
+                <div className="document-section">
+                  <div className="section-header">
+                    <i className="pi pi-file-pdf section-icon"></i>
+                    <h3>Certificado Catastral</h3>
+                  </div>
+                  <div className="section-content">
+                    {!pdfCatastroId ? (
+                      <FileUpload
+                        name="file"
+                        accept="application/pdf"
+                        maxFileSize={5 * 1024 * 1024}
+                        mode="basic"
+                        chooseLabel={uploading ? "Subiendo..." : "Seleccionar PDF Certificado de Catastro"}
+                        customUpload
+                        auto
+                        uploadHandler={(e) =>
+                          handleUpload(e, {
+                            is_catastro: true,
+                            is_titulo: false,
+                            is_factura: false,
+                          })
+                        }
+                        key={fileKey}
+                        disabled={uploading}
+                        className="upload-button"
                       />
-                      <Button
-                        type="button"
-                        label="Eliminar Factura"
-                        icon="pi pi-trash"
-                        className="p-button-danger"
-                        onClick={() => handleDeletePdf(facturaId, "factura")}
-                      />
-                    </div>
-                  ))}
+                    ) : (
+                      <div className="tramite-form-actions">
+                        <Button
+                          type="button"
+                          label="Ver PDF del catastro"
+                          icon="pi pi-eye"
+                          className="tramite-button tramite-submit"
+                          onClick={() => getPdfUrl(pdfCatastroId)}
+                        />
+                        <Button
+                          type="button"
+                          label="Eliminar PDF del catastro"
+                          icon="pi pi-trash"
+                          className="tramite-button tramite-cancel"
+                          onClick={() => handleDeletePdf(pdfCatastroId, "catastro")}
+                        />
+                      </div>
+                    )}
+                  </div>
                 </div>
-              )}
+
+                {/* Sección Título */}
+                <div className="document-section">
+                  <div className="section-header">
+                    <i className="pi pi-file-pdf section-icon"></i>
+                    <h3>Título de Propiedad</h3>
+                  </div>
+                  <div className="section-content">
+                    {!pdfTituloId ? (
+                      <FileUpload
+                        name="file"
+                        accept="application/pdf"
+                        maxFileSize={5 * 1024 * 1024}
+                        mode="basic"
+                        chooseLabel={uploading ? "Subiendo..." : "Seleccionar PDF Título de Propiedad"}
+                        customUpload
+                        auto
+                        uploadHandler={(e) =>
+                          handleUpload(e, {
+                            is_catastro: false,
+                            is_titulo: true,
+                            is_factura: false,
+                          })
+                        }
+                        key={fileKey}
+                        disabled={uploading}
+                        className="upload-button"
+                      />
+                    ) : (
+                      <div className="tramite-form-actions">
+                        <Button
+                          type="button"
+                          label="Ver PDF del título"
+                          icon="pi pi-eye"
+                          className="tramite-button tramite-submit"
+                          onClick={() => getPdfUrl(pdfTituloId)}
+                        />
+                        <Button
+                          type="button"
+                          label="Eliminar PDF del título"
+                          icon="pi pi-trash"
+                          className="tramite-button tramite-cancel"
+                          onClick={() => handleDeletePdf(pdfTituloId, "titulo")}
+                        />
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                {/* Sección Facturas */}
+                <div className="document-section">
+                  <div className="section-header">
+                    <i className="pi pi-receipt section-icon"></i>
+                    <h3>Facturas de Servicios</h3>
+                  </div>
+                  <div className="section-content">
+                    <FileUpload
+                      name="file"
+                      accept="application/pdf"
+                      maxFileSize={5 * 1024 * 1024}
+                      mode="basic"
+                      chooseLabel={uploading ? "Subiendo..." : "Subir Nueva Factura"}
+                      customUpload
+                      auto
+                      uploadHandler={(e) =>
+                        handleUpload(e, {
+                          is_catastro: false,
+                          is_titulo: false,
+                          is_factura: true,
+                        })
+                      }
+                      key={fileKey}
+                      disabled={uploading}
+                      className="upload-button"
+                    />
+
+                    {pdfFacturasId.length > 0 && (
+                      <div className="invoice-list">
+                        {pdfFacturasId.map((facturaId, index) => (
+                          <div key={facturaId} className="invoice-item">
+                            <span className="invoice-label">Factura {index + 1}</span>
+                            <div className="tramite-form-actions">
+                              <Button
+                                type="button"
+                                label="Ver Factura"
+                                icon="pi pi-eye"
+                                className="tramite-button tramite-submit"
+                                onClick={() => getPdfUrl(facturaId)}
+                              />
+                              <Button
+                                type="button"
+                                label="Eliminar Factura"
+                                icon="pi pi-trash"
+                                className="tramite-button tramite-cancel"
+                                onClick={() => handleDeletePdf(facturaId, "factura")}
+                              />
+                            </div>
+
+                          </div>
+                        ))}
+                      </div>
+                    )}
+
+                  </div>
+                  {/* <div className="tramite-form-actions">
+                    <Button
+                      label="Guardar Todo"
+                      icon="pi pi-save"
+                      type="submit"
+                      className="tramite-button tramite-submit"
+                      loading={formik.isSubmitting}
+                    />
+                    <Button
+                      label="Cancelar"
+                      icon="pi pi-times"
+                      type="button"
+                      className="tramite-button tramite-cancel"
+                      onClick={() => window.history.back()}
+                    />
+                  </div> */}
+                </div>
+              </Card>
             </div>
           </TabPanel>
+
         </TabView>
 
         {/* Botones de acción fuera de los tabs pero dentro del form */}
