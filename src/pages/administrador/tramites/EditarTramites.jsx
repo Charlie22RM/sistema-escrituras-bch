@@ -507,180 +507,189 @@ const EditarTramites = () => {
     }
   };
   return (
-    <div className="p-fluid">
+    <div>
       <Toast ref={toast} />
 
       {/* Formulario principal que envuelve todos los tabs */}
       <form onSubmit={formik.handleSubmit}>
         <TabView>
           {/* TAB 1: INFORMACIÓN GENERAL */}
-          <TabPanel header="Información general">
-            <div className="flex flex-column align-items-center gap-4 p-4">
-              <Card title="Registrar Nuevo Trámite" className="w-full md:w-5">
-                <div
-                  className="flex flex-column gap-5 w-full"
-                  style={{ maxWidth: "650px" }}
-                >
-                  {/* Input Cliente */}
-                  <div className="flex flex-column gap-2">
-                    <div className="flex align-items-center gap-3">
-                      <div style={{ minWidth: "400px", cursor: "not-allowed" }}>
+          <TabPanel header="Información Inicial">
+
+            <div className="tramite-form-container">
+              <Card
+                title={
+                  <div className="flex align-items-center">
+                    <Button
+                      icon="pi pi-arrow-left"
+                      className="p-button-text p-button-plain mr-2"
+                      onClick={() => navigate("/administrador/consultar-tramite")}
+                      tooltip="Volver a página principal"
+                      tooltipOptions={{ position: "top" }}
+                    />
+                    <span>Actualizar Trámite</span>
+                  </div>
+                }
+                className="w-full md:w-6"
+              >
+                <form onSubmit={formik.handleSubmit} className="tramite-form">
+                  <div className="tramite-form-content">
+                    {/* Input Cliente */}
+                    <div className="tramite-form-group">
+                      <div className="tramite-input-group">
                         <InputText
                           value={cliente?.nombre || ""}
                           placeholder="Cliente"
                           disabled
-                          className={`p-inputtext-sm w-full ${
-                            formik.touched.cliente_id &&
+                          className={`tramite-input ${formik.touched.cliente_id &&
                             formik.errors.cliente_id
-                              ? "p-invalid"
-                              : ""
-                          }`}
-                          style={{
-                            ...blockedInputStyle,
-                            borderColor:
-                              formik.touched.cliente_id &&
-                              formik.errors.cliente_id
-                                ? "#e24c4c"
-                                : "#ddd",
-                          }}
-                        />
-                      </div>
-                      <Button
-                        type="button"
-                        icon="pi pi-user"
-                        label="Buscar Cliente"
-                        onClick={() => setModalVisible(true)}
-                        className="p-button-primary flex-grow-1"
-                      />
-                    </div>
-                    {formik.touched.cliente_id && formik.errors.cliente_id && (
-                      <small className="p-error">
-                        {formik.errors.cliente_id}
-                      </small>
-                    )}
-                  </div>
+                            ? "p-invalid"
+                            : ""
+                            }`}
 
-                  {/* Input Inmobiliaria */}
-                  <div className="flex flex-column gap-2">
-                    <div className="flex align-items-center gap-3">
-                      <div style={{ minWidth: "400px", cursor: "not-allowed" }}>
+                        // style={{
+                        //   ...blockedInputStyle,
+                        //   borderColor:
+                        //     formik.touched.cliente_id &&
+                        //       formik.errors.cliente_id
+                        //       ? "#e24c4c"
+                        //       : "#ddd",
+                        // }}
+                        />
+                        <Button
+                          type="button"
+                          icon="pi pi-search"
+                          label="Buscar Cliente"
+                          onClick={() => setModalVisible(true)}
+                          className="tramite-button tramite-search-button"
+                        />
+
+                      </div>
+                      {formik.touched.cliente_id && formik.errors.cliente_id && (
+                        <small className="tramite-error">
+                          {formik.errors.cliente_id}
+                        </small>
+                      )}
+                    </div>
+
+                    {/* Input Inmobiliaria */}
+                    <div className="tramite-form-group">
+                      <div className="tramite-input-group">
+
                         <InputText
                           value={inmobiliaria?.nombre || ""}
                           placeholder="Inmobiliaria"
                           disabled
-                          className={`p-inputtext-sm w-full ${
-                            formik.touched.inmobiliaria_id &&
+                          className={`tramite-input ${formik.touched.inmobiliaria_id &&
                             formik.errors.inmobiliaria_id
-                              ? "p-invalid"
-                              : ""
-                          }`}
-                          style={{
-                            ...blockedInputStyle,
-                            borderColor:
-                              formik.touched.inmobiliaria_id &&
-                              formik.errors.inmobiliaria_id
-                                ? "#e24c4c"
-                                : "#ddd",
+                            ? "p-invalid"
+                            : ""
+                            }`}
+                        // style={{
+                        //   ...blockedInputStyle,
+                        //   borderColor:
+                        //     formik.touched.inmobiliaria_id &&
+                        //       formik.errors.inmobiliaria_id
+                        //       ? "#e24c4c"
+                        //       : "#ddd",
+                        // }}
+                        />
+
+                        <Button
+                          type="button"
+                          icon="pi pi-search"
+                          label="Buscar Inmobiliaria"
+                          onClick={() => {
+                            if (!formik.values.cliente_id) {
+                              toast.current.show({
+                                severity: "warn",
+                                summary: "Advertencia",
+                                detail: "Primero seleccione un cliente",
+                                life: 3000,
+                              });
+                              return;
+                            }
+                            setModalInmobiliariaVisible(true);
                           }}
+                          className="tramite-button tramite-search-button"
                         />
                       </div>
-                      <Button
-                        type="button"
-                        icon="pi pi-search"
-                        label="Buscar Inmobiliaria"
-                        onClick={() => {
-                          if (!formik.values.cliente_id) {
-                            toast.current.show({
-                              severity: "warn",
-                              summary: "Advertencia",
-                              detail: "Primero seleccione un cliente",
-                              life: 3000,
-                            });
-                            return;
-                          }
-                          setModalInmobiliariaVisible(true);
-                        }}
-                        className="p-button-primary flex-grow-1"
-                      />
+                      {formik.touched.inmobiliaria_id &&
+                        formik.errors.inmobiliaria_id && (
+                          <small className="tramite-error">
+                            {formik.errors.inmobiliaria_id}
+                          </small>
+                        )}
                     </div>
-                    {formik.touched.inmobiliaria_id &&
-                      formik.errors.inmobiliaria_id && (
-                        <small className="p-error">
-                          {formik.errors.inmobiliaria_id}
-                        </small>
-                      )}
-                  </div>
 
-                  {/* Input Cantón */}
-                  <div className="field" onClick={showDisabledMessage}>
-                    <label>Cantón</label>
-                    <Dropdown
-                      id="canton_id"
-                      name="canton_id"
-                      value={formik.values.canton_id}
-                      onChange={formik.handleChange}
-                      onBlur={formik.handleBlur}
-                      options={cantones}
-                      optionLabel="nombre"
-                      optionValue="id"
-                      placeholder="Seleccione un cantón"
-                      className={`w-full ${
-                        formik.touched.canton_id && formik.errors.canton_id
+                    {/* Input Cantón */}
+                    <div className="tramite-form-group" onClick={showDisabledMessage}>
+                      <label>Cantón</label>
+                      <Dropdown
+                        id="canton_id"
+                        name="canton_id"
+                        value={formik.values.canton_id}
+                        onChange={formik.handleChange}
+                        onBlur={formik.handleBlur}
+                        options={cantones}
+                        optionLabel="nombre"
+                        optionValue="id"
+                        placeholder="Seleccione un cantón"
+                        className={`tramite-dropdown ${formik.touched.canton_id && formik.errors.canton_id
                           ? "p-invalid"
                           : ""
-                      }`}
-                      disabled={!cliente || !inmobiliaria}
-                    />
-                    {formik.touched.canton_id && formik.errors.canton_id && (
-                      <small className="p-error">
-                        {formik.errors.canton_id}
-                      </small>
-                    )}
-                  </div>
+                          }`}
+                        disabled={!cliente || !inmobiliaria}
+                      />
+                      {formik.touched.canton_id && formik.errors.canton_id && (
+                        <small className="tramite-error">
+                          {formik.errors.canton_id}
+                        </small>
+                      )}
+                    </div>
 
-                  {/* Input Proyecto */}
-                  <div className="flex flex-column gap-2">
-                    <div className="flex align-items-center gap-3">
-                      <div style={{ minWidth: "400px", cursor: "not-allowed" }}>
+                    {/* Input Proyecto */}
+                    <div className="tramite-form-group">
+                      <div className="tramite-input-group">
+
                         <InputText
                           value={proyecto?.nombre || ""}
                           placeholder="Proyecto"
                           disabled
-                          className={`p-inputtext-sm w-full ${
-                            formik.touched.proyecto_id &&
+                          className={`tramite-input${formik.touched.proyecto_id &&
                             formik.errors.proyecto_id
-                              ? "p-invalid"
-                              : ""
-                          }`}
-                          style={{
-                            ...blockedInputStyle,
-                            borderColor:
-                              formik.touched.proyecto_id &&
-                              formik.errors.proyecto_id
-                                ? "#e24c4c"
-                                : "#ddd",
-                          }}
+                            ? "p-invalid"
+                            : ""
+                            }`}
+                        // style={{
+                        //   ...blockedInputStyle,
+                        //   borderColor:
+                        //     formik.touched.proyecto_id &&
+                        //       formik.errors.proyecto_id
+                        //       ? "#e24c4c"
+                        //       : "#ddd",
+                        // }}
+                        />
+
+                        <Button
+                          type="button"
+                          icon="pi pi-search"
+                          label="Buscar Proyecto"
+                          onClick={handleModalProyecto}
+                          className="tramite-button tramite-search-button"
                         />
                       </div>
-                      <Button
-                        type="button"
-                        icon="pi pi-search"
-                        label="Buscar Proyecto"
-                        onClick={handleModalProyecto}
-                        className="p-button-primary flex-grow-1"
-                      />
+                      {formik.touched.proyecto_id &&
+                        formik.errors.proyecto_id && (
+                          <small className="tramite-error">
+                            {formik.errors.proyecto_id}
+                          </small>
+                        )}
                     </div>
-                    {formik.touched.proyecto_id &&
-                      formik.errors.proyecto_id && (
-                        <small className="p-error">
-                          {formik.errors.proyecto_id}
-                        </small>
-                      )}
-                  </div>
 
-                  {/* Input Nombre del Beneficiario */}
-                  <div className="flex align-items-center gap-3">
-                    <div style={{ minWidth: "400px" }}>
+                    {/* Input Nombre del Beneficiario */}
+                    <div className="tramite-form-group">
+
                       <InputText
                         id="nombre_beneficiario"
                         name="nombre_beneficiario"
@@ -688,25 +697,24 @@ const EditarTramites = () => {
                         onChange={formik.handleChange}
                         onBlur={formik.handleBlur}
                         placeholder="Nombre del beneficiario"
-                        className={`p-inputtext-sm w-full ${
-                          formik.touched.nombre_beneficiario &&
+                        className={`tramite-input ${formik.touched.nombre_beneficiario &&
                           formik.errors.nombre_beneficiario
-                            ? "p-invalid"
-                            : ""
-                        }`}
+                          ? "p-invalid"
+                          : ""
+                          }`}
                       />
                       {formik.touched.nombre_beneficiario &&
                         formik.errors.nombre_beneficiario && (
-                          <small className="p-error">
+                          <small className="tramite-error">
                             {formik.errors.nombre_beneficiario}
                           </small>
                         )}
-                    </div>
-                  </div>
 
-                  {/* Input Cédula del Beneficiario */}
-                  <div className="flex align-items-center gap-3">
-                    <div style={{ minWidth: "400px" }}>
+                    </div>
+
+                    {/* Input Cédula del Beneficiario */}
+                    <div className="tramite-form-group">
+
                       <InputText
                         id="cedula_beneficiario"
                         name="cedula_beneficiario"
@@ -717,26 +725,25 @@ const EditarTramites = () => {
                         }}
                         onBlur={formik.handleBlur}
                         placeholder="Cédula del beneficiario"
-                        className={`p-inputtext-sm w-full ${
-                          formik.touched.cedula_beneficiario &&
+                        className={`tramite-input ${formik.touched.cedula_beneficiario &&
                           formik.errors.cedula_beneficiario
-                            ? "p-invalid"
-                            : ""
-                        }`}
+                          ? "p-invalid"
+                          : ""
+                          }`}
                         maxLength={10}
                       />
                       {formik.touched.cedula_beneficiario &&
                         formik.errors.cedula_beneficiario && (
-                          <small className="p-error">
+                          <small className="tramite-error">
                             {formik.errors.cedula_beneficiario}
                           </small>
                         )}
-                    </div>
-                  </div>
 
-                  {/* Input Fecha del trámite */}
-                  <div className="flex align-items-center gap-3">
-                    <div style={{ minWidth: "400px" }}>
+                    </div>
+
+                    {/* Input Fecha del trámite */}
+                    <div className="tramite-form-group">
+
                       <label htmlFor="fecha_asignacion">
                         Fecha del trámite
                       </label>
@@ -750,145 +757,178 @@ const EditarTramites = () => {
                         onBlur={formik.handleBlur}
                         dateFormat="dd/mm/yy"
                         showIcon
-                        className={`w-full ${
-                          formik.touched.fecha_asignacion &&
+                        className={`tramite-calendar ${formik.touched.fecha_asignacion &&
                           formik.errors.fecha_asignacion
-                            ? "p-invalid"
-                            : ""
-                        }`}
+                          ? "p-invalid"
+                          : ""
+                          }`}
                       />
                       {formik.touched.fecha_asignacion &&
                         formik.errors.fecha_asignacion && (
-                          <small className="p-error">
+                          <small className="tramite-error">
                             {formik.errors.fecha_asignacion}
                           </small>
                         )}
+
                     </div>
                   </div>
-                </div>
+                </form>
               </Card>
             </div>
           </TabPanel>
 
           {/* TAB 2: LIQUIDACIÓN DE IMPUESTO */}
           <TabPanel
-            header="Liquidación de impuesto"
+            header="Liquidación de Impuestos"
             disabled={
               !formik.values.proyecto_id ||
               !formik.values.canton_id ||
               formik.values.fecha_asignacion === null
             }
           >
-            <div className="flex flex-column align-items-center gap-4 p-4">
-              <Card title="Liquidación de Impuestos" className="w-full md:w-5">
-                {/* Campo: Revisión de título */}
-                <div className="field">
-                  <label>Fecha revisión título*</label>
-                  <Calendar
-                    name="fecha_revision_titulo"
-                    value={formik.values.fecha_revision_titulo}
-                    onChange={(e) =>
-                      formik.setFieldValue("fecha_revision_titulo", e.value)
-                    }
-                    onBlur={formik.handleBlur}
-                    dateFormat="dd/mm/yy"
-                    showIcon
-                    className={`w-full ${
-                      formik.touched.fecha_revision_titulo &&
-                      formik.errors.fecha_revision_titulo
+            <div className="tramite-form-container">
+              <Card
+                title={
+                  <div className="flex align-items-center">
+                    <Button
+                      icon="pi pi-arrow-left"
+                      className="p-button-text p-button-plain mr-2"
+                      onClick={() => navigate("/administrador/consultar-tramite")}
+                      tooltip="Volver a página principal"
+                      tooltipOptions={{ position: "top" }}
+                    />
+                    <span>Liquidación de Impuestos</span>
+                  </div>
+                }
+                className="w-full md:w-6"
+              >
+                <div className="tramite-form-content">
+                  <div className="tramite-form-group">
+                    <label htmlFor="fecha_revision_titulo">
+                      Fecha de Revisión de Título
+                    </label>
+                    <Calendar
+                      name="fecha_revision_titulo"
+                      value={formik.values.fecha_revision_titulo}
+                      onChange={(e) =>
+                        formik.setFieldValue("fecha_revision_titulo", e.value)
+                      }
+                      onBlur={formik.handleBlur}
+                      dateFormat="dd/mm/yy"
+                      showIcon
+                      className={`tramite-calendar ${formik.touched.fecha_revision_titulo &&
+                        formik.errors.fecha_revision_titulo
                         ? "p-invalid"
                         : ""
-                    }`}
-                    minDate={formik.values.fecha_asignacion} // Fecha mínima = fecha_asignacion
-                  />
-                  {formik.touched.fecha_revision_titulo &&
-                    formik.errors.fecha_revision_titulo && (
-                      <small className="p-error">
-                        {formik.errors.fecha_revision_titulo}
-                      </small>
-                    )}
-                </div>
+                        }`}
+                      minDate={formik.values.fecha_asignacion} // Fecha mínima = fecha_asignacion
+                    />
+                    {formik.touched.fecha_revision_titulo &&
+                      formik.errors.fecha_revision_titulo && (
+                        <small className="tramite-error">
+                          {formik.errors.fecha_revision_titulo}
+                        </small>
+                      )}
+                  </div>
 
-                {/* Campo: Envío para liquidar impuestos */}
-                <div className="field">
-                  <label>Envío para liquidar impuestos*</label>
-                  <Calendar
-                    name="envio_liquidar_impuestos"
-                    value={formik.values.fecha_envio_liquidar_impuesto}
-                    onChange={(e) =>
-                      formik.setFieldValue(
-                        "fecha_envio_liquidar_impuesto",
-                        e.value
-                      )
-                    }
-                    onBlur={formik.handleBlur}
-                    dateFormat="dd/mm/yy"
-                    showIcon
-                    className={`w-full ${
-                      formik.touched.fecha_envio_liquidar_impuesto &&
-                      formik.errors.fecha_envio_liquidar_impuesto
+                  {/* Campo: Envío para liquidar impuestos */}
+                  <div className="tramite-form-group">
+                    <label htmlFor="envio_liquidar_impuestos">
+                      Envío a Liquidar Impuestos
+                    </label>
+                    <Calendar
+                      name="envio_liquidar_impuestos"
+                      value={formik.values.fecha_envio_liquidar_impuesto}
+                      onChange={(e) =>
+                        formik.setFieldValue(
+                          "fecha_envio_liquidar_impuesto",
+                          e.value
+                        )
+                      }
+                      onBlur={formik.handleBlur}
+                      dateFormat="dd/mm/yy"
+                      showIcon
+                      className={`tramite-calendar ${formik.touched.fecha_envio_liquidar_impuesto &&
+                        formik.errors.fecha_envio_liquidar_impuesto
                         ? "p-invalid"
                         : ""
-                    }`}
-                    minDate={formik.values.fecha_revision_titulo} // Fecha mínima = revision_titulo
-                    disabled={!formik.values.fecha_revision_titulo} // Deshabilitado si no hay fecha de revisión
-                  />
-                  {formik.touched.fecha_envio_liquidar_impuesto &&
-                    formik.errors.fecha_envio_liquidar_impuesto && (
-                      <small className="p-error">
-                        {formik.errors.fecha_envio_liquidar_impuesto}
-                      </small>
-                    )}
-                </div>
+                        }`}
+                      minDate={formik.values.fecha_revision_titulo} // Fecha mínima = revision_titulo
+                      disabled={!formik.values.fecha_revision_titulo} // Deshabilitado si no hay fecha de revisión
+                    />
+                    {formik.touched.fecha_envio_liquidar_impuesto &&
+                      formik.errors.fecha_envio_liquidar_impuesto && (
+                        <small className="tramite-error">
+                          {formik.errors.fecha_envio_liquidar_impuesto}
+                        </small>
+                      )}
+                  </div>
 
-                <div className="field mt-4">
-                  <label>Comentarios</label>
-                  <InputTextarea
-                    name="observaciones_liquidacion_impuesto"
-                    value={
-                      formik.values.observaciones_liquidacion_impuesto || ""
-                    }
-                    onChange={(e) => {
-                      formik.setFieldValue(
-                        "observaciones_liquidacion_impuesto",
-                        e.target.value
-                      );
-                    }}
-                    onBlur={formik.handleBlur}
-                    rows={5} // Número de filas visibles
-                    autoResize // Ajusta la altura automáticamente
-                    className={`w-full ${
-                      formik.touched.observaciones_liquidacion_impuesto &&
-                      formik.errors.observaciones_liquidacion_impuesto
+                  <div className="tramite-form-group">
+                    <label htmlFor="observaciones_liquidacion_impuesto">
+                      Observaciones
+                    </label>
+                    <InputTextarea
+                      name="observaciones_liquidacion_impuesto"
+                      value={
+                        formik.values.observaciones_liquidacion_impuesto || ""
+                      }
+                      onChange={(e) => {
+                        formik.setFieldValue(
+                          "observaciones_liquidacion_impuesto",
+                          e.target.value
+                        );
+                      }}
+                      onBlur={formik.handleBlur}
+                      rows={5} // Número de filas visibles
+                      autoResize // Ajusta la altura automáticamente
+                      className={`tramite-input ${formik.touched.observaciones_liquidacion_impuesto &&
+                        formik.errors.observaciones_liquidacion_impuesto
                         ? "p-invalid"
                         : ""
-                    }`}
-                    placeholder="Ingrese observaciones sobre la liquidación..."
-                  />
-                  {formik.touched.observaciones_liquidacion_impuesto &&
-                    formik.errors.observaciones_liquidacion_impuesto && (
-                      <small className="p-error">
-                        {formik.errors.observaciones_liquidacion_impuesto}
-                      </small>
-                    )}
+                        }`}
+
+                    />
+                    {formik.touched.observaciones_liquidacion_impuesto &&
+                      formik.errors.observaciones_liquidacion_impuesto && (
+                        <small className="tramite-error">
+                          {formik.errors.observaciones_liquidacion_impuesto}
+                        </small>
+                      )}
+                  </div>
                 </div>
               </Card>
             </div>
+
           </TabPanel>
 
           {/* TAB 3: APROBACIÓN DE PROFORMA */}
           <TabPanel
-            header="Aprobación de proforma"
+            header="Aprobación de Proforma"
             disabled={!formik.values.fecha_envio_liquidar_impuesto}
           >
-            <div className="flex flex-column align-items-center gap-4 p-4">
-              <Card title="Aprobación de Proforma" className="w-full md:w-5">
-                <div
-                  className="flex flex-column gap-5 w-full"
-                  style={{ maxWidth: "650px" }}
-                >
-                  <div className="field">
-                    <label>Envio de Aprobación de proforma*</label>
+            <div className="tramite-form-container">
+              <Card
+                title={
+                  <div className="flex align-items-center">
+                    <Button
+                      icon="pi pi-arrow-left"
+                      className="p-button-text p-button-plain mr-2"
+                      onClick={() => navigate("/administrador/consultar-tramite")}
+                      tooltip="Volver a página principal"
+                      tooltipOptions={{ position: "top" }}
+                    />
+                    <span>Aprobación de Proforma</span>
+                  </div>
+                }
+                className="w-full md:w-6"
+              >
+                <div className="tramite-form-content">
+
+                  <div className="tramite-form-group">
+                    <label htmlFor="fecha_envio_aprobacion_proforma">
+                      Envío de Aprobación de Proforma
+                    </label>
                     <Calendar
                       name="fecha_envio_aprobacion_proforma"
                       value={formik.values.fecha_envio_aprobacion_proforma}
@@ -901,24 +941,26 @@ const EditarTramites = () => {
                       onBlur={formik.handleBlur}
                       dateFormat="dd/mm/yy"
                       showIcon
-                      className={`w-full ${
-                        formik.touched.fecha_envio_aprobacion_proforma &&
+                      className={`tramite-calendar ${formik.touched.fecha_envio_aprobacion_proforma &&
                         formik.errors.fecha_envio_aprobacion_proforma
-                          ? "p-invalid"
-                          : ""
-                      }`}
+                        ? "p-invalid"
+                        : ""
+                        }`}
                       minDate={formik.values.fecha_envio_liquidar_impuesto}
                     />
                     {formik.touched.fecha_envio_aprobacion_proforma &&
                       formik.errors.fecha_envio_aprobacion_proforma && (
-                        <small className="p-error">
+                        <small className="tramite-error">
                           {formik.errors.fecha_envio_aprobacion_proforma}
                         </small>
                       )}
                   </div>
 
-                  <div className="field">
-                    <label>Fecha de Aprobación de proforma*</label>
+
+                  <div className="tramite-form-group">
+                    <label htmlFor="fecha_aprobacion_proforma">
+                      Fecha de Aprobación de Proforma
+                    </label>
                     <Calendar
                       name="fecha_aprobacion_proforma"
                       value={formik.values.fecha_aprobacion_proforma}
@@ -931,12 +973,11 @@ const EditarTramites = () => {
                       onBlur={formik.handleBlur}
                       dateFormat="dd/mm/yy"
                       showIcon
-                      className={`w-full ${
-                        formik.touched.fecha_aprobacion_proforma &&
+                      className={`tramite-calendar ${formik.touched.fecha_aprobacion_proforma &&
                         formik.errors.fecha_aprobacion_proforma
-                          ? "p-invalid"
-                          : ""
-                      }`}
+                        ? "p-invalid"
+                        : ""
+                        }`}
                       disabled={
                         formik.values.fecha_envio_aprobacion_proforma == null
                       } // Deshabilitado si no hay fecha de envío de aprobación de proforma
@@ -944,14 +985,16 @@ const EditarTramites = () => {
                     />
                     {formik.touched.fecha_aprobacion_proforma &&
                       formik.errors.fecha_aprobacion_proforma && (
-                        <small className="p-error">
+                        <small className="tramite-error">
                           {formik.errors.fecha_aprobacion_proforma}
                         </small>
                       )}
                   </div>
 
-                  <div className="field mt-4">
-                    <label>Comentarios</label>
+                  <div className="tramite-form-group">
+                    <label htmlFor="observaciones_proforma">
+                      Observaciones
+                    </label>
                     <InputTextarea
                       name="observaciones_proforma"
                       value={formik.values.observaciones_proforma || ""}
@@ -964,17 +1007,16 @@ const EditarTramites = () => {
                       onBlur={formik.handleBlur}
                       rows={5} // Número de filas visibles
                       autoResize // Ajusta la altura automáticamente
-                      className={`w-full ${
-                        formik.touched.observaciones_proforma &&
+                      className={`tramite-input ${formik.touched.observaciones_proforma &&
                         formik.errors.observaciones_proforma
-                          ? "p-invalid"
-                          : ""
-                      }`}
-                      placeholder="Ingrese observaciones sobre la proforma..."
+                        ? "p-invalid"
+                        : ""
+                        }`}
+
                     />
                     {formik.touched.observaciones_proforma &&
                       formik.errors.observaciones_proforma && (
-                        <small className="p-error">
+                        <small className="tramite-error">
                           {formik.errors.observaciones_proforma}
                         </small>
                       )}
@@ -985,143 +1027,181 @@ const EditarTramites = () => {
           </TabPanel>
 
           <TabPanel
-            header="En firma matriz"
+            header="En Firma Matriz"
             disabled={formik.values.fecha_aprobacion_proforma == null}
           >
-            <div className="flex flex-column align-items-center gap-4 p-4">
-              <Card title="Liquidación de Impuestos" className="w-full md:w-5">
-                <div className="field">
-                  <label>Fecha de firma de matriz cliente*</label>
-                  <Calendar
-                    name="fecha_firma_matriz_cliente"
-                    value={formik.values.fecha_firma_matriz_cliente}
-                    onChange={(e) =>
-                      formik.setFieldValue(
-                        "fecha_firma_matriz_cliente",
-                        e.value
-                      )
-                    }
-                    onBlur={formik.handleBlur}
-                    dateFormat="dd/mm/yy"
-                    showIcon
-                    className={`w-full ${
-                      formik.touched.fecha_firma_matriz_cliente &&
-                      formik.errors.fecha_firma_matriz_cliente
-                        ? "p-invalid"
-                        : ""
-                    }`}
-                    disabled={
-                      formik.values.fecha_retorno_matriz_firmada != null
-                    } // Deshabilitado si hay fecha de retorno
-                    minDate={formik.values.fecha_aprobacion_proforma}
-                  />
-                  {formik.touched.fecha_firma_matriz_cliente &&
-                    formik.errors.fecha_firma_matriz_cliente && (
-                      <small className="p-error">
-                        {formik.errors.fecha_firma_matriz_cliente}
-                      </small>
-                    )}
-                </div>
+            <div className="tramite-form-container">
+              <Card
+                title={
+                  <div className="flex align-items-center">
+                    <Button
+                      icon="pi pi-arrow-left"
+                      className="p-button-text p-button-plain mr-2"
+                      onClick={() => navigate("/administrador/consultar-tramite")}
+                      tooltip="Volver a página principal"
+                      tooltipOptions={{ position: "top" }}
+                    />
+                    <span>Aprobación de Proforma</span>
+                  </div>
+                }
+                className="w-full md:w-6"
+              >
+                <div className="tramite-form-content">
 
-                <div className="field">
-                  <label>Fecha de retorno de la matriz firmada*</label>
-                  <Calendar
-                    name="fecha_retorno_matriz_firmada"
-                    value={formik.values.fecha_retorno_matriz_firmada}
-                    onChange={(e) =>
-                      formik.setFieldValue(
-                        "fecha_retorno_matriz_firmada",
-                        e.value
-                      )
-                    }
-                    onBlur={formik.handleBlur}
-                    dateFormat="dd/mm/yy"
-                    showIcon
-                    className={`w-full ${
-                      formik.touched.fecha_retorno_matriz_firmada &&
-                      formik.errors.fecha_retorno_matriz_firmada
+                  <div className="tramite-form-group">
+                    <label htmlFor="fecha_firma_matriz_cliente">
+                      Fecha de Firma Matriz Cliente
+                    </label>
+                    <Calendar
+                      name="fecha_firma_matriz_cliente"
+                      value={formik.values.fecha_firma_matriz_cliente}
+                      onChange={(e) =>
+                        formik.setFieldValue(
+                          "fecha_firma_matriz_cliente",
+                          e.value
+                        )
+                      }
+                      onBlur={formik.handleBlur}
+                      dateFormat="dd/mm/yy"
+                      showIcon
+                      className={`tramite-calendar ${formik.touched.fecha_firma_matriz_cliente &&
+                        formik.errors.fecha_firma_matriz_cliente
                         ? "p-invalid"
                         : ""
-                    }`}
-                    disabled={formik.values.fecha_firma_matriz_cliente == null} // Deshabilitado si no hay fecha de firma
-                    minDate={formik.values.fecha_firma_matriz_cliente} // Fecha mínima = fecha_firma_matriz_cliente
-                  />
-                  {formik.touched.fecha_retorno_matriz_firmada &&
-                    formik.errors.fecha_retorno_matriz_firmada && (
-                      <small className="p-error">
-                        {formik.errors.fecha_retorno_matriz_firmada}
-                      </small>
-                    )}
-                </div>
+                        }`}
+                      disabled={
+                        formik.values.fecha_retorno_matriz_firmada != null
+                      } // Deshabilitado si hay fecha de retorno
+                      minDate={formik.values.fecha_aprobacion_proforma}
+                    />
+                    {formik.touched.fecha_firma_matriz_cliente &&
+                      formik.errors.fecha_firma_matriz_cliente && (
+                        <small className="tramite-error">
+                          {formik.errors.fecha_firma_matriz_cliente}
+                        </small>
+                      )}
 
-                <div className="field mt-4">
-                  <label>Comentarios</label>
-                  <InputTextarea
-                    name="observaciones_matriz_firmada"
-                    value={formik.values.observaciones_matriz_firmada || ""}
-                    onChange={(e) => {
-                      formik.setFieldValue(
-                        "observaciones_matriz_firmada",
-                        e.target.value
-                      );
-                    }}
-                    onBlur={formik.handleBlur}
-                    rows={5} // Número de filas visibles
-                    autoResize // Ajusta la altura automáticamente
-                    className={`w-full ${
-                      formik.touched.observaciones_matriz_firmada &&
-                      formik.errors.observaciones_matriz_firmada
+                  </div>
+                  <div className="tramite-form-group">
+                    <label htmlFor="fecha_retorno_matriz_firmada">
+                      Fecha de Retorno de la Matriz Firmada
+                    </label>
+                    <Calendar
+                      name="fecha_retorno_matriz_firmada"
+                      value={formik.values.fecha_retorno_matriz_firmada}
+                      onChange={(e) =>
+                        formik.setFieldValue(
+                          "fecha_retorno_matriz_firmada",
+                          e.value
+                        )
+                      }
+                      onBlur={formik.handleBlur}
+                      dateFormat="dd/mm/yy"
+                      showIcon
+                      className={`tramite-calendar ${formik.touched.fecha_retorno_matriz_firmada &&
+                        formik.errors.fecha_retorno_matriz_firmada
                         ? "p-invalid"
                         : ""
-                    }`}
-                    placeholder="Ingrese observaciones sobre la matriz firmada..."
-                  />
-                  {formik.touched.observaciones_matriz_firmada &&
-                    formik.errors.observaciones_matriz_firmada && (
-                      <small className="p-error">
-                        {formik.errors.observaciones_matriz_firmada}
-                      </small>
-                    )}
+                        }`}
+                      disabled={formik.values.fecha_firma_matriz_cliente == null} // Deshabilitado si no hay fecha de firma
+                      minDate={formik.values.fecha_firma_matriz_cliente} // Fecha mínima = fecha_firma_matriz_cliente
+                    />
+                    {formik.touched.fecha_retorno_matriz_firmada &&
+                      formik.errors.fecha_retorno_matriz_firmada && (
+                        <small className="tramite-error">
+                          {formik.errors.fecha_retorno_matriz_firmada}
+                        </small>
+                      )}
+                  </div>
+                  <div className="tramite-form-group">
+                    <label htmlFor="observaciones_matriz_firmada">
+                      Observaciones
+                    </label>
+                    <InputTextarea
+                      name="observaciones_matriz_firmada"
+                      value={formik.values.observaciones_matriz_firmada || ""}
+                      onChange={(e) => {
+                        formik.setFieldValue(
+                          "observaciones_matriz_firmada",
+                          e.target.value
+                        );
+                      }}
+                      onBlur={formik.handleBlur}
+                      rows={5} // Número de filas visibles
+                      autoResize // Ajusta la altura automáticamente
+                      className={`tramite-input ${formik.touched.observaciones_matriz_firmada &&
+                        formik.errors.observaciones_matriz_firmada
+                        ? "p-invalid"
+                        : ""
+                        }`}
+
+                    />
+                    {formik.touched.observaciones_matriz_firmada &&
+                      formik.errors.observaciones_matriz_firmada && (
+                        <small className="tramite-error">
+                          {formik.errors.observaciones_matriz_firmada}
+                        </small>
+                      )}
+                  </div>
                 </div>
               </Card>
             </div>
           </TabPanel>
 
           <TabPanel
-            header="En inscripción"
+            header="En Inscripción"
             disabled={!formik.values.fecha_retorno_matriz_firmada}
           >
-            <div className="flex flex-column align-items-center gap-4 p-4">
-              <Card title="En inscripción" className="w-full md:w-5">
-                <div className="field">
-                  <label>Fecha de ingreso al registro</label>
-                  <Calendar
-                    name="fecha_ingreso_registro"
-                    value={formik.values.fecha_ingreso_registro}
-                    onChange={(e) =>
-                      formik.setFieldValue("fecha_ingreso_registro", e.value)
-                    }
-                    onBlur={formik.handleBlur}
-                    dateFormat="dd/mm/yy"
-                    showIcon
-                    className={`w-full ${
-                      formik.touched.fecha_ingreso_registro &&
-                      formik.errors.fecha_ingreso_registro
+            <div className="tramite-form-container">
+              <Card
+                title={
+                  <div className="flex align-items-center">
+                    <Button
+                      icon="pi pi-arrow-left"
+                      className="p-button-text p-button-plain mr-2"
+                      onClick={() => navigate("/administrador/consultar-tramite")}
+                      tooltip="Volver a página principal"
+                      tooltipOptions={{ position: "top" }}
+                    />
+                    <span>En Inscripción</span>
+                  </div>
+                }
+                className="w-full md:w-6"
+              >
+                <div className="tramite-form-content">
+                  <div className="tramite-form-group">
+                    <label htmlFor="fecha_ingreso_registro">
+                      Fecha de Ingreso al Registro
+                    </label>
+                    <Calendar
+                      name="fecha_ingreso_registro"
+                      value={formik.values.fecha_ingreso_registro}
+                      onChange={(e) =>
+                        formik.setFieldValue("fecha_ingreso_registro", e.value)
+                      }
+                      onBlur={formik.handleBlur}
+                      dateFormat="dd/mm/yy"
+                      showIcon
+                      className={`tramite-calendar ${formik.touched.fecha_ingreso_registro &&
+                        formik.errors.fecha_ingreso_registro
                         ? "p-invalid"
                         : ""
-                    }`}
-                    minDate={formik.values.fecha_retorno_matriz_firmada} // Fecha mínima = fecha_retorno_matriz_firmada
-                  />
-                  {formik.touched.fecha_ingreso_registro &&
-                    formik.errors.fecha_ingreso_registro && (
-                      <small className="p-error">
-                        {formik.errors.fecha_ingreso_registro}
-                      </small>
-                    )}
+                        }`}
+                      minDate={formik.values.fecha_retorno_matriz_firmada} // Fecha mínima = fecha_retorno_matriz_firmada
+                    />
+                    {formik.touched.fecha_ingreso_registro &&
+                      formik.errors.fecha_ingreso_registro && (
+                        <small className="tramite-error">
+                          {formik.errors.fecha_ingreso_registro}
+                        </small>
+                      )}
+                  </div>
                 </div>
 
-                <div className="field">
-                  <label>Fecha tentativa de inscripción</label>
+                <div className="tramite-form-group">
+                  <label htmlFor="fecha_tentativa_inscripcion">
+                    Fecha Tentativa de Inscripción
+                  </label>
                   <Calendar
                     name="fecha_tentativa_inscripcion"
                     value={formik.values.fecha_tentativa_inscripcion}
@@ -1134,25 +1214,26 @@ const EditarTramites = () => {
                     onBlur={formik.handleBlur}
                     dateFormat="dd/mm/yy"
                     showIcon
-                    className={`w-full ${
-                      formik.touched.fecha_tentativa_inscripcion &&
+                    className={`tramite-calendar ${formik.touched.fecha_tentativa_inscripcion &&
                       formik.errors.fecha_tentativa_inscripcion
-                        ? "p-invalid"
-                        : ""
-                    }`}
+                      ? "p-invalid"
+                      : ""
+                      }`}
                     minDate={formik.values.fecha_ingreso_registro} // Fecha mínima = ingreso_registro
                     disabled={!formik.values.fecha_ingreso_registro} // Deshabilitado si no hay fecha de ingreso
                   />
                   {formik.touched.fecha_tentativa_inscripcion &&
                     formik.errors.fecha_tentativa_inscripcion && (
-                      <small className="p-error">
+                      <small className="tramite-error">
                         {formik.errors.fecha_tentativa_inscripcion}
                       </small>
                     )}
                 </div>
 
-                <div className="field">
-                  <label>Fecha de inscripción</label>
+                <div className="tramite-form-group">
+                  <label htmlFor="fecha_inscripcion">
+                    Fecha de Inscripción
+                  </label>
                   <Calendar
                     name="fecha_inscripcion"
                     value={formik.values.fecha_inscripcion}
@@ -1162,18 +1243,17 @@ const EditarTramites = () => {
                     onBlur={formik.handleBlur}
                     dateFormat="dd/mm/yy"
                     showIcon
-                    className={`w-full ${
-                      formik.touched.fecha_inscripcion &&
+                    className={`tramite-calendar ${formik.touched.fecha_inscripcion &&
                       formik.errors.fecha_inscripcion
-                        ? "p-invalid"
-                        : ""
-                    }`}
+                      ? "p-invalid"
+                      : ""
+                      }`}
                     minDate={formik.values.fecha_tentativa_inscripcion} // Fecha mínima = tentativa_inscripcion
                     disabled={!formik.values.fecha_tentativa_inscripcion} // Deshabilitado si no hay fecha de ingreso
                   />
                   {formik.touched.fecha_inscripcion &&
                     formik.errors.fecha_inscripcion && (
-                      <small className="p-error">
+                      <small className="tramite-error">
                         {formik.errors.fecha_inscripcion}
                       </small>
                     )}
@@ -1183,122 +1263,141 @@ const EditarTramites = () => {
           </TabPanel>
 
           <TabPanel
-            header="En catastro"
+            header="En Catastro"
             disabled={!formik.values.fecha_inscripcion}
           >
-            <div className="flex flex-column align-items-center gap-4 p-4">
-              <Card title="En catastro" className="w-full md:w-5">
-                <div className="field">
-                  <label>Fecha de ingreso al catastro</label>
-                  <Calendar
-                    name="fecha_ingreso_catastro"
-                    value={formik.values.fecha_ingreso_catastro}
-                    onChange={(e) =>
-                      formik.setFieldValue("fecha_ingreso_catastro", e.value)
-                    }
-                    onBlur={formik.handleBlur}
-                    dateFormat="dd/mm/yy"
-                    showIcon
-                    className={`w-full ${
-                      formik.touched.fecha_ingreso_catastro &&
-                      formik.errors.fecha_ingreso_catastro
+            <div className="tramite-form-container">
+              <Card
+                title={
+                  <div className="flex align-items-center">
+                    <Button
+                      icon="pi pi-arrow-left"
+                      className="p-button-text p-button-plain mr-2"
+                      onClick={() => navigate("/administrador/consultar-tramite")}
+                      tooltip="Volver a página principal"
+                      tooltipOptions={{ position: "top" }}
+                    />
+                    <span>En Catastro</span>
+                  </div>
+                }
+                className="w-full md:w-6"
+              >
+                <div className="tramite-form-content">
+                  <div className="tramite-form-group">
+                    <label htmlFor="fecha_ingreso_catastro">
+                      Fecha de Ingreso al Catastro
+                    </label>
+                    <Calendar
+                      name="fecha_ingreso_catastro"
+                      value={formik.values.fecha_ingreso_catastro}
+                      onChange={(e) =>
+                        formik.setFieldValue("fecha_ingreso_catastro", e.value)
+                      }
+                      onBlur={formik.handleBlur}
+                      dateFormat="dd/mm/yy"
+                      showIcon
+                      className={`tramite-calendar ${formik.touched.fecha_ingreso_catastro &&
+                        formik.errors.fecha_ingreso_catastro
                         ? "p-invalid"
                         : ""
-                    }`}
-                    minDate={formik.values.fecha_inscripcion}
-                  />
-                  {formik.touched.fecha_ingreso_catastro &&
-                    formik.errors.fecha_ingreso_catastro && (
-                      <small className="p-error">
-                        {formik.errors.fecha_ingreso_catastro}
-                      </small>
-                    )}
-                </div>
+                        }`}
+                      minDate={formik.values.fecha_inscripcion}
+                    />
+                    {formik.touched.fecha_ingreso_catastro &&
+                      formik.errors.fecha_ingreso_catastro && (
+                        <small className="tramite-error">
+                          {formik.errors.fecha_ingreso_catastro}
+                        </small>
+                      )}
+                  </div>
 
-                <div className="field">
-                  <label>Fecha tentativa de catastro</label>
-                  <Calendar
-                    name="fecha_tentativa_catastro"
-                    value={formik.values.fecha_tentativa_catastro}
-                    onChange={(e) =>
-                      formik.setFieldValue("fecha_tentativa_catastro", e.value)
-                    }
-                    onBlur={formik.handleBlur}
-                    dateFormat="dd/mm/yy"
-                    showIcon
-                    className={`w-full ${
-                      formik.touched.fecha_tentativa_catastro &&
-                      formik.errors.fecha_tentativa_catastro
+                  <div className="tramite-form-group">
+                    <label htmlFor="fecha_tentativa_catastro">
+                      Fecha Tentativa de Catastro
+                    </label>
+                    <Calendar
+                      name="fecha_tentativa_catastro"
+                      value={formik.values.fecha_tentativa_catastro}
+                      onChange={(e) =>
+                        formik.setFieldValue("fecha_tentativa_catastro", e.value)
+                      }
+                      onBlur={formik.handleBlur}
+                      dateFormat="dd/mm/yy"
+                      showIcon
+                      className={`tramite-calendar ${formik.touched.fecha_tentativa_catastro &&
+                        formik.errors.fecha_tentativa_catastro
                         ? "p-invalid"
                         : ""
-                    }`}
-                    minDate={formik.values.fecha_ingreso_catastro} // Fecha mínima = ingreso_catastro
-                    disabled={!formik.values.fecha_ingreso_catastro} // Deshabilitado si no hay fecha de ingreso
-                  />
-                  {formik.touched.fecha_tentativa_catastro &&
-                    formik.errors.fecha_tentativa_catastro && (
-                      <small className="p-error">
-                        {formik.errors.fecha_tentativa_catastro}
-                      </small>
-                    )}
-                </div>
+                        }`}
+                      minDate={formik.values.fecha_ingreso_catastro} // Fecha mínima = ingreso_catastro
+                      disabled={!formik.values.fecha_ingreso_catastro} // Deshabilitado si no hay fecha de ingreso
+                    />
+                    {formik.touched.fecha_tentativa_catastro &&
+                      formik.errors.fecha_tentativa_catastro && (
+                        <small className="tramite-error">
+                          {formik.errors.fecha_tentativa_catastro}
+                        </small>
+                      )}
+                  </div>
+                  <div className="tramite-form-group">
+                    <label htmlFor="fecha_catastro">
+                      Fecha de Catastro
+                    </label>
+                    <Calendar
+                      name="fecha_catastro"
+                      value={formik.values.fecha_catastro}
+                      onChange={(e) =>
+                        formik.setFieldValue("fecha_catastro", e.value)
+                      }
+                      onBlur={formik.handleBlur}
+                      dateFormat="dd/mm/yy"
+                      showIcon
+                      className={`tramite-calendar ${formik.touched.fecha_catastro &&
+                        formik.errors.fecha_catastro
+                        ? "p-invalid"
+                        : ""
+                        }`}
+                      minDate={formik.values.fecha_tentativa_catastro} // Fecha mínima = tentativa_catastro
+                      disabled={!formik.values.fecha_tentativa_catastro} // Deshabilitado si no hay fecha de ingreso
+                    />
+                    {formik.touched.fecha_catastro &&
+                      formik.errors.fecha_catastro && (
+                        <small className="tramite-error">
+                          {formik.errors.fecha_catastro}
+                        </small>
+                      )}
+                  </div>
 
-                <div className="field">
-                  <label>Fecha de catastro</label>
-                  <Calendar
-                    name="fecha_catastro"
-                    value={formik.values.fecha_catastro}
-                    onChange={(e) =>
-                      formik.setFieldValue("fecha_catastro", e.value)
-                    }
-                    onBlur={formik.handleBlur}
-                    dateFormat="dd/mm/yy"
-                    showIcon
-                    className={`w-full ${
-                      formik.touched.fecha_catastro &&
-                      formik.errors.fecha_catastro
+                  <div className="tramite-form-group">
+                    <label htmlFor="observaciones_catastro">
+                      Observaciones
+                    </label>
+                    <InputTextarea
+                      name="observaciones_catastro"
+                      value={formik.values.observaciones_catastro || ""}
+                      onChange={(e) => {
+                        formik.setFieldValue(
+                          "observaciones_catastro",
+                          e.target.value
+                        );
+                      }}
+                      onBlur={formik.handleBlur}
+                      rows={5} // Número de filas visibles
+                      autoResize // Ajusta la altura automáticamente
+                      className={`tramite-input ${formik.touched.observaciones_catastro &&
+                        formik.errors.observaciones_catastro
                         ? "p-invalid"
                         : ""
-                    }`}
-                    minDate={formik.values.fecha_tentativa_catastro} // Fecha mínima = tentativa_catastro
-                    disabled={!formik.values.fecha_tentativa_catastro} // Deshabilitado si no hay fecha de ingreso
-                  />
-                  {formik.touched.fecha_catastro &&
-                    formik.errors.fecha_catastro && (
-                      <small className="p-error">
-                        {formik.errors.fecha_catastro}
-                      </small>
-                    )}
-                </div>
-
-                <div className="field mt-4">
-                  <label>Comentarios</label>
-                  <InputTextarea
-                    name="observaciones_catastro"
-                    value={formik.values.observaciones_catastro || ""}
-                    onChange={(e) => {
-                      formik.setFieldValue(
-                        "observaciones_catastro",
-                        e.target.value
-                      );
-                    }}
-                    onBlur={formik.handleBlur}
-                    rows={5} // Número de filas visibles
-                    autoResize // Ajusta la altura automáticamente
-                    className={`w-full ${
-                      formik.touched.observaciones_catastro &&
-                      formik.errors.observaciones_catastro
-                        ? "p-invalid"
-                        : ""
-                    }`}
-                    placeholder="Ingrese observaciones sobre la liquidación..."
-                  />
-                  {formik.touched.observaciones_catastro &&
-                    formik.errors.observaciones_catastro && (
-                      <small className="p-error">
-                        {formik.errors.observaciones_catastro}
-                      </small>
-                    )}
+                        }`}
+              
+                    />
+                    {formik.touched.observaciones_catastro &&
+                      formik.errors.observaciones_catastro && (
+                        <small className="tramite-error">
+                          {formik.errors.observaciones_catastro}
+                        </small>
+                      )}
+                  </div>
                 </div>
               </Card>
             </div>
@@ -1440,22 +1539,24 @@ const EditarTramites = () => {
         </TabView>
 
         {/* Botones de acción fuera de los tabs pero dentro del form */}
-        <div className="flex justify-content-between gap-3 p-4">
+
+        <div className="tramite-form-actions">
+          <Button
+            label="Guardar Todo"
+            icon="pi pi-save"
+            type="submit"
+            className="tramite-button tramite-submit"
+            loading={formik.isSubmitting}
+          />
           <Button
             label="Cancelar"
             icon="pi pi-times"
             type="button"
-            className="p-button-danger"
+            className="tramite-button tramite-cancel"
             onClick={() => window.history.back()}
           />
-          <Button
-            label="Guardar Todo"
-            icon="pi pi-check"
-            type="submit"
-            className="p-button-success"
-            loading={formik.isSubmitting}
-          />
         </div>
+
       </form>
 
       {/* Modales (fuera del formulario) */}

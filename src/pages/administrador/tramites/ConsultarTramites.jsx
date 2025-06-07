@@ -228,6 +228,11 @@ const ConsultarTramites = () => {
           </div>
 
 
+          <Button onClick={donwloadExcel} className="add-button">
+            <i className="pi pi-file-excel" />
+            Descargar Excel
+          </Button>
+
           <Button
             label="Agregar Trámite"
             className="add-button"
@@ -236,11 +241,6 @@ const ConsultarTramites = () => {
         </div>
       </div>
 
-
-      <Button onClick={donwloadExcel} className="download-excel-button">
-        <i className="pi pi-file-excel" />
-        Descargar Excel
-      </Button>
 
       {loading ? (
         <div className="loading-spinner">
@@ -298,6 +298,14 @@ const ConsultarTramites = () => {
               })
                 : '' // o puedes poner 'Sin revisar' u otro texto
             } />
+            <Column field="fecha_aprobacion_proforma" header="Fecha de Aprobación de Proforma" body={(rowData) =>
+              rowData.fecha_envio_aprobacion_proforma ? new Date(rowData.fecha_envio_aprobacion_proforma).toLocaleDateString('es-EC', {
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit',
+              })
+                : '' // o puedes poner 'Sin revisar' u otro texto
+            } />
             <Column field="observaciones_proforma" header="Observaciones" />
             <Column field="fecha_firma_matriz_cliente" header="Fecha de Firma Matriz Cliente" body={(rowData) =>
               rowData.fecha_firma_matriz_cliente ? new Date(rowData.fecha_firma_matriz_cliente).toLocaleDateString('es-EC', {
@@ -307,16 +315,16 @@ const ConsultarTramites = () => {
               })
                 : '' // o puedes poner 'Sin revisar' u otro texto
             } />
-            <Column field="observaciones_matriz_firmada" header="Observaciones" />
-            <Column field="observaciones_proforma" header="Observaciones" />
-            <Column field="fecha_retorno_matriz_cliente" header="Fecha de Retorno de la Matriz Firmada" body={(rowData) =>
-              rowData.fecha_retorno_matriz_cliente ? new Date(rowData.fecha_retorno_matriz_cliente).toLocaleDateString('es-EC', {
+            <Column field="fecha_retorno_matriz_firmada" header="Fecha de Retorno de la Matriz Firmada" body={(rowData) =>
+              rowData.fecha_retorno_matriz_firmada ? new Date(rowData.fecha_retorno_matriz_firmada).toLocaleDateString('es-EC', {
                 year: 'numeric',
                 month: '2-digit',
                 day: '2-digit',
               })
                 : '' // o puedes poner 'Sin revisar' u otro texto
             } />
+            <Column field="observaciones_matriz_firmada" header="Observaciones" />
+
             <Column field="fecha_ingreso_registro" header="Fecha de Ingreso al Registro" body={(rowData) =>
               rowData.fecha_ingreso_registro ? new Date(rowData.fecha_ingreso_registro).toLocaleDateString('es-EC', {
                 year: 'numeric',
@@ -365,6 +373,7 @@ const ConsultarTramites = () => {
               })
                 : '' // o puedes poner 'Sin revisar' u otro texto
             } />
+            <Column field="observaciones_catastro" header="Observaciones" />
             <Column
               body={(rowData) => (
                 <div className="actions-cell">

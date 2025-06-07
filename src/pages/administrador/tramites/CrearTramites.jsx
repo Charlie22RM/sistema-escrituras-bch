@@ -223,7 +223,8 @@ const CrearTramites = () => {
               <span>Registrar nuevo Trámite</span>
             </div>
           }
-          className="tramite-form-card"
+          //className="tramite-form-card"
+          className="w-full md:w-6"
         >
           <form onSubmit={formik.handleSubmit} className="tramite-form">
             <div className="tramite-form-content">
