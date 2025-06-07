@@ -224,6 +224,7 @@ const EditarTramites = () => {
   const [pdfTituloId, setPdfTituloId] = useState(null);
   const [pdfFacturasId, setPdfFacturasId] = useState([]);
   const [uploading, setUploading] = useState(false);
+  const [fileKey, setFileKey] = useState(Date.now());
 
   const getTramite = async () => {
     try {
@@ -457,12 +458,12 @@ const EditarTramites = () => {
       //alert("Error al subir el archivo");
     } finally {
       setUploading(false);
+      setFileKey(Date.now()); // Forzar reinicio del componente
     }
   };
 
-  const getPdfUrl = async () => {
+  const getPdfUrl = async (pdfId) => {
     try {
-      const pdfId = pdfCatastroId;
       const response = await pdfService.getPdf(pdfId);
       window.open(response.data.url, "_blank");
     } catch (error) {
@@ -515,7 +516,6 @@ const EditarTramites = () => {
         <TabView className="full-width-tabview">
           {/* TAB 1: INFORMACIÓN GENERAL */}
           <TabPanel header="Información Inicial">
-
             <div className="tramite-form-container">
               <Card
                 title={
@@ -523,7 +523,9 @@ const EditarTramites = () => {
                     <Button
                       icon="pi pi-arrow-left"
                       className="p-button-text p-button-plain mr-2"
-                      onClick={() => navigate("/administrador/consultar-tramite")}
+                      onClick={() =>
+                        navigate("/administrador/consultar-tramite")
+                      }
                       tooltip="Volver a página principal"
                       tooltipOptions={{ position: "top" }}
                     />
@@ -541,20 +543,21 @@ const EditarTramites = () => {
                           value={cliente?.nombre || ""}
                           placeholder="Cliente"
                           disabled
-                          className={`tramite-input ${formik.touched.cliente_id &&
+                          className={`tramite-input ${
+                            formik.touched.cliente_id &&
                             formik.errors.cliente_id
-                            ? "p-invalid"
-                            : ""
-                            }`}
+                              ? "p-invalid"
+                              : ""
+                          }`}
 
-                        // style={{
-                        //   ...blockedInputStyle,
-                        //   borderColor:
-                        //     formik.touched.cliente_id &&
-                        //       formik.errors.cliente_id
-                        //       ? "#e24c4c"
-                        //       : "#ddd",
-                        // }}
+                          // style={{
+                          //   ...blockedInputStyle,
+                          //   borderColor:
+                          //     formik.touched.cliente_id &&
+                          //       formik.errors.cliente_id
+                          //       ? "#e24c4c"
+                          //       : "#ddd",
+                          // }}
                         />
                         <Button
                           type="button"
@@ -563,36 +566,36 @@ const EditarTramites = () => {
                           onClick={() => setModalVisible(true)}
                           className="tramite-button tramite-search-button"
                         />
-
                       </div>
-                      {formik.touched.cliente_id && formik.errors.cliente_id && (
-                        <small className="tramite-error">
-                          {formik.errors.cliente_id}
-                        </small>
-                      )}
+                      {formik.touched.cliente_id &&
+                        formik.errors.cliente_id && (
+                          <small className="tramite-error">
+                            {formik.errors.cliente_id}
+                          </small>
+                        )}
                     </div>
 
                     {/* Input Inmobiliaria */}
                     <div className="tramite-form-group">
                       <div className="tramite-input-group">
-
                         <InputText
                           value={inmobiliaria?.nombre || ""}
                           placeholder="Inmobiliaria"
                           disabled
-                          className={`tramite-input ${formik.touched.inmobiliaria_id &&
+                          className={`tramite-input ${
+                            formik.touched.inmobiliaria_id &&
                             formik.errors.inmobiliaria_id
-                            ? "p-invalid"
-                            : ""
-                            }`}
-                        // style={{
-                        //   ...blockedInputStyle,
-                        //   borderColor:
-                        //     formik.touched.inmobiliaria_id &&
-                        //       formik.errors.inmobiliaria_id
-                        //       ? "#e24c4c"
-                        //       : "#ddd",
-                        // }}
+                              ? "p-invalid"
+                              : ""
+                          }`}
+                          // style={{
+                          //   ...blockedInputStyle,
+                          //   borderColor:
+                          //     formik.touched.inmobiliaria_id &&
+                          //       formik.errors.inmobiliaria_id
+                          //       ? "#e24c4c"
+                          //       : "#ddd",
+                          // }}
                         />
 
                         <Button
@@ -623,7 +626,10 @@ const EditarTramites = () => {
                     </div>
 
                     {/* Input Cantón */}
-                    <div className="tramite-form-group" onClick={showDisabledMessage}>
+                    <div
+                      className="tramite-form-group"
+                      onClick={showDisabledMessage}
+                    >
                       <label>Cantón</label>
                       <Dropdown
                         id="canton_id"
@@ -635,10 +641,11 @@ const EditarTramites = () => {
                         optionLabel="nombre"
                         optionValue="id"
                         placeholder="Seleccione un cantón"
-                        className={`tramite-dropdown ${formik.touched.canton_id && formik.errors.canton_id
-                          ? "p-invalid"
-                          : ""
-                          }`}
+                        className={`tramite-dropdown ${
+                          formik.touched.canton_id && formik.errors.canton_id
+                            ? "p-invalid"
+                            : ""
+                        }`}
                         disabled={!cliente || !inmobiliaria}
                       />
                       {formik.touched.canton_id && formik.errors.canton_id && (
@@ -651,24 +658,24 @@ const EditarTramites = () => {
                     {/* Input Proyecto */}
                     <div className="tramite-form-group">
                       <div className="tramite-input-group">
-
                         <InputText
                           value={proyecto?.nombre || ""}
                           placeholder="Proyecto"
                           disabled
-                          className={`tramite-input${formik.touched.proyecto_id &&
+                          className={`tramite-input${
+                            formik.touched.proyecto_id &&
                             formik.errors.proyecto_id
-                            ? "p-invalid"
-                            : ""
-                            }`}
-                        // style={{
-                        //   ...blockedInputStyle,
-                        //   borderColor:
-                        //     formik.touched.proyecto_id &&
-                        //       formik.errors.proyecto_id
-                        //       ? "#e24c4c"
-                        //       : "#ddd",
-                        // }}
+                              ? "p-invalid"
+                              : ""
+                          }`}
+                          // style={{
+                          //   ...blockedInputStyle,
+                          //   borderColor:
+                          //     formik.touched.proyecto_id &&
+                          //       formik.errors.proyecto_id
+                          //       ? "#e24c4c"
+                          //       : "#ddd",
+                          // }}
                         />
 
                         <Button
@@ -689,7 +696,6 @@ const EditarTramites = () => {
 
                     {/* Input Nombre del Beneficiario */}
                     <div className="tramite-form-group">
-
                       <InputText
                         id="nombre_beneficiario"
                         name="nombre_beneficiario"
@@ -697,11 +703,12 @@ const EditarTramites = () => {
                         onChange={formik.handleChange}
                         onBlur={formik.handleBlur}
                         placeholder="Nombre del beneficiario"
-                        className={`tramite-input ${formik.touched.nombre_beneficiario &&
+                        className={`tramite-input ${
+                          formik.touched.nombre_beneficiario &&
                           formik.errors.nombre_beneficiario
-                          ? "p-invalid"
-                          : ""
-                          }`}
+                            ? "p-invalid"
+                            : ""
+                        }`}
                       />
                       {formik.touched.nombre_beneficiario &&
                         formik.errors.nombre_beneficiario && (
@@ -709,12 +716,10 @@ const EditarTramites = () => {
                             {formik.errors.nombre_beneficiario}
                           </small>
                         )}
-
                     </div>
 
                     {/* Input Cédula del Beneficiario */}
                     <div className="tramite-form-group">
-
                       <InputText
                         id="cedula_beneficiario"
                         name="cedula_beneficiario"
@@ -725,11 +730,12 @@ const EditarTramites = () => {
                         }}
                         onBlur={formik.handleBlur}
                         placeholder="Cédula del beneficiario"
-                        className={`tramite-input ${formik.touched.cedula_beneficiario &&
+                        className={`tramite-input ${
+                          formik.touched.cedula_beneficiario &&
                           formik.errors.cedula_beneficiario
-                          ? "p-invalid"
-                          : ""
-                          }`}
+                            ? "p-invalid"
+                            : ""
+                        }`}
                         maxLength={10}
                       />
                       {formik.touched.cedula_beneficiario &&
@@ -738,12 +744,10 @@ const EditarTramites = () => {
                             {formik.errors.cedula_beneficiario}
                           </small>
                         )}
-
                     </div>
 
                     {/* Input Fecha del trámite */}
                     <div className="tramite-form-group">
-
                       <label htmlFor="fecha_asignacion">
                         Fecha del trámite
                       </label>
@@ -757,11 +761,12 @@ const EditarTramites = () => {
                         onBlur={formik.handleBlur}
                         dateFormat="dd/mm/yy"
                         showIcon
-                        className={`tramite-calendar ${formik.touched.fecha_asignacion &&
+                        className={`tramite-calendar ${
+                          formik.touched.fecha_asignacion &&
                           formik.errors.fecha_asignacion
-                          ? "p-invalid"
-                          : ""
-                          }`}
+                            ? "p-invalid"
+                            : ""
+                        }`}
                       />
                       {formik.touched.fecha_asignacion &&
                         formik.errors.fecha_asignacion && (
@@ -769,7 +774,6 @@ const EditarTramites = () => {
                             {formik.errors.fecha_asignacion}
                           </small>
                         )}
-
                     </div>
                   </div>
                 </form>
@@ -793,7 +797,9 @@ const EditarTramites = () => {
                     <Button
                       icon="pi pi-arrow-left"
                       className="p-button-text p-button-plain mr-2"
-                      onClick={() => navigate("/administrador/consultar-tramite")}
+                      onClick={() =>
+                        navigate("/administrador/consultar-tramite")
+                      }
                       tooltip="Volver a página principal"
                       tooltipOptions={{ position: "top" }}
                     />
@@ -816,11 +822,12 @@ const EditarTramites = () => {
                       onBlur={formik.handleBlur}
                       dateFormat="dd/mm/yy"
                       showIcon
-                      className={`tramite-calendar ${formik.touched.fecha_revision_titulo &&
+                      className={`tramite-calendar ${
+                        formik.touched.fecha_revision_titulo &&
                         formik.errors.fecha_revision_titulo
-                        ? "p-invalid"
-                        : ""
-                        }`}
+                          ? "p-invalid"
+                          : ""
+                      }`}
                       minDate={formik.values.fecha_asignacion} // Fecha mínima = fecha_asignacion
                     />
                     {formik.touched.fecha_revision_titulo &&
@@ -848,11 +855,12 @@ const EditarTramites = () => {
                       onBlur={formik.handleBlur}
                       dateFormat="dd/mm/yy"
                       showIcon
-                      className={`tramite-calendar ${formik.touched.fecha_envio_liquidar_impuesto &&
+                      className={`tramite-calendar ${
+                        formik.touched.fecha_envio_liquidar_impuesto &&
                         formik.errors.fecha_envio_liquidar_impuesto
-                        ? "p-invalid"
-                        : ""
-                        }`}
+                          ? "p-invalid"
+                          : ""
+                      }`}
                       minDate={formik.values.fecha_revision_titulo} // Fecha mínima = revision_titulo
                       disabled={!formik.values.fecha_revision_titulo} // Deshabilitado si no hay fecha de revisión
                     />
@@ -882,12 +890,12 @@ const EditarTramites = () => {
                       onBlur={formik.handleBlur}
                       rows={5} // Número de filas visibles
                       autoResize // Ajusta la altura automáticamente
-                      className={`tramite-input ${formik.touched.observaciones_liquidacion_impuesto &&
+                      className={`tramite-input ${
+                        formik.touched.observaciones_liquidacion_impuesto &&
                         formik.errors.observaciones_liquidacion_impuesto
-                        ? "p-invalid"
-                        : ""
-                        }`}
-
+                          ? "p-invalid"
+                          : ""
+                      }`}
                     />
                     {formik.touched.observaciones_liquidacion_impuesto &&
                       formik.errors.observaciones_liquidacion_impuesto && (
@@ -899,7 +907,6 @@ const EditarTramites = () => {
                 </div>
               </Card>
             </div>
-
           </TabPanel>
 
           {/* TAB 3: APROBACIÓN DE PROFORMA */}
@@ -914,7 +921,9 @@ const EditarTramites = () => {
                     <Button
                       icon="pi pi-arrow-left"
                       className="p-button-text p-button-plain mr-2"
-                      onClick={() => navigate("/administrador/consultar-tramite")}
+                      onClick={() =>
+                        navigate("/administrador/consultar-tramite")
+                      }
                       tooltip="Volver a página principal"
                       tooltipOptions={{ position: "top" }}
                     />
@@ -924,7 +933,6 @@ const EditarTramites = () => {
                 className="w-full md:w-6"
               >
                 <div className="tramite-form-content">
-
                   <div className="tramite-form-group">
                     <label htmlFor="fecha_envio_aprobacion_proforma">
                       Envío de Aprobación de Proforma
@@ -941,11 +949,12 @@ const EditarTramites = () => {
                       onBlur={formik.handleBlur}
                       dateFormat="dd/mm/yy"
                       showIcon
-                      className={`tramite-calendar ${formik.touched.fecha_envio_aprobacion_proforma &&
+                      className={`tramite-calendar ${
+                        formik.touched.fecha_envio_aprobacion_proforma &&
                         formik.errors.fecha_envio_aprobacion_proforma
-                        ? "p-invalid"
-                        : ""
-                        }`}
+                          ? "p-invalid"
+                          : ""
+                      }`}
                       minDate={formik.values.fecha_envio_liquidar_impuesto}
                     />
                     {formik.touched.fecha_envio_aprobacion_proforma &&
@@ -955,7 +964,6 @@ const EditarTramites = () => {
                         </small>
                       )}
                   </div>
-
 
                   <div className="tramite-form-group">
                     <label htmlFor="fecha_aprobacion_proforma">
@@ -973,11 +981,12 @@ const EditarTramites = () => {
                       onBlur={formik.handleBlur}
                       dateFormat="dd/mm/yy"
                       showIcon
-                      className={`tramite-calendar ${formik.touched.fecha_aprobacion_proforma &&
+                      className={`tramite-calendar ${
+                        formik.touched.fecha_aprobacion_proforma &&
                         formik.errors.fecha_aprobacion_proforma
-                        ? "p-invalid"
-                        : ""
-                        }`}
+                          ? "p-invalid"
+                          : ""
+                      }`}
                       disabled={
                         formik.values.fecha_envio_aprobacion_proforma == null
                       } // Deshabilitado si no hay fecha de envío de aprobación de proforma
@@ -1007,12 +1016,12 @@ const EditarTramites = () => {
                       onBlur={formik.handleBlur}
                       rows={5} // Número de filas visibles
                       autoResize // Ajusta la altura automáticamente
-                      className={`tramite-input ${formik.touched.observaciones_proforma &&
+                      className={`tramite-input ${
+                        formik.touched.observaciones_proforma &&
                         formik.errors.observaciones_proforma
-                        ? "p-invalid"
-                        : ""
-                        }`}
-
+                          ? "p-invalid"
+                          : ""
+                      }`}
                     />
                     {formik.touched.observaciones_proforma &&
                       formik.errors.observaciones_proforma && (
@@ -1037,7 +1046,9 @@ const EditarTramites = () => {
                     <Button
                       icon="pi pi-arrow-left"
                       className="p-button-text p-button-plain mr-2"
-                      onClick={() => navigate("/administrador/consultar-tramite")}
+                      onClick={() =>
+                        navigate("/administrador/consultar-tramite")
+                      }
                       tooltip="Volver a página principal"
                       tooltipOptions={{ position: "top" }}
                     />
@@ -1047,7 +1058,6 @@ const EditarTramites = () => {
                 className="w-full md:w-6"
               >
                 <div className="tramite-form-content">
-
                   <div className="tramite-form-group">
                     <label htmlFor="fecha_firma_matriz_cliente">
                       Fecha de Firma Matriz Cliente
@@ -1064,11 +1074,12 @@ const EditarTramites = () => {
                       onBlur={formik.handleBlur}
                       dateFormat="dd/mm/yy"
                       showIcon
-                      className={`tramite-calendar ${formik.touched.fecha_firma_matriz_cliente &&
+                      className={`tramite-calendar ${
+                        formik.touched.fecha_firma_matriz_cliente &&
                         formik.errors.fecha_firma_matriz_cliente
-                        ? "p-invalid"
-                        : ""
-                        }`}
+                          ? "p-invalid"
+                          : ""
+                      }`}
                       disabled={
                         formik.values.fecha_retorno_matriz_firmada != null
                       } // Deshabilitado si hay fecha de retorno
@@ -1080,7 +1091,6 @@ const EditarTramites = () => {
                           {formik.errors.fecha_firma_matriz_cliente}
                         </small>
                       )}
-
                   </div>
                   <div className="tramite-form-group">
                     <label htmlFor="fecha_retorno_matriz_firmada">
@@ -1098,12 +1108,15 @@ const EditarTramites = () => {
                       onBlur={formik.handleBlur}
                       dateFormat="dd/mm/yy"
                       showIcon
-                      className={`tramite-calendar ${formik.touched.fecha_retorno_matriz_firmada &&
+                      className={`tramite-calendar ${
+                        formik.touched.fecha_retorno_matriz_firmada &&
                         formik.errors.fecha_retorno_matriz_firmada
-                        ? "p-invalid"
-                        : ""
-                        }`}
-                      disabled={formik.values.fecha_firma_matriz_cliente == null} // Deshabilitado si no hay fecha de firma
+                          ? "p-invalid"
+                          : ""
+                      }`}
+                      disabled={
+                        formik.values.fecha_firma_matriz_cliente == null
+                      } // Deshabilitado si no hay fecha de firma
                       minDate={formik.values.fecha_firma_matriz_cliente} // Fecha mínima = fecha_firma_matriz_cliente
                     />
                     {formik.touched.fecha_retorno_matriz_firmada &&
@@ -1129,12 +1142,12 @@ const EditarTramites = () => {
                       onBlur={formik.handleBlur}
                       rows={5} // Número de filas visibles
                       autoResize // Ajusta la altura automáticamente
-                      className={`tramite-input ${formik.touched.observaciones_matriz_firmada &&
+                      className={`tramite-input ${
+                        formik.touched.observaciones_matriz_firmada &&
                         formik.errors.observaciones_matriz_firmada
-                        ? "p-invalid"
-                        : ""
-                        }`}
-
+                          ? "p-invalid"
+                          : ""
+                      }`}
                     />
                     {formik.touched.observaciones_matriz_firmada &&
                       formik.errors.observaciones_matriz_firmada && (
@@ -1159,7 +1172,9 @@ const EditarTramites = () => {
                     <Button
                       icon="pi pi-arrow-left"
                       className="p-button-text p-button-plain mr-2"
-                      onClick={() => navigate("/administrador/consultar-tramite")}
+                      onClick={() =>
+                        navigate("/administrador/consultar-tramite")
+                      }
                       tooltip="Volver a página principal"
                       tooltipOptions={{ position: "top" }}
                     />
@@ -1182,11 +1197,12 @@ const EditarTramites = () => {
                       onBlur={formik.handleBlur}
                       dateFormat="dd/mm/yy"
                       showIcon
-                      className={`tramite-calendar ${formik.touched.fecha_ingreso_registro &&
+                      className={`tramite-calendar ${
+                        formik.touched.fecha_ingreso_registro &&
                         formik.errors.fecha_ingreso_registro
-                        ? "p-invalid"
-                        : ""
-                        }`}
+                          ? "p-invalid"
+                          : ""
+                      }`}
                       minDate={formik.values.fecha_retorno_matriz_firmada} // Fecha mínima = fecha_retorno_matriz_firmada
                     />
                     {formik.touched.fecha_ingreso_registro &&
@@ -1214,11 +1230,12 @@ const EditarTramites = () => {
                     onBlur={formik.handleBlur}
                     dateFormat="dd/mm/yy"
                     showIcon
-                    className={`tramite-calendar ${formik.touched.fecha_tentativa_inscripcion &&
+                    className={`tramite-calendar ${
+                      formik.touched.fecha_tentativa_inscripcion &&
                       formik.errors.fecha_tentativa_inscripcion
-                      ? "p-invalid"
-                      : ""
-                      }`}
+                        ? "p-invalid"
+                        : ""
+                    }`}
                     minDate={formik.values.fecha_ingreso_registro} // Fecha mínima = ingreso_registro
                     disabled={!formik.values.fecha_ingreso_registro} // Deshabilitado si no hay fecha de ingreso
                   />
@@ -1243,11 +1260,12 @@ const EditarTramites = () => {
                     onBlur={formik.handleBlur}
                     dateFormat="dd/mm/yy"
                     showIcon
-                    className={`tramite-calendar ${formik.touched.fecha_inscripcion &&
+                    className={`tramite-calendar ${
+                      formik.touched.fecha_inscripcion &&
                       formik.errors.fecha_inscripcion
-                      ? "p-invalid"
-                      : ""
-                      }`}
+                        ? "p-invalid"
+                        : ""
+                    }`}
                     minDate={formik.values.fecha_tentativa_inscripcion} // Fecha mínima = tentativa_inscripcion
                     disabled={!formik.values.fecha_tentativa_inscripcion} // Deshabilitado si no hay fecha de ingreso
                   />
@@ -1273,7 +1291,9 @@ const EditarTramites = () => {
                     <Button
                       icon="pi pi-arrow-left"
                       className="p-button-text p-button-plain mr-2"
-                      onClick={() => navigate("/administrador/consultar-tramite")}
+                      onClick={() =>
+                        navigate("/administrador/consultar-tramite")
+                      }
                       tooltip="Volver a página principal"
                       tooltipOptions={{ position: "top" }}
                     />
@@ -1296,11 +1316,12 @@ const EditarTramites = () => {
                       onBlur={formik.handleBlur}
                       dateFormat="dd/mm/yy"
                       showIcon
-                      className={`tramite-calendar ${formik.touched.fecha_ingreso_catastro &&
+                      className={`tramite-calendar ${
+                        formik.touched.fecha_ingreso_catastro &&
                         formik.errors.fecha_ingreso_catastro
-                        ? "p-invalid"
-                        : ""
-                        }`}
+                          ? "p-invalid"
+                          : ""
+                      }`}
                       minDate={formik.values.fecha_inscripcion}
                     />
                     {formik.touched.fecha_ingreso_catastro &&
@@ -1319,16 +1340,20 @@ const EditarTramites = () => {
                       name="fecha_tentativa_catastro"
                       value={formik.values.fecha_tentativa_catastro}
                       onChange={(e) =>
-                        formik.setFieldValue("fecha_tentativa_catastro", e.value)
+                        formik.setFieldValue(
+                          "fecha_tentativa_catastro",
+                          e.value
+                        )
                       }
                       onBlur={formik.handleBlur}
                       dateFormat="dd/mm/yy"
                       showIcon
-                      className={`tramite-calendar ${formik.touched.fecha_tentativa_catastro &&
+                      className={`tramite-calendar ${
+                        formik.touched.fecha_tentativa_catastro &&
                         formik.errors.fecha_tentativa_catastro
-                        ? "p-invalid"
-                        : ""
-                        }`}
+                          ? "p-invalid"
+                          : ""
+                      }`}
                       minDate={formik.values.fecha_ingreso_catastro} // Fecha mínima = ingreso_catastro
                       disabled={!formik.values.fecha_ingreso_catastro} // Deshabilitado si no hay fecha de ingreso
                     />
@@ -1340,9 +1365,7 @@ const EditarTramites = () => {
                       )}
                   </div>
                   <div className="tramite-form-group">
-                    <label htmlFor="fecha_catastro">
-                      Fecha de Catastro
-                    </label>
+                    <label htmlFor="fecha_catastro">Fecha de Catastro</label>
                     <Calendar
                       name="fecha_catastro"
                       value={formik.values.fecha_catastro}
@@ -1352,11 +1375,12 @@ const EditarTramites = () => {
                       onBlur={formik.handleBlur}
                       dateFormat="dd/mm/yy"
                       showIcon
-                      className={`tramite-calendar ${formik.touched.fecha_catastro &&
+                      className={`tramite-calendar ${
+                        formik.touched.fecha_catastro &&
                         formik.errors.fecha_catastro
-                        ? "p-invalid"
-                        : ""
-                        }`}
+                          ? "p-invalid"
+                          : ""
+                      }`}
                       minDate={formik.values.fecha_tentativa_catastro} // Fecha mínima = tentativa_catastro
                       disabled={!formik.values.fecha_tentativa_catastro} // Deshabilitado si no hay fecha de ingreso
                     />
@@ -1384,12 +1408,12 @@ const EditarTramites = () => {
                       onBlur={formik.handleBlur}
                       rows={5} // Número de filas visibles
                       autoResize // Ajusta la altura automáticamente
-                      className={`tramite-input ${formik.touched.observaciones_catastro &&
+                      className={`tramite-input ${
+                        formik.touched.observaciones_catastro &&
                         formik.errors.observaciones_catastro
-                        ? "p-invalid"
-                        : ""
-                        }`}
-
+                          ? "p-invalid"
+                          : ""
+                      }`}
                     />
                     {formik.touched.observaciones_catastro &&
                       formik.errors.observaciones_catastro && (
@@ -1424,6 +1448,7 @@ const EditarTramites = () => {
                       is_factura: false,
                     })
                   }
+                  key={fileKey}
                   disabled={uploading}
                 />
               ) : (
@@ -1465,6 +1490,7 @@ const EditarTramites = () => {
                       is_factura: false,
                     })
                   }
+                  key={fileKey}
                   disabled={uploading}
                 />
               ) : (
@@ -1506,6 +1532,7 @@ const EditarTramites = () => {
                     is_factura: true,
                   })
                 }
+                key={fileKey}
                 disabled={uploading}
               />
 
@@ -1556,7 +1583,6 @@ const EditarTramites = () => {
             onClick={() => window.history.back()}
           />
         </div>
-
       </form>
 
       {/* Modales (fuera del formulario) */}
