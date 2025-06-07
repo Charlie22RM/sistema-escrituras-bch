@@ -1574,14 +1574,14 @@ const EditarTramites = () => {
                     type="button"
                     label="Ver PDF del título"
                     icon="pi pi-eye"
-                    onClick={() => getPdfUrl(pdfTituloId, "titulo")}
+                    onClick={() => getPdfUrl(pdfTituloId)}
                   />
                   <Button
                     type="button"
                     label="Eliminar PDF del título"
                     icon="pi pi-trash"
                     className="p-button-danger"
-                    onClick={() => handleDeletePdf(pdfTituloId)}
+                    onClick={() => handleDeletePdf(pdfTituloId,"titulo")}
                   />
                 </div>
               )}
