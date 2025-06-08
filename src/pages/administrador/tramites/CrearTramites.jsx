@@ -412,6 +412,7 @@ const CrearTramites = () => {
           onHide={() => setModalProyectoVisible(false)}
           setProyecto={handleSetProyecto}
           canton_id={formik.values.canton_id}
+          inmobiliaria_id={formik.values.inmobiliaria_id} // <-- ¡Nuevo prop!
         />
       </div>
     </>

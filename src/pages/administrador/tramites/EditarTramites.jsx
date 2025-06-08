@@ -1266,83 +1266,85 @@ const EditarTramites = () => {
                         </small>
                       )}
                   </div>
-                </div>
 
-                <div className="tramite-form-group">
-                  <label htmlFor="fecha_tentativa_inscripcion">
-                    Fecha Tentativa de Inscripción
-                  </label>
-                  <Calendar
-                    name="fecha_tentativa_inscripcion"
-                    value={formik.values.fecha_tentativa_inscripcion}
-                    onChange={(e) =>
-                      formik.setFieldValue(
-                        "fecha_tentativa_inscripcion",
-                        e.value
-                      )
-                    }
-                    onBlur={formik.handleBlur}
-                    dateFormat="dd/mm/yy"
-                    showIcon
-                    className={`tramite-calendar ${formik.touched.fecha_tentativa_inscripcion &&
-                      formik.errors.fecha_tentativa_inscripcion
-                      ? "p-invalid"
-                      : ""
-                      }`}
-                    minDate={formik.values.fecha_ingreso_registro} // Fecha mínima = ingreso_registro
-                    disabled={!formik.values.fecha_ingreso_registro} // Deshabilitado si no hay fecha de ingreso
-                  />
-                  {formik.touched.fecha_tentativa_inscripcion &&
-                    formik.errors.fecha_tentativa_inscripcion && (
-                      <small className="tramite-error">
-                        {formik.errors.fecha_tentativa_inscripcion}
-                      </small>
-                    )}
-                </div>
 
-                <div className="tramite-form-group">
-                  <label htmlFor="fecha_inscripcion">
-                    Fecha de Inscripción
-                  </label>
-                  <Calendar
-                    name="fecha_inscripcion"
-                    value={formik.values.fecha_inscripcion}
-                    onChange={(e) =>
-                      formik.setFieldValue("fecha_inscripcion", e.value)
-                    }
-                    onBlur={formik.handleBlur}
-                    dateFormat="dd/mm/yy"
-                    showIcon
-                    className={`tramite-calendar ${formik.touched.fecha_inscripcion &&
-                      formik.errors.fecha_inscripcion
-                      ? "p-invalid"
-                      : ""
-                      }`}
-                    minDate={formik.values.fecha_tentativa_inscripcion} // Fecha mínima = tentativa_inscripcion
-                    disabled={!formik.values.fecha_tentativa_inscripcion} // Deshabilitado si no hay fecha de ingreso
-                  />
-                  {formik.touched.fecha_inscripcion &&
-                    formik.errors.fecha_inscripcion && (
-                      <small className="tramite-error">
-                        {formik.errors.fecha_inscripcion}
-                      </small>
-                    )}
-                </div>
-                <div className="tramite-form-actions">
-                  <Button
-                    label="Guardar Todo"
-                    icon="pi pi-save"
-                    type="submit"
-                    className="tramite-button tramite-submit"
-                    loading={formik.isSubmitting}
-                  />
-                  <Button
-                    label="Cancelar"
-                    icon="pi pi-times"
-                    type="button"
-                    className="tramite-button tramite-cancel"
-                    onClick={() => window.history.back()}
-                  />
+                  <div className="tramite-form-group">
+                    <label htmlFor="fecha_tentativa_inscripcion">
+                      Fecha Tentativa de Inscripción
+                    </label>
+                    <Calendar
+                      name="fecha_tentativa_inscripcion"
+                      value={formik.values.fecha_tentativa_inscripcion}
+                      onChange={(e) =>
+                        formik.setFieldValue(
+                          "fecha_tentativa_inscripcion",
+                          e.value
+                        )
+                      }
+                      onBlur={formik.handleBlur}
+                      dateFormat="dd/mm/yy"
+                      showIcon
+                      className={`tramite-calendar ${formik.touched.fecha_tentativa_inscripcion &&
+                        formik.errors.fecha_tentativa_inscripcion
+                        ? "p-invalid"
+                        : ""
+                        }`}
+                      minDate={formik.values.fecha_ingreso_registro} // Fecha mínima = ingreso_registro
+                      disabled={!formik.values.fecha_ingreso_registro} // Deshabilitado si no hay fecha de ingreso
+                    />
+                    {formik.touched.fecha_tentativa_inscripcion &&
+                      formik.errors.fecha_tentativa_inscripcion && (
+                        <small className="tramite-error">
+                          {formik.errors.fecha_tentativa_inscripcion}
+                        </small>
+                      )}
+                  </div>
+
+                  <div className="tramite-form-group">
+                    <label htmlFor="fecha_inscripcion">
+                      Fecha de Inscripción
+                    </label>
+                    <Calendar
+                      name="fecha_inscripcion"
+                      value={formik.values.fecha_inscripcion}
+                      onChange={(e) =>
+                        formik.setFieldValue("fecha_inscripcion", e.value)
+                      }
+                      onBlur={formik.handleBlur}
+                      dateFormat="dd/mm/yy"
+                      showIcon
+                      className={`tramite-calendar ${formik.touched.fecha_inscripcion &&
+                        formik.errors.fecha_inscripcion
+                        ? "p-invalid"
+                        : ""
+                        }`}
+                      minDate={formik.values.fecha_tentativa_inscripcion} // Fecha mínima = tentativa_inscripcion
+                      disabled={!formik.values.fecha_tentativa_inscripcion} // Deshabilitado si no hay fecha de ingreso
+                    />
+                    {formik.touched.fecha_inscripcion &&
+                      formik.errors.fecha_inscripcion && (
+                        <small className="tramite-error">
+                          {formik.errors.fecha_inscripcion}
+                        </small>
+                      )}
+                  </div>
+
+                  <div className="tramite-form-actions">
+                    <Button
+                      label="Guardar Todo"
+                      icon="pi pi-save"
+                      type="submit"
+                      className="tramite-button tramite-submit"
+                      loading={formik.isSubmitting}
+                    />
+                    <Button
+                      label="Cancelar"
+                      icon="pi pi-times"
+                      type="button"
+                      className="tramite-button tramite-cancel"
+                      onClick={() => window.history.back()}
+                    />
+                  </div>
                 </div>
               </Card>
             </div>
@@ -1737,6 +1739,7 @@ const EditarTramites = () => {
         setProyecto={handleSetProyecto}
         onHide={() => setModalProyectoVisible(false)}
         canton_id={formik.values.canton_id}
+        inmobiliaria_id={formik.values.inmobiliaria_id} // <-- ¡Nuevo prop!
       />
     </div>
   );

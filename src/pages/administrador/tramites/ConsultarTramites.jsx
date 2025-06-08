@@ -12,6 +12,7 @@ import { useNavigate } from "react-router-dom";
 import { clearLogout } from "../../../redux/authSlice";
 import "../administrador.css";
 import InformeService from "../../../services/InformeService";
+import { Tag } from 'primereact/tag';
 
 const ConsultarTramites = () => {
   const [tramites, setTramites] = useState([]);
@@ -30,6 +31,38 @@ const ConsultarTramites = () => {
   const informeService = InformeService();
   const dispatch = useDispatch();
   const navigate = useNavigate();
+
+
+  //  const formatEstado = (estado) =>
+  //     estado
+  //       .toLowerCase()
+  //       .replace(/_/g, ' ')
+  //       .replace(/\b\w/g, (char) => char.toUpperCase());
+
+
+
+  const estadoTramiteTemplate = (rowData) => {
+    return <Tag value={rowData.estado} severity={getSeverity(rowData.estado)} />;
+  };
+  const getSeverity = (estado) => {
+    switch (estado) {
+      case 'INICIADO':
+        return 'info';
+      case 'LIQUIDACION_IMPUESTO':
+      case 'APROBACION_PROFORMA':
+      case 'LIQUIDACION_APROBADA':
+      case 'FIRMA_MATRIZ':
+      case 'INSCRIPCION':
+      case 'CATASTRO':
+        return 'warning';
+      case 'FINALIZADO':
+        return 'success';
+      default:
+        return null;
+    }
+  };
+
+
   const toast = useRef(null);
 
   const loadTramites = async (page, limit, searchQuery = "") => {
@@ -251,9 +284,11 @@ const ConsultarTramites = () => {
         <div className="table-container">
           <DataTable
             value={tramites}
-            showGridlines
+
             lazy
             paginator
+            scrollable
+            scrollDirection="horizontal"
             first={lazyState.first}
             rows={lazyState.rows}
             totalRecords={totalRecords}
@@ -263,10 +298,10 @@ const ConsultarTramites = () => {
             className="consultar-table"
             emptyMessage="No se encontraron trámites"
           >
-            <Column field="cedula_beneficiario" header="Cédula del Beneficiario" />
-            <Column field="nombre_beneficiario" header="Nombre del Beneficiario" />
-            <Column field="canton.nombre" header="Cantón" />
-            <Column field="fecha_asignacion" header="Revisión de Título" body={(rowData) =>
+            <Column style={{ minWidth: '120px' }} field="cedula_beneficiario" header="Cédula del Beneficiario" />
+            <Column style={{ minWidth: '120px' }} field="nombre_beneficiario" header="Nombre del Beneficiario" />
+            <Column style={{ minWidth: '100px' }} field="canton.nombre" header="Cantón" />
+            <Column style={{ minWidth: '120px' }} field="fecha_asignacion" header="Fecha de Asignación" body={(rowData) =>
               rowData.fecha_asignacion ? new Date(rowData.fecha_asignacion).toLocaleDateString('es-EC', {
                 year: 'numeric',
                 month: '2-digit',
@@ -274,7 +309,7 @@ const ConsultarTramites = () => {
               })
                 : '' // o puedes poner 'Sin revisar' u otro texto
             } />
-            <Column field="fecha_revision_titulo" header="Revisión de Título" body={(rowData) =>
+            <Column style={{ minWidth: '120px' }} field="fecha_revision_titulo" header="Revisión de Título" body={(rowData) =>
               rowData.fecha_revision_titulo ? new Date(rowData.fecha_revision_titulo).toLocaleDateString('es-EC', {
                 year: 'numeric',
                 month: '2-digit',
@@ -282,7 +317,7 @@ const ConsultarTramites = () => {
               })
                 : '' // o puedes poner 'Sin revisar' u otro texto
             } />
-            <Column field="fecha_envio_liquidar_impuesto" header="Envío a Liquidar Impuestos" body={(rowData) =>
+            <Column style={{ minWidth: '150px' }} field="fecha_envio_liquidar_impuesto" header="Envío a Liquidar Impuestos" body={(rowData) =>
               rowData.fecha_envio_liquidar_impuesto ? new Date(rowData.fecha_envio_liquidar_impuesto).toLocaleDateString('es-EC', {
                 year: 'numeric',
                 month: '2-digit',
@@ -290,8 +325,8 @@ const ConsultarTramites = () => {
               })
                 : '' // o puedes poner 'Sin revisar' u otro texto
             } />
-            <Column field="observaciones_liquidacion_impuesto" header="Observaciones" />
-            <Column field="fecha_envio_aprobacion_proforma" header="Envío de Aprobación de Proforma" body={(rowData) =>
+            <Column style={{ minWidth: '150px' }}field="observaciones_liquidacion_impuesto" header="Observaciones" />
+            <Column style={{ minWidth: '180px' }} field="fecha_envio_aprobacion_proforma" header="Envío de Aprobación de Proforma" body={(rowData) =>
               rowData.fecha_envio_aprobacion_proforma ? new Date(rowData.fecha_envio_aprobacion_proforma).toLocaleDateString('es-EC', {
                 year: 'numeric',
                 month: '2-digit',
@@ -299,7 +334,7 @@ const ConsultarTramites = () => {
               })
                 : '' // o puedes poner 'Sin revisar' u otro texto
             } />
-            <Column field="fecha_aprobacion_proforma" header="Fecha de Aprobación de Proforma" body={(rowData) =>
+            <Column style={{ minWidth: '180px' }} field="fecha_aprobacion_proforma" header="Fecha de Aprobación de Proforma" body={(rowData) =>
               rowData.fecha_envio_aprobacion_proforma ? new Date(rowData.fecha_envio_aprobacion_proforma).toLocaleDateString('es-EC', {
                 year: 'numeric',
                 month: '2-digit',
@@ -307,8 +342,8 @@ const ConsultarTramites = () => {
               })
                 : '' // o puedes poner 'Sin revisar' u otro texto
             } />
-            <Column field="observaciones_proforma" header="Observaciones" />
-            <Column field="fecha_firma_matriz_cliente" header="Fecha de Firma Matriz Cliente" body={(rowData) =>
+            <Column style={{ minWidth: '150px' }} field="observaciones_proforma" header="Observaciones" />
+            <Column style={{ minWidth: '150px' }} field="fecha_firma_matriz_cliente" header="Fecha de Firma Matriz Cliente" body={(rowData) =>
               rowData.fecha_firma_matriz_cliente ? new Date(rowData.fecha_firma_matriz_cliente).toLocaleDateString('es-EC', {
                 year: 'numeric',
                 month: '2-digit',
@@ -316,7 +351,7 @@ const ConsultarTramites = () => {
               })
                 : '' // o puedes poner 'Sin revisar' u otro texto
             } />
-            <Column field="fecha_retorno_matriz_firmada" header="Fecha de Retorno de la Matriz Firmada" body={(rowData) =>
+            <Column style={{ minWidth: '160px' }} field="fecha_retorno_matriz_firmada" header="Fecha de Retorno de la Matriz Firmada" body={(rowData) =>
               rowData.fecha_retorno_matriz_firmada ? new Date(rowData.fecha_retorno_matriz_firmada).toLocaleDateString('es-EC', {
                 year: 'numeric',
                 month: '2-digit',
@@ -324,9 +359,9 @@ const ConsultarTramites = () => {
               })
                 : '' // o puedes poner 'Sin revisar' u otro texto
             } />
-            <Column field="observaciones_matriz_firmada" header="Observaciones" />
+            <Column style={{ minWidth: '150px' }} field="observaciones_matriz_firmada" header="Observaciones" />
 
-            <Column field="fecha_ingreso_registro" header="Fecha de Ingreso al Registro" body={(rowData) =>
+            <Column style={{ minWidth: '150px' }} field="fecha_ingreso_registro" header="Fecha de Ingreso al Registro" body={(rowData) =>
               rowData.fecha_ingreso_registro ? new Date(rowData.fecha_ingreso_registro).toLocaleDateString('es-EC', {
                 year: 'numeric',
                 month: '2-digit',
@@ -334,7 +369,7 @@ const ConsultarTramites = () => {
               })
                 : '' // o puedes poner 'Sin revisar' u otro texto
             } />
-            <Column field="fecha_tentativa_inscripcion" header="Fecha Tentativa de Inscripción" body={(rowData) =>
+            <Column style={{ minWidth: '140px' }} field="fecha_tentativa_inscripcion" header="Fecha Tentativa de Inscripción" body={(rowData) =>
               rowData.fecha_tentativa_inscripcion ? new Date(rowData.fecha_tentativa_inscripcion).toLocaleDateString('es-EC', {
                 year: 'numeric',
                 month: '2-digit',
@@ -342,7 +377,7 @@ const ConsultarTramites = () => {
               })
                 : '' // o puedes poner 'Sin revisar' u otro texto
             } />
-            <Column field="fecha_inscripcion" header="Fecha de Inscripción" body={(rowData) =>
+            <Column style={{ minWidth: '120px' }} field="fecha_inscripcion" header="Fecha de Inscripción" body={(rowData) =>
               rowData.fecha_inscripcion ? new Date(rowData.fecha_inscripcion).toLocaleDateString('es-EC', {
                 year: 'numeric',
                 month: '2-digit',
@@ -350,7 +385,7 @@ const ConsultarTramites = () => {
               })
                 : '' // o puedes poner 'Sin revisar' u otro texto
             } />
-            <Column field="fecha_ingreso_catastro" header="Fecha de Ingreso al Catastro" body={(rowData) =>
+            <Column style={{ minWidth: '150px' }} field="fecha_ingreso_catastro" header="Fecha de Ingreso al Catastro" body={(rowData) =>
               rowData.fecha_ingreso_catastro ? new Date(rowData.fecha_ingreso_catastro).toLocaleDateString('es-EC', {
                 year: 'numeric',
                 month: '2-digit',
@@ -358,7 +393,7 @@ const ConsultarTramites = () => {
               })
                 : '' // o puedes poner 'Sin revisar' u otro texto
             } />
-            <Column field="fecha_tentativa_catastro" header="Fecha Tentativa de Catastro" body={(rowData) =>
+            <Column style={{ minWidth: '140px' }} field="fecha_tentativa_catastro" header="Fecha Tentativa de Catastro" body={(rowData) =>
               rowData.fecha_tentativa_catastro ? new Date(rowData.fecha_tentativa_catastro).toLocaleDateString('es-EC', {
                 year: 'numeric',
                 month: '2-digit',
@@ -366,7 +401,7 @@ const ConsultarTramites = () => {
               })
                 : '' // o puedes poner 'Sin revisar' u otro texto
             } />
-            <Column field="fecha_catastro" header="Fecha de Catastro" body={(rowData) =>
+            <Column style={{ minWidth: '120px' }} field="fecha_catastro" header="Fecha de Catastro" body={(rowData) =>
               rowData.fecha_catastro ? new Date(rowData.fecha_catastro).toLocaleDateString('es-EC', {
                 year: 'numeric',
                 month: '2-digit',
@@ -374,8 +409,11 @@ const ConsultarTramites = () => {
               })
                 : '' // o puedes poner 'Sin revisar' u otro texto
             } />
-            <Column field="observaciones_catastro" header="Observaciones" />
+            <Column style={{ minWidth: '150px' }} field="observaciones_catastro" header="Observaciones" columnClassName="col-cedula" />
+            <Column  field="estado" header="Estado" body={estadoTramiteTemplate} frozen alignFrozen="right" />
             <Column
+              frozen
+              alignFrozen="right"
               body={(rowData) => (
                 <div className="actions-cell">
                   <Button

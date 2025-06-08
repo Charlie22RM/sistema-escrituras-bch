@@ -176,24 +176,6 @@
   padding: 3rem;
 }
 
-/* Responsive adjustments */
-@media (max-width: 768px) {
-  .clientes-actions {
-    flex-direction: column;
-    gap: 1rem;
-  }
-
-  .search-wrapper {
-    width: 100%;
-    max-width: none;
-  }
-
-  .add-button {
-    width: 100%;
-    justify-content: center;
-  }
-}
-
 /* Estilos generales */
 .crear-cliente-container {
   background-color: #f8f9fa;
@@ -323,16 +305,6 @@
   transform: translateY(-1px);
 }
 
-/* Estilos responsivos */
-@media (max-width: 640px) {
-  .button-group {
-    flex-direction: column;
-  }
-
-  .client-form-card .p-card-body {
-    padding: 1.5rem;
-  }
-}
 
 .custom-primary-button {
   background-color: #1e3c72 !important;
@@ -459,31 +431,11 @@
   background-color: #d6283e;
 }
 
-/* Animaciones */
-@keyframes dialog-fade-in {
-  from {
-    opacity: 0;
-    transform: translate(-50%, -60%);
-  }
-
-  to {
-    opacity: 1;
-    transform: translate(-50%, -50%);
-  }
-}
-
-/* ========== GENERAL RESPONSIVE IMPROVEMENTS ========== */
-
 /* Container adjustments */
 .consultar-container {
   padding: 1.5rem;
 }
 
-@media (max-width: 576px) {
-  .consultar-container {
-    padding: 1rem;
-  }
-}
 
 /* Header responsive behavior */
 .consultar-header {
@@ -505,18 +457,6 @@
 .search-wrapper {
   max-width: 100%;
   width: 100%;
-}
-
-@media (min-width: 768px) {
-  .consultar-actions {
-    flex-direction: row;
-    align-items: center;
-  }
-
-  .search-wrapper {
-    flex-grow: 1;
-    max-width: 400px;
-  }
 }
 
 /* Search group mobile optimization */
@@ -542,12 +482,6 @@
   width: 100%;
 }
 
-@media (min-width: 768px) {
-  .add-button {
-    width: auto;
-  }
-}
-
 /* Table responsive optimizations */
 .table-container {
   border-radius: 6px;
@@ -565,14 +499,6 @@
   padding: 0.75rem;
 }
 
-@media (max-width: 768px) {
-
-  .consultar-table .p-datatable-thead>tr>th,
-  .consultar-table .p-datatable-tbody>tr>td {
-    padding: 0.5rem;
-  }
-}
-
 /* Action buttons mobile optimization */
 .actions-cell {
   gap: 0.25rem;
@@ -587,48 +513,6 @@
 /* Loading spinner */
 .loading-spinner {
   padding: 2rem;
-}
-
-/* ========== SPECIFIC MOBILE OPTIMIZATIONS ========== */
-@media (max-width: 480px) {
-
-  /* Further reduce padding and font sizes */
-  .consultar-container {
-    padding: 0.75rem;
-  }
-
-  .consultar-title {
-    font-size: 1.3rem;
-    margin-bottom: 0.75rem;
-  }
-
-  /* More compact search */
-  .search-group {
-    height: 34px;
-  }
-
-  /* Smaller buttons */
-  .add-button {
-    height: 34px;
-    padding: 0 0.75rem;
-  }
-
-  /* More compact table cells */
-  .consultar-table .p-datatable-thead>tr>th,
-  .consultar-table .p-datatable-tbody>tr>td {
-    padding: 0.4rem;
-  }
-
-  /* Smaller action buttons */
-  .actions-cell {
-    gap: 0.15rem;
-  }
-
-  .edit-button,
-  .delete-button {
-    width: 28px;
-    height: 28px;
-  }
 }
 
 /* Contenedor principal */
@@ -773,21 +657,6 @@
   flex: 1;
 }
 
-/* Responsive */
-@media (max-width: 768px) {
-  .tramite-form-container {
-    padding: 1rem;
-  }
-
-  .tramite-input-group {
-    flex-direction: column;
-  }
-
-  .tramite-form-actions {
-    flex-direction: column;
-  }
-}
-
 /* Estilos para el botón del calendario */
 .p-calendar .p-datepicker-trigger {
   background-color: #1e3c72 !important;
@@ -812,7 +681,6 @@
   /* Centra las pestañas */
   width: 100%;
   border-bottom: 2px solid #e0e0e0;
-
 }
 
 .full-width-tabview .p-tabview-nav-container {
@@ -825,7 +693,6 @@
 
 .full-width-tabview .p-tabview-nav-link {
   flex: 1;
-  /* Hace que cada pestaña ocupe espacio igual */
   text-align: center;
   justify-content: center;
   padding: 1rem;
@@ -838,38 +705,23 @@
   border-color: #1e3c72;
 }
 
-/* Color al hacer hover */
 .full-width-tabview .p-tabview-nav-link:not(.p-disabled):hover {
   color: #1e3c72;
   border-color: #1e3c72;
 }
 
-/* Contenido del panel */
 .full-width-tabview .p-tabview-panels {
   padding: 1.5rem 0;
   width: 100%;
 }
 
-/* Mejora la UI del Card */
 .tramite-form-container .p-card {
   border-radius: 8px;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 }
 
-/* Asegura que el contenido ocupe todo el ancho */
 .tramite-form-container {
   width: 100%;
-}
-
-@media (max-width: 768px) {
-  .full-width-tabview .p-tabview-nav {
-    flex-direction: column;
-    /* Apila las pestañas verticalmente en móviles */
-  }
-
-  .full-width-tabview .p-tabview-nav-link {
-    width: 100%;
-  }
 }
 
 /* Documentación Panel */
@@ -924,19 +776,166 @@
 
 .invoice-list {
   margin-bottom: 1.5rem;
-
-
 }
 
 .invoice-item {
   margin-top: 10px;
-  /* o 16px */
-
 }
 
 .action-buttons {
   display: flex;
   gap: 0.5rem;
+}
+
+.upload-button .p-button {
+  background-color: #e8e7e7;
+  color: #464646;
+  /* texto azul sobre fondo claro */
+  font-weight: 600;
+  border-radius: 8px;
+  padding: 0.6rem 1.2rem;
+  border: none;
+  transition: background-color 0.3s ease;
+}
+
+.upload-button .p-button:hover {
+  background-color: #e0e0e0;
+}
+
+.section-icon {
+  font-size: 1.8rem;
+  color: #474747;
+  /* rojo bandera */
+  margin-right: 0.5rem;
+  vertical-align: middle;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .clientes-actions {
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .search-wrapper {
+    width: 100%;
+    max-width: none;
+  }
+
+  .add-button {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+/* Estilos responsivos */
+@media (max-width: 640px) {
+  .button-group {
+    flex-direction: column;
+  }
+
+  .client-form-card .p-card-body {
+    padding: 1.5rem;
+  }
+}
+
+@media (max-width: 576px) {
+  .consultar-container {
+    padding: 1rem;
+  }
+}
+
+@media (min-width: 768px) {
+  .consultar-actions {
+    flex-direction: row;
+    align-items: center;
+  }
+
+  .search-wrapper {
+    flex-grow: 1;
+    max-width: 400px;
+  }
+}
+
+@media (min-width: 768px) {
+  .add-button {
+    width: auto;
+  }
+}
+
+@media (max-width: 768px) {
+
+  .consultar-table .p-datatable-thead>tr>th,
+  .consultar-table .p-datatable-tbody>tr>td {
+    padding: 0.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+
+  /* Further reduce padding and font sizes */
+  .consultar-container {
+    padding: 0.75rem;
+  }
+
+  .consultar-title {
+    font-size: 1.3rem;
+    margin-bottom: 0.75rem;
+  }
+
+  /* More compact search */
+  .search-group {
+    height: 34px;
+  }
+
+  /* Smaller buttons */
+  .add-button {
+    height: 34px;
+    padding: 0 0.75rem;
+  }
+
+  /* More compact table cells */
+  .consultar-table .p-datatable-thead>tr>th,
+  .consultar-table .p-datatable-tbody>tr>td {
+    padding: 0.4rem;
+  }
+
+  /* Smaller action buttons */
+  .actions-cell {
+    gap: 0.15rem;
+  }
+
+  .edit-button,
+  .delete-button {
+    width: 28px;
+    height: 28px;
+  }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .tramite-form-container {
+    padding: 1rem;
+  }
+
+  .tramite-input-group {
+    flex-direction: column;
+  }
+
+  .tramite-form-actions {
+    flex-direction: column;
+  }
+}
+
+@media (max-width: 768px) {
+  .full-width-tabview .p-tabview-nav {
+    flex-direction: column;
+    /* Apila las pestañas verticalmente en móviles */
+  }
+
+  .full-width-tabview .p-tabview-nav-link {
+    width: 100%;
+  }
 }
 
 /* Responsive adjustments */
@@ -954,26 +953,16 @@
   }
 }
 
-.upload-button .p-button {
-  background-color: #e8e7e7;
-  color: #464646;
-  /* texto azul sobre fondo claro */
-  font-weight: 600;
-  border-radius: 8px;
-  padding: 0.6rem 1.2rem;
-  border: none;
-  transition: background-color 0.3s ease;
+/* Animaciones */
+@keyframes dialog-fade-in {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -60%);
+  }
+
+  to {
+    opacity: 1;
+    transform: translate(-50%, -50%);
+  }
 }
 
-.upload-button .p-button:hover {
-  background-color: #e0e0e0;
-
-}
-
-.section-icon {
-  font-size: 1.8rem;
-  color: #474747;
-  /* rojo bandera */
-  margin-right: 0.5rem;
-  vertical-align: middle;
-}

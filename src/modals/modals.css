@@ -1,0 +1,21 @@
+
+
+/* Estilos responsive */
+@media screen and (max-width: 960px) {
+  .p-dialog {
+    width: 75vw !important;
+  }
+}
+
+@media screen and (max-width: 640px) {
+  .p-dialog {
+    width: 90vw !important;
+    min-width: unset !important;
+  }
+  
+  .p-inputtext {
+    width: 100% !important;
+  }
+}
+
+

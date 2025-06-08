@@ -9,8 +9,9 @@ import { clearLogout } from "../redux/authSlice";
 import { Toast } from "primereact/toast";
 import { InputText } from "primereact/inputtext";
 import { Button } from "primereact/button";
+import "./modals.css";
 
-const ClienteModal = ({ visible, onHide,setCliente }) => {
+const ClienteModal = ({ visible, onHide, setCliente }) => {
   const [clientes, setClientes] = useState([]);
   const clienteService = ClienteService();
   const toast = useRef(null);
@@ -87,6 +88,8 @@ const ClienteModal = ({ visible, onHide,setCliente }) => {
     }));
   };
 
+
+
   const handleError = (error) => {
     if (error.response && error.response.status === 401) {
       toast.current.show({
@@ -122,19 +125,20 @@ const ClienteModal = ({ visible, onHide,setCliente }) => {
     onHide();
   }
 
+
   return (
     <>
       <Toast ref={toast} />
 
       <Dialog
-        header="Cliente"
+        header="Entidades Financieras"
         visible={visible}
         onHide={handleClose}
-        className="p-fluid min-w-min"
+        className="p-fluid min-w-min dialog-header-border"
         breakpoints={{ "960px": "75vw", "640px": "90vw" }}
         style={{ width: "80vw", minWidth: "800px" }}
       >
-        <div className="flex justify-content-center align-items-center mb-4">
+        {/* <div className="flex justify-content-center align-items-center mb-4">
           <div className="flex align-items-center" style={{ gap: "10px" }}>
             <InputText
               placeholder="Buscar Usuario"
@@ -151,11 +155,48 @@ const ClienteModal = ({ visible, onHide,setCliente }) => {
 
             <Button
               size="small"
-              className="p-button-success"
+              className="p-button-success search-button"
               label="Buscar"
               style={{ width: "100px" }}
               onClick={handleSearch}
             />
+          </div>
+        </div> */}
+
+        <div className="search-wrapper">
+          <div className="search-group">
+            <InputText
+              value={inputSearch}
+              onChange={(e) => setInputSearch(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  handleSearch();
+                }
+              }}
+              placeholder="Buscar cliente"
+              className="search-input"
+            />
+            <Button
+              icon="pi pi-search"
+              className="search-button"
+              onClick={handleSearch}
+            />
+            {inputSearch && (
+              <Button
+                icon="pi pi-times"
+                className="clear-button"
+                onClick={() => {
+                  setInputSearch("");
+                  setLazyState((prev) => ({
+                    ...prev,
+                    first: 0,
+                    page: 1,
+                    searchTerm: "", // 👈 Aquí se limpia el filtro
+                  }));
+                }}
+              />
+
+            )}
           </div>
         </div>
 
@@ -167,25 +208,25 @@ const ClienteModal = ({ visible, onHide,setCliente }) => {
           lazy
           first={lazyState.first}
           onPage={onPageChange}
-          className="p-datatable-customers"
+          className="table-container"
+          responsiveLayout="scroll"
         >
           <Column field="nombre" header="Nombre" />
           <Column field="telefono" header="Teléfono" />
           <Column field="email" header="Correo Electrónico" />
           <Column field="direccion" header="Dirección" />
-          <Column 
+          <Column
             header="Acciones"
             body={(rowData) => (
               <Button
                 label="Seleccionar"
                 icon="pi pi-check"
-                className="p-button-sm p-button-success"
+                className="tramite-button tramite-submit"
                 style={{ width: "150px" }}
                 onClick={() => {
-                  // Aquí puedes manejar la acción de seleccionar el cliente
                   console.log("Cliente seleccionado:", rowData);
-                  setCliente(rowData); // Asigna el cliente seleccionado al estado
-                  handleClose(); // Cierra el modal
+                  setCliente(rowData);
+                  handleClose();
                 }}
               />
             )}

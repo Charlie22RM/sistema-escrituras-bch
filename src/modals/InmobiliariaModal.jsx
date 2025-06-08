@@ -10,6 +10,7 @@ import { InputText } from "primereact/inputtext";
 import { Button } from "primereact/button";
 import InmobiliariaService from "../services/InmobiliariaService";
 import { DataTable } from "primereact/datatable";
+import "./modals.css";
 
 const InmobiliariaModal = ({
   visible,
@@ -130,7 +131,7 @@ const InmobiliariaModal = ({
         breakpoints={{ "960px": "75vw", "640px": "90vw" }}
         style={{ width: "80vw", minWidth: "800px" }}
       >
-        <div className="flex justify-content-center align-items-center mb-4">
+        {/* <div className="flex justify-content-center align-items-center mb-4">
           <div className="flex align-items-center" style={{ gap: "10px" }}>
             <InputText
               placeholder="Buscar inmobiliaria"
@@ -153,7 +154,45 @@ const InmobiliariaModal = ({
               onClick={handleSearch}
             />
           </div>
+        </div> */}
+
+        <div className="search-wrapper">
+          <div className="search-group">
+            <InputText
+              value={inputSearch}
+              onChange={(e) => setInputSearch(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  handleSearch();
+                }
+              }}
+              placeholder="Buscar inmobiliaria"
+              className="search-input"
+            />
+            <Button
+              icon="pi pi-search"
+              className="search-button"
+              onClick={handleSearch}
+            />
+            {inputSearch && (
+              <Button
+                icon="pi pi-times"
+                className="clear-button"
+                onClick={() => {
+                  setInputSearch("");
+                  setLazyState((prev) => ({
+                    ...prev,
+                    first: 0,
+                    page: 1,
+                    searchTerm: "", // 👈 Aquí se limpia el filtro
+                  }));
+                }}
+              />
+
+            )}
+          </div>
         </div>
+
 
         <DataTable
           value={inmobiliarias}
@@ -163,7 +202,7 @@ const InmobiliariaModal = ({
           lazy
           first={lazyState.first}
           onPage={onPageChange}
-          className="p-datatable-sm"
+          className="table-container"
         >
           <Column field="nombre" header="Nombre" />
           <Column field="cliente.nombre" header="Cliente" />
@@ -173,7 +212,7 @@ const InmobiliariaModal = ({
               <Button
                 label="Seleccionar"
                 icon="pi pi-check"
-                className="p-button-sm p-button-success"
+                className="tramite-button tramite-submit"
                 style={{ width: "150px" }}
                 onClick={() => {
                   // Aquí puedes manejar la acción de seleccionar la inmobiliaria

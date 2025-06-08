@@ -6,8 +6,9 @@ import { InputText } from "primereact/inputtext";
 import { Button } from "primereact/button";
 import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
+import "./modals.css";
 
-const ProyectoModal = ({ visible, onHide, setProyecto, canton_id }) => {
+const ProyectoModal = ({ visible, onHide, setProyecto, canton_id, inmobiliaria_id }) => {
   const [proyectos, setProyectos] = useState([]);
   const toast = useRef(null);
   const proyectoService = ProyectoService();
@@ -84,6 +85,10 @@ const ProyectoModal = ({ visible, onHide, setProyecto, canton_id }) => {
         if (canton_id && canton_id !== "0") {
           qs = `&cantonId=${canton_id}`;
         }
+        // Filtro por inmobiliaria (si está seleccionada)
+        if (inmobiliaria_id && inmobiliaria_id !== "0") {
+          qs += `&inmobiliariaId=${inmobiliaria_id}`;
+        }
         if (lazyState.searchTerm) {
           qs += `&search=${lazyState.searchTerm}`;
         }
@@ -92,10 +97,11 @@ const ProyectoModal = ({ visible, onHide, setProyecto, canton_id }) => {
         console.error("Error al cargar los proyectos:", error);
       }
     };
-    if (canton_id) {
+    // Solo ejecuta la búsqueda si hay cantón e inmobiliaria seleccionados
+    if (canton_id && inmobiliaria_id) {
       fetchData();
     }
-  }, [canton_id, lazyState.page, lazyState.rows, lazyState.searchTerm]);
+  }, [canton_id, inmobiliaria_id, lazyState.page, lazyState.rows, lazyState.searchTerm]);
 
   return (
     <>
@@ -109,10 +115,11 @@ const ProyectoModal = ({ visible, onHide, setProyecto, canton_id }) => {
         breakpoints={{ "960px": "75vw", "640px": "90vw" }}
         style={{ width: "80vw", minWidth: "800px" }}
       >
-        <div className="flex justify-content-center align-items-center mb-4">
-          <div className="flex align-items-center" style={{ gap: "10px" }}>
+
+
+        <div className="search-wrapper">
+          <div className="search-group">
             <InputText
-              placeholder="Buscar Proyecto"
               value={inputSearch}
               onChange={(e) => setInputSearch(e.target.value)}
               onKeyDown={(e) => {
@@ -120,19 +127,33 @@ const ProyectoModal = ({ visible, onHide, setProyecto, canton_id }) => {
                   handleSearch();
                 }
               }}
-              className="p-inputtext-sm"
-              style={{ width: "300px" }}
+              placeholder="Buscar proyecto"
+              className="search-input"
             />
-
             <Button
-              size="small"
-              className="p-button-success"
-              label="Buscar"
-              style={{ width: "100px" }}
+              icon="pi pi-search"
+              className="search-button"
               onClick={handleSearch}
             />
+            {inputSearch && (
+              <Button
+                icon="pi pi-times"
+                className="clear-button"
+                onClick={() => {
+                  setInputSearch("");
+                  setLazyState((prev) => ({
+                    ...prev,
+                    first: 0,
+                    page: 1,
+                    searchTerm: "", // 👈 Aquí se limpia el filtro
+                  }));
+                }}
+              />
+
+            )}
           </div>
         </div>
+
 
         <DataTable
           value={proyectos}
@@ -149,7 +170,8 @@ const ProyectoModal = ({ visible, onHide, setProyecto, canton_id }) => {
               page: e.page + 1,
             }));
           }}
-          className="p-datatable-sm"
+          emptyMessage="No hay proyectos disponibles en este cantón."
+          className="table-container"
         >
           <Column field="nombre" header="Nombre" />
           <Column field="etapa" header="Etapa" />
@@ -161,7 +183,7 @@ const ProyectoModal = ({ visible, onHide, setProyecto, canton_id }) => {
               <Button
                 label="Seleccionar"
                 icon="pi pi-check"
-                className="p-button-sm p-button-success"
+                className="tramite-button tramite-submit"
                 style={{ width: "150px" }}
                 onClick={() => {
                   setProyecto(rowData);
