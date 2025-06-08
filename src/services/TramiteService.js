@@ -8,6 +8,7 @@ const TramiteService = () => {
     const secureAxios = axios.create();
 
       // Interceptor para manejar errores globales (como 401 Unauthorized)
+      /*
       secureAxios.interceptors.response.use(
         (response) => response,
         (error) => {
@@ -24,7 +25,7 @@ const TramiteService = () => {
           return Promise.reject(error);
         }
       );
-
+      */
   const createTramite = async (data) => {
     try {
       const headers = { Authorization: `Bearer ${token}` };

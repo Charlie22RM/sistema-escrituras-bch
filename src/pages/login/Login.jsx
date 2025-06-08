@@ -11,14 +11,17 @@ import "./Login.css";
 import { Toast } from "primereact/toast";
 import { useDispatch } from 'react-redux';
 import { setLogin } from "../../redux/authSlice";
+import { setConfiguracion } from "../../redux/configuracionSlice";
 import { useNavigate } from "react-router-dom";
+import ConfiguracionService from "../../services/ConfiguracionService";
 
 const Login = () => {
     const dispatch = useDispatch();
     const toast = useRef(null);
     const navigateTo = useNavigate();
     const authService = AuthService();
-
+    const configuracionService = ConfiguracionService();
+    
     const formik = useFormik({
         initialValues: {
             email: "",
@@ -36,9 +39,37 @@ const Login = () => {
         },
     });
 
+    const getConfiguracion = async () =>{
+        try {
+            const response = await configuracionService.getAll();
+            console.log("Configuraciones obtenidas:", response);
+            const configuraciones = response.data;
+            const payload = {
+                canDeleteTramite: null,
+            };
+            if (configuraciones.length > 0) {
+                configuraciones.forEach((configuracion) => {
+                    if (configuracion.codigo === "PERMITIR_ELIMINAR_TRAMITES") {
+                        payload.canDeleteTramite = configuracion.valor === "true";
+                    }
+                });
+            }
+            console.log("Configuraciónes procesadas:", payload);
+            dispatch(setConfiguracion(payload));
+        } catch (error) {
+            console.error("Error al obtener configuraciones:", error);
+            toast.current.show({
+                severity: "error",
+                summary: "Error",
+                detail: "No se pudieron cargar las configuraciones.",
+                life: 3000,
+            });
+        }
+    }
     const handleLogin = async (values, { setSubmitting }) => {
         try {
             const response = await authService.login(values.email, values.password);
+            await getConfiguracion();
             console.log("Login exitoso:", response);
 
             toast.current.show({
