@@ -6,9 +6,9 @@ const API_URL = import.meta.env.VITE_API_BASE_URL;
 const InformeService = () => {
   const { token } = useSelector((state) => state.auth);
 
-  const getInformeTramite = async () => {
+  const getInformeTramite = async (qs="") => {
     try {
-      const response = await axios.get(`${API_URL}/informe/tramites`, {
+      const response = await axios.get(`${API_URL}/informe/tramites${qs}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },

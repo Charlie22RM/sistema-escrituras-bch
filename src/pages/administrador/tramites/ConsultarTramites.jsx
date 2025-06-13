@@ -90,7 +90,7 @@ const ConsultarTramites = () => {
       const response = await tramiteService.getTramites(
         `?page=${page || lazyState.page}&limit=${row || lazyState.rows}${qs}`
       );
-      
+
       setTramites(response.data.data);
       setTotalRecords(response.data.total);
     } catch (error) {
@@ -348,9 +348,18 @@ const ConsultarTramites = () => {
       setProyecto(null);
     }
   }, [formik.values.canton_id]);
+  
   const donwloadExcel = async () => {
     try {
-      const response = await informeService.getInformeTramite();
+      const params = new URLSearchParams();
+
+      if (search) params.append("search", search);
+      if (proyecto) params.append("proyectoId", proyecto.id);
+      if (inmobiliaria) params.append("inmobiliariaId", inmobiliaria.id);
+      if (cliente) params.append("clienteId", cliente.id);
+      if (formik.values.canton_id)
+        params.append("cantonId", formik.values.canton_id);
+      const response = await informeService.getInformeTramite(`?${params.toString()}`);
       const blob = new Blob([response], {
         type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
       });
