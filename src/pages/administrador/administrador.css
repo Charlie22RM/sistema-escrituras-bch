@@ -966,3 +966,12 @@
   }
 }
 
+/* Si necesitas más especificidad en los estilos */
+.p-inputswitch.custom-switch-active .p-inputswitch-slider {
+  background: #1e3c72;
+}
+
+.p-inputswitch.custom-switch-active:not(.p-disabled):hover .p-inputswitch-slider {
+  background: #1e3c72;
+  opacity: 0.9;
+}

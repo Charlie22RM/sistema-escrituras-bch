@@ -1093,7 +1093,7 @@ const EditarTramites = () => {
                       tooltip="Volver a página principal"
                       tooltipOptions={{ position: "top" }}
                     />
-                    <span>Aprobación de Proforma</span>
+                    <span>En Firma Matriz</span>
                   </div>
                 }
                 className="w-full md:w-6"
