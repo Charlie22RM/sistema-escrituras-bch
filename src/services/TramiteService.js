@@ -5,31 +5,14 @@ const API_URL = import.meta.env.VITE_API_BASE_URL;
 const TramiteService = () => {
   const token = useSelector((state) => state.auth.token);
 
-    const secureAxios = axios.create();
+  const secureAxios = axios.create();
 
-      // Interceptor para manejar errores globales (como 401 Unauthorized)
-      /*
-      secureAxios.interceptors.response.use(
-        (response) => response,
-        (error) => {
-          if (error.response && error.response.status === 401) {
-            // Mostrar advertencia de sesión inválida (requiere ajustar toast aquí, no es compatible con react-toastify tal como está)
-            toast.warning("No tienes permiso para acceder a esta sección.");
-    
-            // Esperar y luego redirigir (nota: dispatch y navigate no están definidos aquí, deberías mover esta lógica a otro lugar)
-            setTimeout(() => {
-              dispatch(clearLogout()); // <-- Esto fallará si no se pasa dispatch como parámetro o contexto
-              navigate("/"); // <-- Igual que dispatch
-            }, 5000);
-          }
-          return Promise.reject(error);
-        }
-      );
-      */
   const createTramite = async (data) => {
     try {
       const headers = { Authorization: `Bearer ${token}` };
-      const response = await axios.post(`${API_URL}/tramites`, data, { headers });
+      const response = await axios.post(`${API_URL}/tramites`, data, {
+        headers,
+      });
       return response.data;
     } catch (error) {
       console.error("Error al crear trámite:", error);
@@ -37,57 +20,55 @@ const TramiteService = () => {
     }
   };
 
-    const searchTramites = async (query, page = 1, limit = 10) => {
+  const getTramites = async (qs="") => {
     const headers = { Authorization: `Bearer ${token}` };
     try {
-      const url = `${API_URL}/tramites/search?query=${encodeURIComponent(query)}&page=${page}&limit=${limit}`;
-      const response = await secureAxios.get(url, { headers });
-      return response.data;
-    } catch (error) {
-      console.error("Error al buscar tramites:", error.response?.data || error.message);
-      throw error.response?.data || { message: "Error al buscar tramites" };
-    }
-  };
-
-    const getTramites = async (page = 1, limit = 10) => {
-    const headers = { Authorization: `Bearer ${token}` };
-    try {
-      const url = `${API_URL}/tramites?page=${page}&limit=${limit}`;
+      const url = `${API_URL}/tramites${qs}`;
       const response = await secureAxios.get(url, { headers });
       return response.data; // Devuelve { data, total } o similar
     } catch (error) {
-      console.error("Error al obtener trámites:", error.response?.data || error.message);
+      console.error(
+        "Error al obtener trámites:",
+        error.response?.data || error.message
+      );
       throw error.response?.data || { message: "Error al obtener trámites" };
     }
   };
 
-    const deleteTramite = async (id) => {
+  const deleteTramite = async (id) => {
     const headers = { Authorization: `Bearer ${token}` };
     try {
       const url = `${API_URL}/tramites/${id}`;
       const response = await secureAxios.delete(url, { headers });
       return response;
     } catch (error) {
-      console.error("Error al eliminar trámite:", error.response?.data || error.message);
+      console.error(
+        "Error al eliminar trámite:",
+        error.response?.data || error.message
+      );
       throw error.response?.data || { message: "Error al eliminar trámite" };
     }
   };
 
-  const findOne = async (id) =>{
+  const findOne = async (id) => {
     try {
       const headers = { Authorization: `Bearer ${token}` };
-      const response = await axios.get(`${API_URL}/tramites/${id}`, { headers });
+      const response = await axios.get(`${API_URL}/tramites/${id}`, {
+        headers,
+      });
       return response.data;
     } catch (error) {
       console.error("Error al obtener trámite:", error);
       throw error;
     }
-  }
+  };
 
-    const update = async (id, data) => {
+  const update = async (id, data) => {
     try {
       const headers = { Authorization: `Bearer ${token}` };
-      const response = await axios.put(`${API_URL}/tramites/${id}`, data, { headers });
+      const response = await axios.put(`${API_URL}/tramites/${id}`, data, {
+        headers,
+      });
       return response.data;
     } catch (error) {
       console.error("Error al actualizar trámite:", error);
@@ -96,15 +77,11 @@ const TramiteService = () => {
   };
   return {
     createTramite,
-    searchTramites,
     getTramites,
     deleteTramite,
     findOne,
     update,
   };
 };
-
-
-
 
 export default TramiteService;
