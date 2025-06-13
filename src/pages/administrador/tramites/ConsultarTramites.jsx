@@ -84,13 +84,13 @@ const ConsultarTramites = () => {
 
   const toast = useRef(null);
 
-  const loadTramites = async (qs = "") => {
+  const loadTramites = async (qs = "", page = null, row = null) => {
     setLoading(true);
     try {
       const response = await tramiteService.getTramites(
-        `?page=${lazyState.page}&limit=${lazyState.rows}${qs}`
+        `?page=${page || lazyState.page}&limit=${row || lazyState.rows}${qs}`
       );
-
+      
       setTramites(response.data.data);
       setTotalRecords(response.data.total);
     } catch (error) {
@@ -182,16 +182,16 @@ const ConsultarTramites = () => {
       try {
         let qs = search ? `&search=${search}` : "";
         if (proyecto) {
-          qs += `&proyecto=${proyecto}`;
+          qs += `&proyectoId=${proyecto}`;
         }
         if (inmobiliaria) {
-          qs += `&inmobiliaria=${inmobiliaria}`;
+          qs += `&inmobiliariaId=${inmobiliaria}`;
         }
         if (cliente) {
-          qs += `&cliente=${cliente}`;
+          qs += `&clienteId=${cliente}`;
         }
         if (formik.values.canton_id) {
-          qs += `&canton=${formik.values.canton_id}`;
+          qs += `&cantonId=${formik.values.canton_id}`;
         }
         await loadTramites(qs);
       } catch (error) {
@@ -217,6 +217,36 @@ const ConsultarTramites = () => {
       first: 0,
       page: 1,
     });
+  };
+
+  const handleClick = async () => {
+    if (lazyState.first !== 0 && lazyState.page !== 1) {
+      setLazyState({
+        ...lazyState,
+        first: 0,
+        page: 1,
+      });
+      return;
+    }
+
+    try {
+      let qs = search ? `&search=${search}` : "";
+      if (proyecto) {
+        qs += `&proyectoId=${proyecto.id}`;
+      }
+      if (inmobiliaria) {
+        qs += `&inmobiliariaId=${inmobiliaria.id}`;
+      }
+      if (cliente) {
+        qs += `&clienteId=${cliente.id}`;
+      }
+      if (formik.values.canton_id) {
+        qs += `&cantonId=${formik.values.canton_id}`;
+      }
+      await loadTramites(qs, 0, 1);
+    } catch (error) {
+      handleError(error);
+    }
   };
 
   const handleEdit = (id) => {
@@ -519,10 +549,9 @@ const ConsultarTramites = () => {
               )}
             </div>
 
-            <Button
-            type="button"
-            onClick={handleSearchClick}
-            >Buscar trámite</Button>
+            <Button type="button" onClick={handleClick}>
+              Buscar trámite
+            </Button>
           </Card>
           <div className="table-container">
             <DataTable
