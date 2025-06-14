@@ -380,11 +380,6 @@ const ConsultarTramites = () => {
             </div>
           </div>
 
-          <Button onClick={donwloadExcel} className="add-button">
-            <i className="pi pi-file-excel" />
-            Descargar Excel
-          </Button>
-
           <Button
             label="Agregar Trámite"
             className="add-button"
@@ -399,131 +394,149 @@ const ConsultarTramites = () => {
         </div>
       ) : (
         <>
-          <Card title="Filtros">
-            <div className="tramite-form-group">
-              <div className="tramite-input-group">
-                <InputText
-                  value={cliente?.nombre || ""}
-                  placeholder="Cliente"
-                  disabled
-                  className={`tramite-input ${
-                    formik.touched.cliente_id && formik.errors.cliente_id
-                      ? "p-invalid"
-                      : ""
-                  }`}
-                />
-                <Button
-                  icon="pi pi-search"
-                  label="Buscar Cliente"
-                  onClick={() => setModalVisible(true)}
-                  className="tramite-button tramite-search-button"
-                />
-              </div>
-              {formik.touched.cliente_id && formik.errors.cliente_id && (
-                <small className="tramite-error">
-                  {formik.errors.cliente_id}
-                </small>
-              )}
-            </div>
+          <div  className="w-full md:w-14">
+        
+              <form className="tramite-form">
+                <div className="tramite-form-content2">
+                  <div className="tramite-form-group">
+                    <div className="tramite-input-group">
+                      <InputText
+                        value={cliente?.nombre || ""}
+                        placeholder="Buscar Cliente"
+                        disabled
+                        className={`tramite-input ${formik.touched.cliente_id && formik.errors.cliente_id
+                          ? "p-invalid"
+                          : ""
+                          }`}
+                      />
+                      <Button
+                        icon="pi pi-search"
+                        
+                        onClick={() => setModalVisible(true)}
+                        className="tramite-button tramite-search-button"
+                      />
+                    </div>
+                    {formik.touched.cliente_id && formik.errors.cliente_id && (
+                      <small className="tramite-error">
+                        {formik.errors.cliente_id}
+                      </small>
+                    )}
+                  </div>
 
-            {/* Input Inmobiliaria */}
-            <div className="tramite-form-group">
-              <div className="tramite-input-group">
-                <InputText
-                  value={inmobiliaria?.nombre || ""}
-                  placeholder="Inmobiliaria"
-                  disabled
-                  className={`tramite-input ${
-                    formik.touched.inmobiliaria_id &&
-                    formik.errors.inmobiliaria_id
-                      ? "p-invalid"
-                      : ""
-                  }`}
-                />
-                <Button
-                  icon="pi pi-search"
-                  label="Buscar Inmobiliaria"
-                  onClick={() => {
-                    if (!formik.values.cliente_id) {
-                      toast.current.show({
-                        severity: "warn",
-                        summary: "Advertencia",
-                        detail: "Primero seleccione un cliente",
-                        life: 3000,
-                      });
-                      return;
-                    }
-                    setModalInmobiliariaVisible(true);
-                  }}
-                  className="tramite-button tramite-search-button"
-                />
-              </div>
-              {formik.touched.inmobiliaria_id &&
-                formik.errors.inmobiliaria_id && (
-                  <small className="tramite-error">
-                    {formik.errors.inmobiliaria_id}
-                  </small>
-                )}
-            </div>
+                  {/* Input Inmobiliaria */}
+                  <div className="tramite-form-group">
+                    <div className="tramite-input-group">
+                      <InputText
+                        value={inmobiliaria?.nombre || ""}
+                        placeholder="Buscar Inmobiliaria"
+                        disabled
+                        className={`tramite-input ${formik.touched.inmobiliaria_id &&
+                          formik.errors.inmobiliaria_id
+                          ? "p-invalid"
+                          : ""
+                          }`}
+                      />
+                      <Button
+                        icon="pi pi-search"
+                      
+                        onClick={() => {
+                          if (!formik.values.cliente_id) {
+                            toast.current.show({
+                              severity: "warn",
+                              summary: "Advertencia",
+                              detail: "Primero seleccione un cliente",
+                              life: 3000,
+                            });
+                            return;
+                          }
+                          setModalInmobiliariaVisible(true);
+                        }}
+                        className="tramite-button tramite-search-button"
+                      />
+                    </div>
+                    {formik.touched.inmobiliaria_id &&
+                      formik.errors.inmobiliaria_id && (
+                        <small className="tramite-error">
+                          {formik.errors.inmobiliaria_id}
+                        </small>
+                      )}
+                  </div>
 
-            {/* Input Cantón */}
-            <div className="tramite-form-group" onClick={showDisabledMessage}>
-              <Dropdown
-                id="canton_id"
-                name="canton_id"
-                value={formik.values.canton_id}
-                onChange={formik.handleChange}
-                onBlur={formik.handleBlur}
-                options={cantones}
-                optionLabel="nombre"
-                optionValue="id"
-                placeholder="Seleccione un cantón"
-                className={`tramite-dropdown ${
-                  formik.touched.canton_id && formik.errors.canton_id
-                    ? "p-invalid"
-                    : ""
-                }`}
-                disabled={!cliente || !inmobiliaria}
-              />
-              {formik.touched.canton_id && formik.errors.canton_id && (
-                <small className="tramite-error">
-                  {formik.errors.canton_id}
-                </small>
-              )}
-            </div>
+                  {/* Input Cantón */}
+                  <div className="tramite-form-group" onClick={showDisabledMessage}>
+                    <Dropdown
+                      id="canton_id"
+                      name="canton_id"
+                      value={formik.values.canton_id}
+                      onChange={formik.handleChange}
+                      onBlur={formik.handleBlur}
+                      options={cantones}
+                      optionLabel="nombre"
+                      optionValue="id"
+                      placeholder="Seleccione un cantón"
+                      className={`tramite-dropdown ${formik.touched.canton_id && formik.errors.canton_id
+                        ? "p-invalid"
+                        : ""
+                        }`}
+                      disabled={!cliente || !inmobiliaria}
+                    />
+                    {formik.touched.canton_id && formik.errors.canton_id && (
+                      <small className="tramite-error">
+                        {formik.errors.canton_id}
+                      </small>
+                    )}
+                  </div>
 
-            {/* Input Proyecto */}
-            <div className="tramite-form-group">
-              <div className="tramite-input-group">
-                <InputText
-                  value={proyecto?.nombre || ""}
-                  placeholder="Proyecto"
-                  disabled
-                  className={`tramite-input ${
-                    formik.touched.proyecto_id && formik.errors.proyecto_id
-                      ? "p-invalid"
-                      : ""
-                  }`}
-                />
-                <Button
-                  icon="pi pi-search"
-                  label="Buscar Proyecto"
-                  onClick={handleModalProyecto}
-                  className="tramite-button tramite-search-button"
-                />
-              </div>
-              {formik.touched.proyecto_id && formik.errors.proyecto_id && (
-                <small className="tramite-error">
-                  {formik.errors.proyecto_id}
-                </small>
-              )}
-            </div>
+                  {/* Input Proyecto */}
+                  <div className="tramite-form-group">
+                    <div className="tramite-input-group">
+                      <InputText
+                        value={proyecto?.nombre || ""}
+                        placeholder="Buscar Proyecto"
+                        disabled
+                        className={`tramite-input ${formik.touched.proyecto_id && formik.errors.proyecto_id
+                          ? "p-invalid"
+                          : ""
+                          }`}
+                      />
+                      <Button
+                        icon="pi pi-search"
+          
+                        onClick={handleModalProyecto}
+                        className="tramite-button tramite-search-button"
+                      />
+                    </div>
+                    {formik.touched.proyecto_id && formik.errors.proyecto_id && (
+                      <small className="tramite-error">
+                        {formik.errors.proyecto_id}
+                      </small>
+                    )}
+                  </div>
+                  <div className="tramite-form-group">
+                    <div className="tramite-input-group">
+                      <Button
+                        type="button"
+                        icon="pi pi-filter"
+                        className="tramite-button tramite-submit"
+                        onClick={handleSearchClick}
+                      ></Button>
+                      <Button onClick={donwloadExcel} className="tramite-button tramite-search-button">
+                        <i className="pi pi-file-excel" />
+                        Descargar Excel
+                      </Button>
+                    </div>
+                  </div>
 
-            <Button
-            type="button"
-            onClick={handleSearchClick}
-            >Buscar trámite</Button>
-          </Card>
+
+
+
+
+                </div>
+
+
+              </form>
+ 
+          </div>
           <div className="table-container">
             <DataTable
               value={tramites}
@@ -563,13 +576,13 @@ const ConsultarTramites = () => {
                   (rowData) =>
                     rowData.fecha_asignacion
                       ? new Date(rowData.fecha_asignacion).toLocaleDateString(
-                          "es-EC",
-                          {
-                            year: "numeric",
-                            month: "2-digit",
-                            day: "2-digit",
-                          }
-                        )
+                        "es-EC",
+                        {
+                          year: "numeric",
+                          month: "2-digit",
+                          day: "2-digit",
+                        }
+                      )
                       : "" // o puedes poner 'Sin revisar' u otro texto
                 }
               />
@@ -581,12 +594,12 @@ const ConsultarTramites = () => {
                   (rowData) =>
                     rowData.fecha_revision_titulo
                       ? new Date(
-                          rowData.fecha_revision_titulo
-                        ).toLocaleDateString("es-EC", {
-                          year: "numeric",
-                          month: "2-digit",
-                          day: "2-digit",
-                        })
+                        rowData.fecha_revision_titulo
+                      ).toLocaleDateString("es-EC", {
+                        year: "numeric",
+                        month: "2-digit",
+                        day: "2-digit",
+                      })
                       : "" // o puedes poner 'Sin revisar' u otro texto
                 }
               />
@@ -598,12 +611,12 @@ const ConsultarTramites = () => {
                   (rowData) =>
                     rowData.fecha_envio_liquidar_impuesto
                       ? new Date(
-                          rowData.fecha_envio_liquidar_impuesto
-                        ).toLocaleDateString("es-EC", {
-                          year: "numeric",
-                          month: "2-digit",
-                          day: "2-digit",
-                        })
+                        rowData.fecha_envio_liquidar_impuesto
+                      ).toLocaleDateString("es-EC", {
+                        year: "numeric",
+                        month: "2-digit",
+                        day: "2-digit",
+                      })
                       : "" // o puedes poner 'Sin revisar' u otro texto
                 }
               />
@@ -620,12 +633,12 @@ const ConsultarTramites = () => {
                   (rowData) =>
                     rowData.fecha_envio_aprobacion_proforma
                       ? new Date(
-                          rowData.fecha_envio_aprobacion_proforma
-                        ).toLocaleDateString("es-EC", {
-                          year: "numeric",
-                          month: "2-digit",
-                          day: "2-digit",
-                        })
+                        rowData.fecha_envio_aprobacion_proforma
+                      ).toLocaleDateString("es-EC", {
+                        year: "numeric",
+                        month: "2-digit",
+                        day: "2-digit",
+                      })
                       : "" // o puedes poner 'Sin revisar' u otro texto
                 }
               />
@@ -637,12 +650,12 @@ const ConsultarTramites = () => {
                   (rowData) =>
                     rowData.fecha_envio_aprobacion_proforma
                       ? new Date(
-                          rowData.fecha_envio_aprobacion_proforma
-                        ).toLocaleDateString("es-EC", {
-                          year: "numeric",
-                          month: "2-digit",
-                          day: "2-digit",
-                        })
+                        rowData.fecha_envio_aprobacion_proforma
+                      ).toLocaleDateString("es-EC", {
+                        year: "numeric",
+                        month: "2-digit",
+                        day: "2-digit",
+                      })
                       : "" // o puedes poner 'Sin revisar' u otro texto
                 }
               />
@@ -659,12 +672,12 @@ const ConsultarTramites = () => {
                   (rowData) =>
                     rowData.fecha_firma_matriz_cliente
                       ? new Date(
-                          rowData.fecha_firma_matriz_cliente
-                        ).toLocaleDateString("es-EC", {
-                          year: "numeric",
-                          month: "2-digit",
-                          day: "2-digit",
-                        })
+                        rowData.fecha_firma_matriz_cliente
+                      ).toLocaleDateString("es-EC", {
+                        year: "numeric",
+                        month: "2-digit",
+                        day: "2-digit",
+                      })
                       : "" // o puedes poner 'Sin revisar' u otro texto
                 }
               />
@@ -676,12 +689,12 @@ const ConsultarTramites = () => {
                   (rowData) =>
                     rowData.fecha_retorno_matriz_firmada
                       ? new Date(
-                          rowData.fecha_retorno_matriz_firmada
-                        ).toLocaleDateString("es-EC", {
-                          year: "numeric",
-                          month: "2-digit",
-                          day: "2-digit",
-                        })
+                        rowData.fecha_retorno_matriz_firmada
+                      ).toLocaleDateString("es-EC", {
+                        year: "numeric",
+                        month: "2-digit",
+                        day: "2-digit",
+                      })
                       : "" // o puedes poner 'Sin revisar' u otro texto
                 }
               />
@@ -699,12 +712,12 @@ const ConsultarTramites = () => {
                   (rowData) =>
                     rowData.fecha_ingreso_registro
                       ? new Date(
-                          rowData.fecha_ingreso_registro
-                        ).toLocaleDateString("es-EC", {
-                          year: "numeric",
-                          month: "2-digit",
-                          day: "2-digit",
-                        })
+                        rowData.fecha_ingreso_registro
+                      ).toLocaleDateString("es-EC", {
+                        year: "numeric",
+                        month: "2-digit",
+                        day: "2-digit",
+                      })
                       : "" // o puedes poner 'Sin revisar' u otro texto
                 }
               />
@@ -716,12 +729,12 @@ const ConsultarTramites = () => {
                   (rowData) =>
                     rowData.fecha_tentativa_inscripcion
                       ? new Date(
-                          rowData.fecha_tentativa_inscripcion
-                        ).toLocaleDateString("es-EC", {
-                          year: "numeric",
-                          month: "2-digit",
-                          day: "2-digit",
-                        })
+                        rowData.fecha_tentativa_inscripcion
+                      ).toLocaleDateString("es-EC", {
+                        year: "numeric",
+                        month: "2-digit",
+                        day: "2-digit",
+                      })
                       : "" // o puedes poner 'Sin revisar' u otro texto
                 }
               />
@@ -733,13 +746,13 @@ const ConsultarTramites = () => {
                   (rowData) =>
                     rowData.fecha_inscripcion
                       ? new Date(rowData.fecha_inscripcion).toLocaleDateString(
-                          "es-EC",
-                          {
-                            year: "numeric",
-                            month: "2-digit",
-                            day: "2-digit",
-                          }
-                        )
+                        "es-EC",
+                        {
+                          year: "numeric",
+                          month: "2-digit",
+                          day: "2-digit",
+                        }
+                      )
                       : "" // o puedes poner 'Sin revisar' u otro texto
                 }
               />
@@ -751,12 +764,12 @@ const ConsultarTramites = () => {
                   (rowData) =>
                     rowData.fecha_ingreso_catastro
                       ? new Date(
-                          rowData.fecha_ingreso_catastro
-                        ).toLocaleDateString("es-EC", {
-                          year: "numeric",
-                          month: "2-digit",
-                          day: "2-digit",
-                        })
+                        rowData.fecha_ingreso_catastro
+                      ).toLocaleDateString("es-EC", {
+                        year: "numeric",
+                        month: "2-digit",
+                        day: "2-digit",
+                      })
                       : "" // o puedes poner 'Sin revisar' u otro texto
                 }
               />
@@ -768,12 +781,12 @@ const ConsultarTramites = () => {
                   (rowData) =>
                     rowData.fecha_tentativa_catastro
                       ? new Date(
-                          rowData.fecha_tentativa_catastro
-                        ).toLocaleDateString("es-EC", {
-                          year: "numeric",
-                          month: "2-digit",
-                          day: "2-digit",
-                        })
+                        rowData.fecha_tentativa_catastro
+                      ).toLocaleDateString("es-EC", {
+                        year: "numeric",
+                        month: "2-digit",
+                        day: "2-digit",
+                      })
                       : "" // o puedes poner 'Sin revisar' u otro texto
                 }
               />
@@ -785,13 +798,13 @@ const ConsultarTramites = () => {
                   (rowData) =>
                     rowData.fecha_catastro
                       ? new Date(rowData.fecha_catastro).toLocaleDateString(
-                          "es-EC",
-                          {
-                            year: "numeric",
-                            month: "2-digit",
-                            day: "2-digit",
-                          }
-                        )
+                        "es-EC",
+                        {
+                          year: "numeric",
+                          month: "2-digit",
+                          day: "2-digit",
+                        }
+                      )
                       : "" // o puedes poner 'Sin revisar' u otro texto
                 }
               />

@@ -559,6 +559,18 @@
   gap: 1.5rem;
 }
 
+.tramite-form-content2 {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.5rem;
+}
+
+@media (min-width: 768px) {
+  .tramite-form-content2 {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
 /* Grupos de campos */
 .tramite-form-group {
   display: flex;
