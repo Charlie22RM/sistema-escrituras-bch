@@ -84,11 +84,11 @@ const ConsultarTramites = () => {
 
   const toast = useRef(null);
 
-  const loadTramites = async (qs = "") => {
+  const loadTramites = async (qs = "", page = null, row = null) => {
     setLoading(true);
     try {
       const response = await tramiteService.getTramites(
-        `?page=${lazyState.page}&limit=${lazyState.rows}${qs}`
+        `?page=${page || lazyState.page}&limit=${row || lazyState.rows}${qs}`
       );
 
       setTramites(response.data.data);
@@ -182,16 +182,16 @@ const ConsultarTramites = () => {
       try {
         let qs = search ? `&search=${search}` : "";
         if (proyecto) {
-          qs += `&proyecto=${proyecto}`;
+          qs += `&proyectoId=${proyecto}`;
         }
         if (inmobiliaria) {
-          qs += `&inmobiliaria=${inmobiliaria}`;
+          qs += `&inmobiliariaId=${inmobiliaria}`;
         }
         if (cliente) {
-          qs += `&cliente=${cliente}`;
+          qs += `&clienteId=${cliente}`;
         }
         if (formik.values.canton_id) {
-          qs += `&canton=${formik.values.canton_id}`;
+          qs += `&cantonId=${formik.values.canton_id}`;
         }
         await loadTramites(qs);
       } catch (error) {
@@ -217,6 +217,36 @@ const ConsultarTramites = () => {
       first: 0,
       page: 1,
     });
+  };
+
+  const handleClick = async () => {
+    if (lazyState.first !== 0 && lazyState.page !== 1) {
+      setLazyState({
+        ...lazyState,
+        first: 0,
+        page: 1,
+      });
+      return;
+    }
+
+    try {
+      let qs = search ? `&search=${search}` : "";
+      if (proyecto) {
+        qs += `&proyectoId=${proyecto.id}`;
+      }
+      if (inmobiliaria) {
+        qs += `&inmobiliariaId=${inmobiliaria.id}`;
+      }
+      if (cliente) {
+        qs += `&clienteId=${cliente.id}`;
+      }
+      if (formik.values.canton_id) {
+        qs += `&cantonId=${formik.values.canton_id}`;
+      }
+      await loadTramites(qs, 0, 1);
+    } catch (error) {
+      handleError(error);
+    }
   };
 
   const handleEdit = (id) => {
@@ -318,9 +348,18 @@ const ConsultarTramites = () => {
       setProyecto(null);
     }
   }, [formik.values.canton_id]);
+  
   const donwloadExcel = async () => {
     try {
-      const response = await informeService.getInformeTramite();
+      const params = new URLSearchParams();
+
+      if (search) params.append("search", search);
+      if (proyecto) params.append("proyectoId", proyecto.id);
+      if (inmobiliaria) params.append("inmobiliariaId", inmobiliaria.id);
+      if (cliente) params.append("clienteId", cliente.id);
+      if (formik.values.canton_id)
+        params.append("cantonId", formik.values.canton_id);
+      const response = await informeService.getInformeTramite(`?${params.toString()}`);
       const blob = new Blob([response], {
         type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
       });
