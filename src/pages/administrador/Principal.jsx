@@ -1,169 +1,14 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { useDispatch } from 'react-redux';
-import { useNavigate, Outlet } from 'react-router-dom';
-import { clearLogout } from '../../redux/authSlice';
-import './styles.css';
+import React, { useState, useEffect, useRef } from "react";
+import { useSelector, useDispatch } from "react-redux";
+import { useNavigate, Outlet } from "react-router-dom";
+import { clearLogout } from "../../redux/authSlice";
+import "./styles.css";
 
-import { Button } from 'primereact/button';
-import { Avatar } from 'primereact/avatar';
-
-// const Principal = () => {
-//   // Estados para manejar visibilidad del dropdown y sidebar
-//   const [isDropdownVisible, setIsDropdownVisible] = useState(false);
-//   const [isSidebarVisible, setIsSidebarVisible] = useState(false);
-
-//   // Refs para detectar clics fuera de los componentes
-//   const dropdownRef = useRef(null);
-//   const sidebarRef = useRef(null);
-//   const toggleButtonRef = useRef(null);
-//   const userButtonRef = useRef(null);
-
-//   const navigate = useNavigate(); // Hook para redirección
-//   const dispatch = useDispatch(); // Hook para acciones Redux
-
-//   // Alternar visibilidad del menú desplegable (dropdown)
-//   const toggleDropdown = () => {
-//     setIsDropdownVisible(prev => !prev);
-//   };
-
-//   // Alternar visibilidad del menú lateral (sidebar)
-//   const toggleSidebar = () => {
-//     setIsSidebarVisible(prev => !prev);
-//   };
-
-//   // Manejar opción de configuración
-//   const handleOptionConfig = (option) => {
-//     if (option === 'config') {
-//       navigate('./config');
-//     }
-//     setIsDropdownVisible(false);
-//   };
-
-//   // Manejar opción de cambio de contraseña
-//   const handleOptionCambCont = (option) => {
-//     if (option === 'cambCont') {
-//       navigate('./cambio-contrasena');
-//     }
-//     setIsDropdownVisible(false);
-//   };
-
-//   // Manejar opción de cerrar sesión
-//   const handleOptionLogout = (option) => {
-//     if (option === 'logout') {
-//       dispatch(clearLogout()); // Limpia el estado de autenticación
-//       navigate('/'); // Redirige al login
-//     }
-//     setIsDropdownVisible(false);
-//   };
-
-//   // Efecto para cerrar el dropdown o sidebar si se hace clic fuera
-//   useEffect(() => {
-//     const handleClickOutside = (event) => {
-//       // Cierra el dropdown si se hace clic fuera de él
-//       if (
-//         dropdownRef.current &&
-//         !dropdownRef.current.contains(event.target) &&
-//         !userButtonRef.current.contains(event.target)
-//       ) {
-//         setIsDropdownVisible(false);
-//       }
-
-//       // Cierra el sidebar si se hace clic fuera de él
-//       if (
-//         sidebarRef.current &&
-//         !sidebarRef.current.contains(event.target) &&
-//         !toggleButtonRef.current.contains(event.target)
-//       ) {
-//         setIsSidebarVisible(false);
-//       }
-//     };
-
-//     // Agrega el evento al montar el componente
-//     document.addEventListener('mousedown', handleClickOutside);
-
-//     // Limpia el evento al desmontar
-//     return () => {
-//       document.removeEventListener('mousedown', handleClickOutside);
-//     };
-//   }, []);
-
-//   return (
-//     <div className="main-container">
-//       {/* Sidebar con navegación - visible solo si isSidebarVisible es true */}
-//       <div className={`sidebar ${isSidebarVisible ? 'sidebar-visible' : ''}`} ref={sidebarRef}>
-//         <div className="sidebar-item" onClick={() => navigate('/administrador')}>
-//           <i className="pi pi-clipboard"></i> Trámites
-//         </div>
-//         <div className="sidebar-item" onClick={() => navigate('./consultar-cliente')}>
-//           <i className="pi pi-building-columns"></i> Clientes
-//         </div>
-//         <div className="sidebar-item" onClick={() => navigate('./consultar-inmobiliaria')}>
-//           <i className="pi pi-building"></i> Inmobiliarias
-//         </div>
-//         <div className="sidebar-item" onClick={() => navigate('./consultar-canton')}>
-//           <i className="pi pi-map"></i> Cantones
-//         </div>
-//         <div className="sidebar-item" onClick={() => navigate('./consultar-proyecto')}>
-//           <i className="pi pi-home"></i> Proyectos
-//         </div>
-//         <div className="sidebar-item" onClick={() => navigate('./consultar-usuario')}>
-//           <i className="pi pi-users"></i> Usuarios
-//         </div>
-//       </div>
-
-//       {/* Contenedor principal del contenido */}
-//       <div className={`content ${isSidebarVisible ? 'content-shifted' : ''}`}>
-//         {/* Navbar superior */}
-//         <div className="navbar">
-//           <div className="navbar-left">
-//             <div className="navbar-title">BCHASESORES S.A.</div> {/* Título de la aplicación */}
-//             <div
-//               className="navbar-item"
-//               onClick={toggleSidebar}
-//               ref={toggleButtonRef}
-//             >
-//               <i className="pi pi-bars"></i> {/* Icono de menú */}
-//             </div>
-//           </div>
-//           <div className="navbar-right">
-//             <div
-//               className="navbar-item"
-//               onClick={toggleDropdown}
-//               ref={userButtonRef}
-//             >
-//               <i className="pi pi-user"></i> {/* Icono de usuario */}
-//             </div>
-//           </div>
-//         </div>
-
-
-//         {/* Menú desplegable del usuario (Configuración, Cambio de contraseña, Logout) */}
-//         {isDropdownVisible && (
-//           <div className="dropdown-menu" ref={dropdownRef}>
-//             <div className="dropdown-item" onClick={() => handleOptionConfig('config')}>
-//               <i className="pi pi-cog"></i> Configuración
-//             </div>
-//             <div className="dropdown-item" onClick={() => handleOptionCambCont('cambCont')}>
-//               <i className="pi pi-lock"></i> Cambio de Contraseña
-//             </div>
-//             <div className="dropdown-item" onClick={() => handleOptionLogout('logout')}>
-//               <i className="pi pi-sign-out"></i> Cerrar Sesión
-//             </div>
-//           </div>
-//         )}
-
-//         {/* Aquí se renderiza el contenido hijo usando Outlet de React Router */}
-//         <div className="main-content">
-//           <Outlet />
-//         </div>
-//       </div>
-//     </div>
-//   );
-// };
-
-// export default Principal;
+import { Button } from "primereact/button";
+import { Avatar } from "primereact/avatar";
 
 const Principal = () => {
+  const { perfilId } = useSelector((state) => state.auth);
   const [isDropdownVisible, setIsDropdownVisible] = useState(false);
   const [isSidebarVisible, setIsSidebarVisible] = useState(true); // Sidebar visible por defecto
 
@@ -177,8 +22,8 @@ const Principal = () => {
   const dispatch = useDispatch();
 
   // Handlers
-  const toggleDropdown = () => setIsDropdownVisible(prev => !prev);
-  const toggleSidebar = () => setIsSidebarVisible(prev => !prev);
+  const toggleDropdown = () => setIsDropdownVisible((prev) => !prev);
+  const toggleSidebar = () => setIsSidebarVisible((prev) => !prev);
 
   const handleNavigation = (path) => {
     navigate(path);
@@ -187,33 +32,36 @@ const Principal = () => {
 
   const handleLogout = () => {
     dispatch(clearLogout());
-    navigate('/');
+    navigate("/");
   };
 
   // Effect para cerrar al hacer clic fuera
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
-        if (userButtonRef.current && !userButtonRef.current.contains(event.target)) {
+        if (
+          userButtonRef.current &&
+          !userButtonRef.current.contains(event.target)
+        ) {
           setIsDropdownVisible(false);
         }
       }
     };
 
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
   return (
     <div className="principal-container">
       {/* Sidebar */}
       <div
-        className={`principal-sidebar ${isSidebarVisible ? 'visible' : ''}`}
+        className={`principal-sidebar ${isSidebarVisible ? "visible" : ""}`}
         ref={sidebarRef}
       >
         <div className="sidebar-header">
           <div className="sidebar-logo">
-            <i className="pi pi-building" style={{ fontSize: '1.5rem' }} />
+            <i className="pi pi-building" style={{ fontSize: "1.5rem" }} />
             <span>BCHASESORES</span>
           </div>
           <Button
@@ -226,51 +74,60 @@ const Principal = () => {
         <div className="sidebar-menu">
           <div
             className="menu-item"
-            onClick={() => handleNavigation('/administrador')}
+            onClick={() => handleNavigation("/administrador")}
           >
             <i className="pi pi-clipboard"></i>
             <span>Trámites</span>
           </div>
-          <div
-            className="menu-item"
-            onClick={() => handleNavigation('./consultar-cliente')}
-          >
-            <i className="pi pi-building-columns"></i>
-            <span>Clientes</span>
-          </div>
-          <div
-            className="menu-item"
-            onClick={() => handleNavigation('./consultar-inmobiliaria')}
-          >
-            <i className="pi pi-building"></i>
-            <span>Inmobiliarias</span>
-          </div>
-          <div
-            className="menu-item"
-            onClick={() => handleNavigation('./consultar-canton')}
-          >
-            <i className="pi pi-map"></i>
-            <span>Cantones</span>
-          </div>
-          <div
-            className="menu-item"
-            onClick={() => handleNavigation('./consultar-proyecto')}
-          >
-            <i className="pi pi-home"></i>
-            <span>Proyectos</span>
-          </div>
-          <div
-            className="menu-item"
-            onClick={() => handleNavigation('./consultar-usuario')}
-          >
-            <i className="pi pi-users"></i>
-            <span>Usuarios</span>
-          </div>
+          {perfilId == 1 && (
+            <>
+              <div
+                className="menu-item"
+                onClick={() => handleNavigation("./consultar-cliente")}
+              >
+                <i className="pi pi-building-columns"></i>
+                <span>Clientes</span>
+              </div>
+              <div
+                className="menu-item"
+                onClick={() => handleNavigation("./consultar-inmobiliaria")}
+              >
+                <i className="pi pi-building"></i>
+                <span>Inmobiliarias</span>
+              </div>
+              <div
+                className="menu-item"
+                onClick={() => handleNavigation("./consultar-canton")}
+              >
+                <i className="pi pi-map"></i>
+                <span>Cantones</span>
+              </div>
+              <div
+                className="menu-item"
+                onClick={() => handleNavigation("./consultar-proyecto")}
+              >
+                <i className="pi pi-home"></i>
+                <span>Proyectos</span>
+              </div>
+              <div
+                className="menu-item"
+                onClick={() => handleNavigation("./consultar-usuario")}
+              >
+                <i className="pi pi-users"></i>
+                <span>Usuarios</span>
+              </div>
+            </>
+          )}
         </div>
 
         <div className="sidebar-footer">
           <div className="user-info">
-            <Avatar icon="pi pi-user" shape="circle" size="large" className="bg-indigo-500 text-black" />
+            <Avatar
+              icon="pi pi-user"
+              shape="circle"
+              size="large"
+              className="bg-indigo-500 text-black"
+            />
             <div className="user-details">
               <span className="username">Usuario</span>
               <span className="user-role">Administrador</span>
@@ -280,7 +137,9 @@ const Principal = () => {
       </div>
 
       {/* Main Content */}
-      <div className={`principal-content ${isSidebarVisible ? '' : 'full-width'}`}>
+      <div
+        className={`principal-content ${isSidebarVisible ? "" : "full-width"}`}
+      >
         {/* Navbar */}
         <div className="principal-navbar">
           <div className="navbar-left">
@@ -316,7 +175,7 @@ const Principal = () => {
                   <div className="dropdown-body">
                     <button
                       className="dropdown-item"
-                      onClick={() => handleNavigation('./config')}
+                      onClick={() => handleNavigation("./config")}
                       aria-label="Configuración"
                     >
                       <i className="pi pi-cog"></i>
@@ -325,7 +184,7 @@ const Principal = () => {
                     </button>
                     <button
                       className="dropdown-item"
-                      onClick={() => handleNavigation('./cambio-contrasena')}
+                      onClick={() => handleNavigation("./cambio-contrasena")}
                       aria-label="Cambiar contraseña"
                     >
                       <i className="pi pi-lock"></i>
@@ -355,21 +214,28 @@ const Principal = () => {
           <Outlet />
         </div>
 
-                     {/* Footer */}
-      <footer className="principal-footer dark">
-        <div className="footer-content">
-          <div className="footer-left">
-            <span>© {new Date().getFullYear()} BCHASESORES S.A. Todos los derechos reservados.</span>
+        {/* Footer */}
+        <footer className="principal-footer dark">
+          <div className="footer-content">
+            <div className="footer-left">
+              <span>
+                © {new Date().getFullYear()} BCHASESORES S.A. Todos los derechos
+                reservados.
+              </span>
+            </div>
+            <div className="footer-right">
+              <span>Versión 1.0.0</span>
+              <span className="footer-separator">|</span>
+              <a href="#" className="footer-link">
+                Aviso Legal
+              </a>
+              <span className="footer-separator">|</span>
+              <a href="#" className="footer-link">
+                Preguntas Frecuentes (FAQ)
+              </a>
+            </div>
           </div>
-          <div className="footer-right">
-            <span>Versión 1.0.0</span>
-            <span className="footer-separator">|</span>
-            <a href="#" className="footer-link">Aviso Legal</a>
-            <span className="footer-separator">|</span>
-            <a href="#" className="footer-link">Preguntas Frecuentes (FAQ)</a>
-          </div>
-        </div>
-      </footer>
+        </footer>
       </div>
     </div>
   );
