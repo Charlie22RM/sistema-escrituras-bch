@@ -294,7 +294,7 @@ const CrearTramites = () => {
                   optionLabel="nombre"
                   optionValue="id"
                   placeholder="Seleccione un cantón"
-                  className={`tramite-dropdown ${formik.touched.canton_id && formik.errors.canton_id ? "p-invalid" : ""}`}
+                  className={`${formik.touched.canton_id && formik.errors.canton_id ? "p-invalid" : ""}`}
                   disabled={!cliente || !inmobiliaria}
                 />
                 {formik.touched.canton_id && formik.errors.canton_id && (
@@ -369,7 +369,7 @@ const CrearTramites = () => {
                   dateFormat="dd/mm/yy"
                   showIcon
                   placeholder="Fecha del trámite"
-                  className={`tramite-calendar ${formik.submitCount > 0 && formik.errors.fecha_asignacion ? "p-invalid" : ""}`}
+                  className={`${formik.submitCount > 0 && formik.errors.fecha_asignacion ? "p-invalid" : ""}`}
                 />
                 {formik.submitCount > 0 && formik.errors.fecha_asignacion && (
                   <small className="tramite-error">{formik.errors.fecha_asignacion}</small>

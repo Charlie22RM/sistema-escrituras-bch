@@ -507,7 +507,7 @@ const ConsultarTramites = () => {
                     optionLabel="nombre"
                     optionValue="id"
                     placeholder="Seleccione un cantón"
-                    className={`tramite-dropdown ${formik.touched.canton_id && formik.errors.canton_id
+                    className={`${formik.touched.canton_id && formik.errors.canton_id
                       ? "p-invalid"
                       : ""
                       }`}
