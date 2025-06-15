@@ -190,8 +190,8 @@ const ConsultarTramites = () => {
         if (cliente) {
           qs += `&cliente=${cliente}`;
         }
-        if (formik.values.canton_id) {
-          qs += `&canton=${formik.values.canton_id}`;
+        if (formik.values.canton_id != null) {
+          qs += `&cantonId=${formik.values.canton_id}`;
         }
         await loadTramites(qs);
       } catch (error) {
@@ -553,7 +553,7 @@ const ConsultarTramites = () => {
                         className="tramite-button tramite-submit"
                         onClick={handleClick}
                       ></Button>
-                      <Button onClick={donwloadExcel} className="tramite-button tramite-search-button">
+                      <Button onClick={donwloadExcel} className="tramite-button tramite-search-button" type="button">
                         <i className="pi pi-file-excel" />
                         Descargar Excel
                       </Button>
