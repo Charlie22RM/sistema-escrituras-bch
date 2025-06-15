@@ -228,7 +228,7 @@ const ConsultarTramites = () => {
       });
       return;
     }
-
+    setSearch(searchInput);
     try {
       let qs = search ? `&search=${search}` : "";
       if (proyecto) {
@@ -243,7 +243,9 @@ const ConsultarTramites = () => {
       if (formik.values.canton_id) {
         qs += `&cantonId=${formik.values.canton_id}`;
       }
-      await loadTramites(qs, 0, 1);
+      const page = 0;
+      const row = 10;
+      await loadTramites(qs, page, row);
     } catch (error) {
       handleError(error);
     }
@@ -450,7 +452,7 @@ const ConsultarTramites = () => {
                       />
                       <Button
                         icon="pi pi-search"
-                        
+                        type="button"
                         onClick={() => setModalVisible(true)}
                         className="tramite-button tramite-search-button"
                       />
@@ -477,7 +479,7 @@ const ConsultarTramites = () => {
                       />
                       <Button
                         icon="pi pi-search"
-                      
+                        type="button"
                         onClick={() => {
                           if (!formik.values.cliente_id) {
                             toast.current.show({
@@ -540,7 +542,7 @@ const ConsultarTramites = () => {
                       />
                       <Button
                         icon="pi pi-search"
-          
+                        type="button"  
                         onClick={handleModalProyecto}
                         className="tramite-button tramite-search-button"
                       />
@@ -557,7 +559,7 @@ const ConsultarTramites = () => {
                         type="button"
                         icon="pi pi-filter"
                         className="tramite-button tramite-submit"
-                        onClick={handleSearchClick}
+                        onClick={handleClick}
                       ></Button>
                       <Button onClick={donwloadExcel} className="tramite-button tramite-search-button">
                         <i className="pi pi-file-excel" />
