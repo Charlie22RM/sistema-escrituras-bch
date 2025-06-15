@@ -238,6 +238,7 @@ const CrearTramites = () => {
                     className={`tramite-input ${formik.touched.cliente_id && formik.errors.cliente_id ? "p-invalid" : ""}`}
                   />
                   <Button
+                  
                     icon="pi pi-search"
                     label="Buscar Cliente"
                     onClick={() => setModalVisible(true)}

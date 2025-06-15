@@ -84,11 +84,11 @@ const ConsultarTramites = () => {
 
   const toast = useRef(null);
 
-  const loadTramites = async (qs = "", page = null, row = null) => {
+  const loadTramites = async (qs = "") => {
     setLoading(true);
     try {
       const response = await tramiteService.getTramites(
-        `?page=${page || lazyState.page}&limit=${row || lazyState.rows}${qs}`
+        `?page=${lazyState.page}&limit=${lazyState.rows}${qs}`
       );
 
       setTramites(response.data.data);
@@ -182,16 +182,16 @@ const ConsultarTramites = () => {
       try {
         let qs = search ? `&search=${search}` : "";
         if (proyecto) {
-          qs += `&proyectoId=${proyecto}`;
+          qs += `&proyecto=${proyecto}`;
         }
         if (inmobiliaria) {
-          qs += `&inmobiliariaId=${inmobiliaria}`;
+          qs += `&inmobiliaria=${inmobiliaria}`;
         }
         if (cliente) {
-          qs += `&clienteId=${cliente}`;
+          qs += `&cliente=${cliente}`;
         }
         if (formik.values.canton_id) {
-          qs += `&cantonId=${formik.values.canton_id}`;
+          qs += `&canton=${formik.values.canton_id}`;
         }
         await loadTramites(qs);
       } catch (error) {
@@ -211,42 +211,13 @@ const ConsultarTramites = () => {
   };
 
   const handleSearchClick = () => {
+    console.log("Filtro aplicado");
     setSearch(searchInput);
     setLazyState({
       ...lazyState,
       first: 0,
       page: 1,
     });
-  };
-
-  const handleClick = async () => {
-    if (lazyState.first !== 0 && lazyState.page !== 1) {
-      setLazyState({
-        ...lazyState,
-        first: 0,
-        page: 1,
-      });
-      return;
-    }
-
-    try {
-      let qs = search ? `&search=${search}` : "";
-      if (proyecto) {
-        qs += `&proyectoId=${proyecto.id}`;
-      }
-      if (inmobiliaria) {
-        qs += `&inmobiliariaId=${inmobiliaria.id}`;
-      }
-      if (cliente) {
-        qs += `&clienteId=${cliente.id}`;
-      }
-      if (formik.values.canton_id) {
-        qs += `&cantonId=${formik.values.canton_id}`;
-      }
-      await loadTramites(qs, 0, 1);
-    } catch (error) {
-      handleError(error);
-    }
   };
 
   const handleEdit = (id) => {
@@ -348,18 +319,9 @@ const ConsultarTramites = () => {
       setProyecto(null);
     }
   }, [formik.values.canton_id]);
-  
   const donwloadExcel = async () => {
     try {
-      const params = new URLSearchParams();
-
-      if (search) params.append("search", search);
-      if (proyecto) params.append("proyectoId", proyecto.id);
-      if (inmobiliaria) params.append("inmobiliariaId", inmobiliaria.id);
-      if (cliente) params.append("clienteId", cliente.id);
-      if (formik.values.canton_id)
-        params.append("cantonId", formik.values.canton_id);
-      const response = await informeService.getInformeTramite(`?${params.toString()}`);
+      const response = await informeService.getInformeTramite();
       const blob = new Blob([response], {
         type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
       });
@@ -433,148 +395,151 @@ const ConsultarTramites = () => {
         </div>
       ) : (
         <>
-          <div  className="w-full md:w-14">
-        
-              <form className="tramite-form">
-                <div className="tramite-form-content2">
-                  <div className="tramite-form-group">
-                    <div className="tramite-input-group">
-                      <InputText
-                        value={cliente?.nombre || ""}
-                        placeholder="Buscar Cliente"
-                        disabled
-                        className={`tramite-input ${formik.touched.cliente_id && formik.errors.cliente_id
-                          ? "p-invalid"
-                          : ""
-                          }`}
-                      />
-                      <Button
-                        icon="pi pi-search"
-                        
-                        onClick={() => setModalVisible(true)}
-                        className="tramite-button tramite-search-button"
-                      />
-                    </div>
-                    {formik.touched.cliente_id && formik.errors.cliente_id && (
-                      <small className="tramite-error">
-                        {formik.errors.cliente_id}
-                      </small>
-                    )}
-                  </div>
+          <div className="w-full md:w-14">
 
-                  {/* Input Inmobiliaria */}
-                  <div className="tramite-form-group">
-                    <div className="tramite-input-group">
-                      <InputText
-                        value={inmobiliaria?.nombre || ""}
-                        placeholder="Buscar Inmobiliaria"
-                        disabled
-                        className={`tramite-input ${formik.touched.inmobiliaria_id &&
-                          formik.errors.inmobiliaria_id
-                          ? "p-invalid"
-                          : ""
-                          }`}
-                      />
-                      <Button
-                        icon="pi pi-search"
-                      
-                        onClick={() => {
-                          if (!formik.values.cliente_id) {
-                            toast.current.show({
-                              severity: "warn",
-                              summary: "Advertencia",
-                              detail: "Primero seleccione un cliente",
-                              life: 3000,
-                            });
-                            return;
-                          }
-                          setModalInmobiliariaVisible(true);
-                        }}
-                        className="tramite-button tramite-search-button"
-                      />
-                    </div>
-                    {formik.touched.inmobiliaria_id &&
-                      formik.errors.inmobiliaria_id && (
-                        <small className="tramite-error">
-                          {formik.errors.inmobiliaria_id}
-                        </small>
-                      )}
-                  </div>
-
-                  {/* Input Cantón */}
-                  <div className="tramite-form-group" onClick={showDisabledMessage}>
-                    <Dropdown
-                      id="canton_id"
-                      name="canton_id"
-                      value={formik.values.canton_id}
-                      onChange={formik.handleChange}
-                      onBlur={formik.handleBlur}
-                      options={cantones}
-                      optionLabel="nombre"
-                      optionValue="id"
-                      placeholder="Seleccione un cantón"
-                      className={`tramite-dropdown ${formik.touched.canton_id && formik.errors.canton_id
+            <form className="tramite-form">
+              <div className="tramite-form-content2">
+                <div className="tramite-form-group">
+                  <div className="tramite-input-group">
+                    <InputText
+                      value={cliente?.nombre || ""}
+                      placeholder="Buscar Cliente"
+                      disabled
+                      className={`tramite-input ${formik.touched.cliente_id && formik.errors.cliente_id
                         ? "p-invalid"
                         : ""
                         }`}
-                      disabled={!cliente || !inmobiliaria}
                     />
-                    {formik.touched.canton_id && formik.errors.canton_id && (
+                    <Button
+                      icon="pi pi-search"
+                      type="button"
+                      onClick={() => setModalVisible(true)}
+                      className="tramite-button tramite-search-button"
+                    />
+                  </div>
+                  {formik.touched.cliente_id && formik.errors.cliente_id && (
+                    <small className="tramite-error">
+                      {formik.errors.cliente_id}
+                    </small>
+                  )}
+                </div>
+
+                {/* Input Inmobiliaria */}
+                <div className="tramite-form-group">
+                  <div className="tramite-input-group">
+                    <InputText
+                      value={inmobiliaria?.nombre || ""}
+                      placeholder="Buscar Inmobiliaria"
+                      disabled
+                      className={`tramite-input ${formik.touched.inmobiliaria_id &&
+                        formik.errors.inmobiliaria_id
+                        ? "p-invalid"
+                        : ""
+                        }`}
+                    />
+                    <Button
+                      icon="pi pi-search"
+                      type="button"
+                      onClick={() => {
+                        if (!formik.values.cliente_id) {
+                          toast.current.show({
+                            severity: "warn",
+                            summary: "Advertencia",
+                            detail: "Primero seleccione un cliente",
+                            life: 3000,
+                          });
+                          return;
+                        }
+                        setModalInmobiliariaVisible(true);
+                      }}
+                      className="tramite-button tramite-search-button"
+                    />
+                  </div>
+                  {formik.touched.inmobiliaria_id &&
+                    formik.errors.inmobiliaria_id && (
                       <small className="tramite-error">
-                        {formik.errors.canton_id}
+                        {formik.errors.inmobiliaria_id}
                       </small>
                     )}
+                </div>
+
+                {/* Input Cantón */}
+                <div className="tramite-form-group" onClick={showDisabledMessage}>
+                  <Dropdown
+                    id="canton_id"
+                    name="canton_id"
+                    value={formik.values.canton_id}
+                    onChange={formik.handleChange}
+                    onBlur={formik.handleBlur}
+                    options={cantones}
+                    optionLabel="nombre"
+                    optionValue="id"
+                    placeholder="Seleccione un cantón"
+                    className={`tramite-dropdown ${formik.touched.canton_id && formik.errors.canton_id
+                      ? "p-invalid"
+                      : ""
+                      }`}
+                    disabled={!cliente || !inmobiliaria}
+                  />
+                  {formik.touched.canton_id && formik.errors.canton_id && (
+                    <small className="tramite-error">
+                      {formik.errors.canton_id}
+                    </small>
+                  )}
+                </div>
+
+                {/* Input Proyecto */}
+                <div className="tramite-form-group">
+                  <div className="tramite-input-group">
+                    <InputText
+                      value={proyecto?.nombre || ""}
+                      placeholder="Buscar Proyecto"
+                      disabled
+                      className={`tramite-input ${formik.touched.proyecto_id && formik.errors.proyecto_id
+                        ? "p-invalid"
+                        : ""
+                        }`}
+                    />
+                    <Button
+                      icon="pi pi-search"
+                      type="button"
+                      onClick={handleModalProyecto}
+                      className="tramite-button tramite-search-button"
+                    />
                   </div>
-
-                  {/* Input Proyecto */}
-                  <div className="tramite-form-group">
-                    <div className="tramite-input-group">
-                      <InputText
-                        value={proyecto?.nombre || ""}
-                        placeholder="Buscar Proyecto"
-                        disabled
-                        className={`tramite-input ${formik.touched.proyecto_id && formik.errors.proyecto_id
-                          ? "p-invalid"
-                          : ""
-                          }`}
-                      />
-                      <Button
-                        icon="pi pi-search"
-          
-                        onClick={handleModalProyecto}
-                        className="tramite-button tramite-search-button"
-                      />
-                    </div>
-                    {formik.touched.proyecto_id && formik.errors.proyecto_id && (
-                      <small className="tramite-error">
-                        {formik.errors.proyecto_id}
-                      </small>
-                    )}
+                  {formik.touched.proyecto_id && formik.errors.proyecto_id && (
+                    <small className="tramite-error">
+                      {formik.errors.proyecto_id}
+                    </small>
+                  )}
+                </div>
+                <div className="tramite-form-group">
+                  <div className="tramite-input-group">
+                    <Button
+                      onClick={handleSearchClick}
+                      type="button"
+                      icon="pi pi-filter"
+                      className="tramite-button tramite-submit">
+                    </Button>
+                    <Button
+                      onClick={donwloadExcel}
+                      type="button"
+                      className="tramite-button tramite-search-button">
+                      <i className="pi pi-file-excel" />
+                      Descargar Excel
+                    </Button>
                   </div>
-                  <div className="tramite-form-group">
-                    <div className="tramite-input-group">
-                      <Button
-                        type="button"
-                        icon="pi pi-filter"
-                        className="tramite-button tramite-submit"
-                        onClick={handleSearchClick}
-                      ></Button>
-                      <Button onClick={donwloadExcel} className="tramite-button tramite-search-button">
-                        <i className="pi pi-file-excel" />
-                        Descargar Excel
-                      </Button>
-                    </div>
-                  </div>
-
-
-
-
-
                 </div>
 
 
-              </form>
- 
+
+
+
+              </div>
+
+
+            </form>
+
           </div>
           <div className="table-container">
             <DataTable
@@ -582,7 +547,7 @@ const ConsultarTramites = () => {
               lazy
               paginator
               scrollable
-              scrollDirection="horizontal"
+
               first={lazyState.first}
               rows={lazyState.rows}
               totalRecords={totalRecords}
