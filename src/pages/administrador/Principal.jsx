@@ -10,7 +10,7 @@ import { Avatar } from "primereact/avatar";
 const Principal = () => {
   const { perfilId } = useSelector((state) => state.auth);
   const [isDropdownVisible, setIsDropdownVisible] = useState(false);
-  const [isSidebarVisible, setIsSidebarVisible] = useState(true); // Sidebar visible por defecto
+  const [isSidebarVisible, setIsSidebarVisible] = useState(false); // Sidebar visible por defecto
 
   // Refs
   const dropdownRef = useRef(null);
@@ -62,7 +62,7 @@ const Principal = () => {
         <div className="sidebar-header">
           <div className="sidebar-logo">
             <i className="pi pi-building" style={{ fontSize: "1.5rem" }} />
-            <span>BCHASESORES</span>
+            <span>BCH Asesores S.A.</span>
           </div>
           <Button
             icon="pi pi-times"

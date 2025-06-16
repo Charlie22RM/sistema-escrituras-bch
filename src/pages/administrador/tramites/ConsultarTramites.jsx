@@ -449,11 +449,10 @@ const ConsultarTramites = () => {
                       value={cliente?.nombre || ""}
                       placeholder="Buscar Cliente"
                       disabled
-                      className={`tramite-input ${
-                        formik.touched.cliente_id && formik.errors.cliente_id
+                      className={`tramite-input ${formik.touched.cliente_id && formik.errors.cliente_id
                           ? "p-invalid"
                           : ""
-                      }`}
+                        }`}
                     />
                     <Button
                       icon="pi pi-search"
@@ -476,12 +475,11 @@ const ConsultarTramites = () => {
                       value={inmobiliaria?.nombre || ""}
                       placeholder="Buscar Inmobiliaria"
                       disabled
-                      className={`tramite-input ${
-                        formik.touched.inmobiliaria_id &&
-                        formik.errors.inmobiliaria_id
+                      className={`tramite-input ${formik.touched.inmobiliaria_id &&
+                          formik.errors.inmobiliaria_id
                           ? "p-invalid"
                           : ""
-                      }`}
+                        }`}
                     />
                     <Button
                       icon="pi pi-search"
@@ -544,11 +542,10 @@ const ConsultarTramites = () => {
                       value={proyecto?.nombre || ""}
                       placeholder="Buscar Proyecto"
                       disabled
-                      className={`tramite-input ${
-                        formik.touched.proyecto_id && formik.errors.proyecto_id
+                      className={`tramite-input ${formik.touched.proyecto_id && formik.errors.proyecto_id
                           ? "p-invalid"
                           : ""
-                      }`}
+                        }`}
                     />
                     <Button
                       icon="pi pi-search"
@@ -571,13 +568,37 @@ const ConsultarTramites = () => {
                       className="tramite-button tramite-submit"
                       onClick={handleClick}
                     ></Button>
+                    {(cliente || inmobiliaria || formik.values.canton_id || proyecto) && (
+                      <Button
+                        icon="pi pi-times"
+                        className="clear-button"
+                        onClick={() => {
+                          // Limpiar valores de filtros
+                          formik.setFieldValue("cliente_id", "");
+                          formik.setFieldValue("inmobiliaria_id", "");
+                          formik.setFieldValue("canton_id", "");
+                          formik.setFieldValue("proyecto_id", "");
+
+                          setCliente(null);
+                          setInmobiliaria(null);
+                          setProyecto(null);
+
+                          setLazyState({
+                            ...lazyState,
+                            first: 0,
+                            page: 1,
+                          });
+                        }}
+                
+                      />
+                    )}
                     <Button
                       onClick={donwloadExcel}
                       className="tramite-button tramite-search-button"
                       type="button"
                     >
-                      <i className="pi pi-file-excel" />
-                      Descargar Excel
+                      <i className="pi pi-file-excel mr-2" />
+                      Descargar Informe
                     </Button>
                   </div>
                 </div>
@@ -622,13 +643,13 @@ const ConsultarTramites = () => {
                   (rowData) =>
                     rowData.fecha_asignacion
                       ? new Date(rowData.fecha_asignacion).toLocaleDateString(
-                          "es-EC",
-                          {
-                            year: "numeric",
-                            month: "2-digit",
-                            day: "2-digit",
-                          }
-                        )
+                        "es-EC",
+                        {
+                          year: "numeric",
+                          month: "2-digit",
+                          day: "2-digit",
+                        }
+                      )
                       : "" // o puedes poner 'Sin revisar' u otro texto
                 }
               />
@@ -640,12 +661,12 @@ const ConsultarTramites = () => {
                   (rowData) =>
                     rowData.fecha_revision_titulo
                       ? new Date(
-                          rowData.fecha_revision_titulo
-                        ).toLocaleDateString("es-EC", {
-                          year: "numeric",
-                          month: "2-digit",
-                          day: "2-digit",
-                        })
+                        rowData.fecha_revision_titulo
+                      ).toLocaleDateString("es-EC", {
+                        year: "numeric",
+                        month: "2-digit",
+                        day: "2-digit",
+                      })
                       : "" // o puedes poner 'Sin revisar' u otro texto
                 }
               />
@@ -657,12 +678,12 @@ const ConsultarTramites = () => {
                   (rowData) =>
                     rowData.fecha_envio_liquidar_impuesto
                       ? new Date(
-                          rowData.fecha_envio_liquidar_impuesto
-                        ).toLocaleDateString("es-EC", {
-                          year: "numeric",
-                          month: "2-digit",
-                          day: "2-digit",
-                        })
+                        rowData.fecha_envio_liquidar_impuesto
+                      ).toLocaleDateString("es-EC", {
+                        year: "numeric",
+                        month: "2-digit",
+                        day: "2-digit",
+                      })
                       : "" // o puedes poner 'Sin revisar' u otro texto
                 }
               />
@@ -679,12 +700,12 @@ const ConsultarTramites = () => {
                   (rowData) =>
                     rowData.fecha_envio_aprobacion_proforma
                       ? new Date(
-                          rowData.fecha_envio_aprobacion_proforma
-                        ).toLocaleDateString("es-EC", {
-                          year: "numeric",
-                          month: "2-digit",
-                          day: "2-digit",
-                        })
+                        rowData.fecha_envio_aprobacion_proforma
+                      ).toLocaleDateString("es-EC", {
+                        year: "numeric",
+                        month: "2-digit",
+                        day: "2-digit",
+                      })
                       : "" // o puedes poner 'Sin revisar' u otro texto
                 }
               />
@@ -696,12 +717,12 @@ const ConsultarTramites = () => {
                   (rowData) =>
                     rowData.fecha_envio_aprobacion_proforma
                       ? new Date(
-                          rowData.fecha_envio_aprobacion_proforma
-                        ).toLocaleDateString("es-EC", {
-                          year: "numeric",
-                          month: "2-digit",
-                          day: "2-digit",
-                        })
+                        rowData.fecha_envio_aprobacion_proforma
+                      ).toLocaleDateString("es-EC", {
+                        year: "numeric",
+                        month: "2-digit",
+                        day: "2-digit",
+                      })
                       : "" // o puedes poner 'Sin revisar' u otro texto
                 }
               />
@@ -718,12 +739,12 @@ const ConsultarTramites = () => {
                   (rowData) =>
                     rowData.fecha_firma_matriz_cliente
                       ? new Date(
-                          rowData.fecha_firma_matriz_cliente
-                        ).toLocaleDateString("es-EC", {
-                          year: "numeric",
-                          month: "2-digit",
-                          day: "2-digit",
-                        })
+                        rowData.fecha_firma_matriz_cliente
+                      ).toLocaleDateString("es-EC", {
+                        year: "numeric",
+                        month: "2-digit",
+                        day: "2-digit",
+                      })
                       : "" // o puedes poner 'Sin revisar' u otro texto
                 }
               />
@@ -735,12 +756,12 @@ const ConsultarTramites = () => {
                   (rowData) =>
                     rowData.fecha_retorno_matriz_firmada
                       ? new Date(
-                          rowData.fecha_retorno_matriz_firmada
-                        ).toLocaleDateString("es-EC", {
-                          year: "numeric",
-                          month: "2-digit",
-                          day: "2-digit",
-                        })
+                        rowData.fecha_retorno_matriz_firmada
+                      ).toLocaleDateString("es-EC", {
+                        year: "numeric",
+                        month: "2-digit",
+                        day: "2-digit",
+                      })
                       : "" // o puedes poner 'Sin revisar' u otro texto
                 }
               />
@@ -758,12 +779,12 @@ const ConsultarTramites = () => {
                   (rowData) =>
                     rowData.fecha_ingreso_registro
                       ? new Date(
-                          rowData.fecha_ingreso_registro
-                        ).toLocaleDateString("es-EC", {
-                          year: "numeric",
-                          month: "2-digit",
-                          day: "2-digit",
-                        })
+                        rowData.fecha_ingreso_registro
+                      ).toLocaleDateString("es-EC", {
+                        year: "numeric",
+                        month: "2-digit",
+                        day: "2-digit",
+                      })
                       : "" // o puedes poner 'Sin revisar' u otro texto
                 }
               />
@@ -775,12 +796,12 @@ const ConsultarTramites = () => {
                   (rowData) =>
                     rowData.fecha_tentativa_inscripcion
                       ? new Date(
-                          rowData.fecha_tentativa_inscripcion
-                        ).toLocaleDateString("es-EC", {
-                          year: "numeric",
-                          month: "2-digit",
-                          day: "2-digit",
-                        })
+                        rowData.fecha_tentativa_inscripcion
+                      ).toLocaleDateString("es-EC", {
+                        year: "numeric",
+                        month: "2-digit",
+                        day: "2-digit",
+                      })
                       : "" // o puedes poner 'Sin revisar' u otro texto
                 }
               />
@@ -792,13 +813,13 @@ const ConsultarTramites = () => {
                   (rowData) =>
                     rowData.fecha_inscripcion
                       ? new Date(rowData.fecha_inscripcion).toLocaleDateString(
-                          "es-EC",
-                          {
-                            year: "numeric",
-                            month: "2-digit",
-                            day: "2-digit",
-                          }
-                        )
+                        "es-EC",
+                        {
+                          year: "numeric",
+                          month: "2-digit",
+                          day: "2-digit",
+                        }
+                      )
                       : "" // o puedes poner 'Sin revisar' u otro texto
                 }
               />
@@ -810,12 +831,12 @@ const ConsultarTramites = () => {
                   (rowData) =>
                     rowData.fecha_ingreso_catastro
                       ? new Date(
-                          rowData.fecha_ingreso_catastro
-                        ).toLocaleDateString("es-EC", {
-                          year: "numeric",
-                          month: "2-digit",
-                          day: "2-digit",
-                        })
+                        rowData.fecha_ingreso_catastro
+                      ).toLocaleDateString("es-EC", {
+                        year: "numeric",
+                        month: "2-digit",
+                        day: "2-digit",
+                      })
                       : "" // o puedes poner 'Sin revisar' u otro texto
                 }
               />
@@ -827,12 +848,12 @@ const ConsultarTramites = () => {
                   (rowData) =>
                     rowData.fecha_tentativa_catastro
                       ? new Date(
-                          rowData.fecha_tentativa_catastro
-                        ).toLocaleDateString("es-EC", {
-                          year: "numeric",
-                          month: "2-digit",
-                          day: "2-digit",
-                        })
+                        rowData.fecha_tentativa_catastro
+                      ).toLocaleDateString("es-EC", {
+                        year: "numeric",
+                        month: "2-digit",
+                        day: "2-digit",
+                      })
                       : "" // o puedes poner 'Sin revisar' u otro texto
                 }
               />
@@ -844,13 +865,13 @@ const ConsultarTramites = () => {
                   (rowData) =>
                     rowData.fecha_catastro
                       ? new Date(rowData.fecha_catastro).toLocaleDateString(
-                          "es-EC",
-                          {
-                            year: "numeric",
-                            month: "2-digit",
-                            day: "2-digit",
-                          }
-                        )
+                        "es-EC",
+                        {
+                          year: "numeric",
+                          month: "2-digit",
+                          day: "2-digit",
+                        }
+                      )
                       : "" // o puedes poner 'Sin revisar' u otro texto
                 }
               />

@@ -224,6 +224,11 @@ const EditarTramites = () => {
   const [pdfTituloId, setPdfTituloId] = useState(null);
   const [pdfFacturasId, setPdfFacturasId] = useState([]);
   const [uploading, setUploading] = useState(false);
+  const [uploadingCatastro, setUploadingCatastro] = useState(false);
+  const [uploadingTitulo, setUploadingTitulo] = useState(false);
+  const [uploadingFactura, setUploadingFactura] = useState(false);
+
+
   const [fileKey, setFileKey] = useState(Date.now());
 
   const getTramite = async () => {
@@ -431,18 +436,52 @@ const EditarTramites = () => {
     fetchData();
   }, []);
 
-  const handleUpload = async (event, additionalData) => {
+  // const handleUpload = async (event, additionalData) => {
+  //   const { files } = event;
+  //   if (!files || files.length === 0) return;
+
+  //   try {
+  //     setUploading(true);
+  //     const uploadRes = await pdfService.uploadPdf(files[0], {
+  //       tramite_id: id,
+  //       ...additionalData,
+  //     });
+
+  //     const pdfId = uploadRes.data.id; // Asegúrate de retornar el ID en el backend
+  //     if (additionalData.is_catastro) {
+  //       setPdfCatastroId(pdfId);
+  //     } else if (additionalData.is_titulo) {
+  //       setPdfTituloId(pdfId);
+  //     } else if (additionalData.is_factura) {
+  //       setPdfFacturasId((prev) => [...prev, pdfId]);
+  //     }
+
+  //     toast.current.show({
+  //       severity: "success",
+  //       summary: "Éxito",
+  //       detail: "PDF subido correctamente",
+  //       life: 3000,
+  //     });
+  //     //console.error("Error subiendo PDF", error);
+  //     //alert("Error al subir el archivo");
+  //   } finally {
+  //     setUploading(false);
+  //     setFileKey(Date.now()); // Forzar reinicio del componente
+  //   }
+  // };
+
+  const handleUpload = async (event, additionalData, setUploadingTipo) => {
     const { files } = event;
     if (!files || files.length === 0) return;
 
     try {
-      setUploading(true);
+      setUploadingTipo(true);
       const uploadRes = await pdfService.uploadPdf(files[0], {
         tramite_id: id,
         ...additionalData,
       });
 
-      const pdfId = uploadRes.data.id; // Asegúrate de retornar el ID en el backend
+      const pdfId = uploadRes.data.id;
       if (additionalData.is_catastro) {
         setPdfCatastroId(pdfId);
       } else if (additionalData.is_titulo) {
@@ -457,13 +496,14 @@ const EditarTramites = () => {
         detail: "PDF subido correctamente",
         life: 3000,
       });
-      //console.error("Error subiendo PDF", error);
-      //alert("Error al subir el archivo");
+    } catch (error) {
+      handleError(error);
     } finally {
-      setUploading(false);
-      setFileKey(Date.now()); // Forzar reinicio del componente
+      setUploadingTipo(false);
+      setFileKey(Date.now());
     }
   };
+
 
   const getPdfUrl = async (pdfId) => {
     try {
@@ -474,22 +514,77 @@ const EditarTramites = () => {
     }
   };
 
-  const handleDeletePdf = async (id, tipo) => {
-    const result = await Swal.fire({
-      title: "¿Estás seguro?",
-      text: "¡No podrás revertir esta acción!",
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonColor: "#3085d6",
-      cancelButtonColor: "#d33",
-      confirmButtonText: "Sí, eliminar",
-      cancelButtonText: "Cancelar",
-    });
+  // const handleDeletePdf = async (id, tipo) => {
+  //   const result = await Swal.fire({
+  //     title: "¿Estás seguro?",
+  //     text: "¡No podrás revertir esta acción!",
+  //     icon: "warning",
+  //     showCancelButton: true,
+  //     confirmButtonColor: "#3085d6",
+  //     cancelButtonColor: "#d33",
+  //     confirmButtonText: "Sí, eliminar",
+  //     cancelButtonText: "Cancelar",
+  //   });
 
-    if (result.isConfirmed) {
+  //   if (result.isConfirmed) {
+  //     try {
+  //       await pdfService.deletePdf(id);
+  //       Swal.fire("¡Eliminado!", "El PDF ha sido borrado.", "success");
+  //       switch (tipo) {
+  //         case "catastro":
+  //           setPdfCatastroId(null);
+  //           break;
+  //         case "titulo":
+  //           setPdfTituloId(null);
+  //           break;
+  //         case "factura":
+  //           setPdfFacturasId((prev) => prev.filter((pdfId) => pdfId !== id));
+  //           break;
+  //         default:
+  //           console.error("Tipo de PDF no reconocido:", tipo);
+  //           break;
+  //       }
+  //     } catch (error) {
+  //       //Swal.fire("Error", "No se pudo eliminar el PDF", "error");
+  //       handleError(error);
+  //     }
+  //   }
+  // };
+
+  const handleDeletePdf = (id, tipo) => {
+    // Verificar si ya hay un diálogo abierto
+    if (document.querySelector(".custom-dialog")) return;
+
+    // Crear elemento de diálogo personalizado
+    const dialog = document.createElement("div");
+    dialog.className = "custom-dialog";
+
+    dialog.innerHTML = `
+    <div class="dialog-overlay"></div>
+    <div class="dialog-container">
+      <div class="dialog-header">
+        <i class="dialog-icon pi pi-exclamation-triangle"></i>
+        <h3>Confirmar eliminación</h3>
+      </div>
+      <div class="dialog-content">
+        <p>¿Estás seguro de que deseas eliminar este PDF?</p>
+      </div>
+      <div class="dialog-footer">
+        <button class="dialog-btn cancel-btn">Cancelar</button>
+        <button class="dialog-btn confirm-btn">Sí, eliminar</button>
+      </div>
+    </div>
+  `;
+
+    // Agregar el diálogo al DOM
+    document.body.appendChild(dialog);
+
+    // Manejar clic en confirmar
+    dialog.querySelector(".confirm-btn").addEventListener("click", async () => {
       try {
         await pdfService.deletePdf(id);
-        Swal.fire("¡Eliminado!", "El PDF ha sido borrado.", "success");
+
+        // Actualizar estado según tipo
         switch (tipo) {
           case "catastro":
             setPdfCatastroId(null);
@@ -504,12 +599,32 @@ const EditarTramites = () => {
             console.error("Tipo de PDF no reconocido:", tipo);
             break;
         }
+
+        // Mostrar notificación de éxito
+        toast.current?.show({
+          severity: "success",
+          summary: "Eliminado",
+          detail: "El PDF ha sido borrado correctamente.",
+          life: 3000,
+        });
       } catch (error) {
-        //Swal.fire("Error", "No se pudo eliminar el PDF", "error");
         handleError(error);
+      } finally {
+        dialog.remove();
       }
-    }
+    });
+
+    // Manejar clic en cancelar
+    dialog.querySelector(".cancel-btn").addEventListener("click", () => {
+      dialog.remove();
+    });
+
+    // Cerrar al hacer clic fuera del contenedor
+    dialog.querySelector(".dialog-overlay").addEventListener("click", () => {
+      dialog.remove();
+    });
   };
+
   return (
     <div>
       <Toast ref={toast} />
@@ -537,7 +652,7 @@ const EditarTramites = () => {
                 }
                 className="w-full md:w-6"
               >
-                <form onSubmit={formik.handleSubmit} className="tramite-form">
+                <div onSubmit={formik.handleSubmit} className="tramite-form">
                   <div className="tramite-form-content">
                     {/* Input Cliente */}
                     <div className="tramite-form-group">
@@ -791,7 +906,7 @@ const EditarTramites = () => {
                       />
                     </div>
                   </div>
-                </form>
+                </div>
               </Card>
             </div>
           </TabPanel>
@@ -829,6 +944,7 @@ const EditarTramites = () => {
                       Fecha de Revisión de Título
                     </label>
                     <Calendar
+                      id="fecha_revision_titulo"
                       name="fecha_revision_titulo"
                       value={formik.values.fecha_revision_titulo}
                       onChange={(e) =>
@@ -858,6 +974,7 @@ const EditarTramites = () => {
                       Envío a Liquidar Impuestos
                     </label>
                     <Calendar
+                      id="envio_liquidar_impuestos"
                       name="envio_liquidar_impuestos"
                       value={formik.values.fecha_envio_liquidar_impuesto}
                       onChange={(e) =>
@@ -890,6 +1007,7 @@ const EditarTramites = () => {
                       Observaciones
                     </label>
                     <InputTextarea
+                      id="observaciones_liquidacion_impuesto"
                       name="observaciones_liquidacion_impuesto"
                       value={
                         formik.values.observaciones_liquidacion_impuesto || ""
@@ -966,6 +1084,7 @@ const EditarTramites = () => {
                       Envío de Aprobación de Proforma
                     </label>
                     <Calendar
+                      id="fecha_envio_aprobacion_proforma"
                       name="fecha_envio_aprobacion_proforma"
                       value={formik.values.fecha_envio_aprobacion_proforma}
                       onChange={(e) =>
@@ -997,6 +1116,7 @@ const EditarTramites = () => {
                       Fecha de Aprobación de Proforma
                     </label>
                     <Calendar
+                      id="fecha_aprobacion_proforma"
                       name="fecha_aprobacion_proforma"
                       value={formik.values.fecha_aprobacion_proforma}
                       onChange={(e) =>
@@ -1031,6 +1151,7 @@ const EditarTramites = () => {
                       Observaciones
                     </label>
                     <InputTextarea
+                      id="observaciones_proforma"
                       name="observaciones_proforma"
                       value={formik.values.observaciones_proforma || ""}
                       onChange={(e) => {
@@ -1104,6 +1225,7 @@ const EditarTramites = () => {
                       Fecha de Firma Matriz Cliente
                     </label>
                     <Calendar
+                      id="fecha_firma_matriz_cliente"
                       name="fecha_firma_matriz_cliente"
                       value={formik.values.fecha_firma_matriz_cliente}
                       onChange={(e) =>
@@ -1137,6 +1259,7 @@ const EditarTramites = () => {
                       Fecha de Retorno de la Matriz Firmada
                     </label>
                     <Calendar
+                      id="fecha_retorno_matriz_firmada"
                       name="fecha_retorno_matriz_firmada"
                       value={formik.values.fecha_retorno_matriz_firmada}
                       onChange={(e) =>
@@ -1170,6 +1293,7 @@ const EditarTramites = () => {
                       Observaciones
                     </label>
                     <InputTextarea
+                      id="observaciones_matriz_firmada"
                       name="observaciones_matriz_firmada"
                       value={formik.values.observaciones_matriz_firmada || ""}
                       onChange={(e) => {
@@ -1244,6 +1368,7 @@ const EditarTramites = () => {
                       Fecha de Ingreso al Registro
                     </label>
                     <Calendar
+                      id="fecha_ingreso_registro"
                       name="fecha_ingreso_registro"
                       value={formik.values.fecha_ingreso_registro}
                       onChange={(e) =>
@@ -1273,6 +1398,7 @@ const EditarTramites = () => {
                       Fecha Tentativa de Inscripción
                     </label>
                     <Calendar
+                      id="fecha_tentativa_inscripcion"
                       name="fecha_tentativa_inscripcion"
                       value={formik.values.fecha_tentativa_inscripcion}
                       onChange={(e) =>
@@ -1305,6 +1431,7 @@ const EditarTramites = () => {
                       Fecha de Inscripción
                     </label>
                     <Calendar
+                      id="fecha_inscripcion"
                       name="fecha_inscripcion"
                       value={formik.values.fecha_inscripcion}
                       onChange={(e) =>
@@ -1378,6 +1505,7 @@ const EditarTramites = () => {
                       Fecha de Ingreso al Catastro
                     </label>
                     <Calendar
+                      id="fecha_ingreso_catastro"
                       name="fecha_ingreso_catastro"
                       value={formik.values.fecha_ingreso_catastro}
                       onChange={(e) =>
@@ -1406,6 +1534,7 @@ const EditarTramites = () => {
                       Fecha Tentativa de Catastro
                     </label>
                     <Calendar
+                      id="fecha_tentativa_catastro"
                       name="fecha_tentativa_catastro"
                       value={formik.values.fecha_tentativa_catastro}
                       onChange={(e) =>
@@ -1435,6 +1564,7 @@ const EditarTramites = () => {
                   <div className="tramite-form-group">
                     <label htmlFor="fecha_catastro">Fecha de Catastro</label>
                     <Calendar
+                      id="fecha_catastro"
                       name="fecha_catastro"
                       value={formik.values.fecha_catastro}
                       onChange={(e) =>
@@ -1464,6 +1594,7 @@ const EditarTramites = () => {
                       Observaciones
                     </label>
                     <InputTextarea
+                      id="observaciones_catastro"
                       name="observaciones_catastro"
                       value={formik.values.observaciones_catastro || ""}
                       onChange={(e) => {
@@ -1541,7 +1672,7 @@ const EditarTramites = () => {
                         accept="application/pdf"
                         maxFileSize={5 * 1024 * 1024}
                         mode="basic"
-                        chooseLabel={uploading ? "Subiendo..." : "Seleccionar PDF Certificado de Catastro"}
+                        chooseLabel={uploadingCatastro ? "Subiendo..." : "Seleccionar PDF Certificado de Catastro"}
                         customUpload
                         auto
                         uploadHandler={(e) =>
@@ -1549,10 +1680,10 @@ const EditarTramites = () => {
                             is_catastro: true,
                             is_titulo: false,
                             is_factura: false,
-                          })
+                          }, setUploadingCatastro)
                         }
                         key={fileKey}
-                        disabled={uploading}
+                        disabled={uploadingCatastro}
                         className="upload-button"
                       />
                     ) : (
@@ -1589,7 +1720,7 @@ const EditarTramites = () => {
                         accept="application/pdf"
                         maxFileSize={5 * 1024 * 1024}
                         mode="basic"
-                        chooseLabel={uploading ? "Subiendo..." : "Seleccionar PDF Título de Propiedad"}
+                        chooseLabel={uploadingTitulo ? "Subiendo..." : "Seleccionar PDF Título de Propiedad"}
                         customUpload
                         auto
                         uploadHandler={(e) =>
@@ -1597,10 +1728,10 @@ const EditarTramites = () => {
                             is_catastro: false,
                             is_titulo: true,
                             is_factura: false,
-                          })
+                          }, setUploadingTitulo)
                         }
                         key={fileKey}
-                        disabled={uploading}
+                        disabled={uploadingTitulo}
                         className="upload-button"
                       />
                     ) : (
@@ -1636,7 +1767,7 @@ const EditarTramites = () => {
                       accept="application/pdf"
                       maxFileSize={5 * 1024 * 1024}
                       mode="basic"
-                      chooseLabel={uploading ? "Subiendo..." : "Subir Nueva Factura"}
+                      chooseLabel={uploadingFactura ? "Subiendo..." : "Subir Nueva Factura"}
                       customUpload
                       auto
                       uploadHandler={(e) =>
@@ -1644,10 +1775,10 @@ const EditarTramites = () => {
                           is_catastro: false,
                           is_titulo: false,
                           is_factura: true,
-                        })
+                        }, setUploadingFactura)
                       }
                       key={fileKey}
-                      disabled={uploading}
+                      disabled={uploadingFactura}
                       className="upload-button"
                     />
 
