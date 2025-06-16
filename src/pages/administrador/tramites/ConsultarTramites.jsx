@@ -84,7 +84,7 @@ const ConsultarTramites = () => {
 
   const toast = useRef(null);
 
-  const loadTramites = async (qs = "",page = null, row = null) => {
+  const loadTramites = async (qs = "", page = null, row = null) => {
     setLoading(true);
     try {
       const response = await tramiteService.getTramites(
@@ -434,6 +434,8 @@ const ConsultarTramites = () => {
         </div>
       </div>
 
+      <h2 className="consultar-title">Filtros</h2>
+
       {loading ? (
         <div className="loading-spinner">
           <ProgressSpinner />
@@ -450,8 +452,8 @@ const ConsultarTramites = () => {
                       placeholder="Buscar Cliente"
                       disabled
                       className={`tramite-input ${formik.touched.cliente_id && formik.errors.cliente_id
-                          ? "p-invalid"
-                          : ""
+                        ? "p-invalid"
+                        : ""
                         }`}
                     />
                     <Button
@@ -476,9 +478,9 @@ const ConsultarTramites = () => {
                       placeholder="Buscar Inmobiliaria"
                       disabled
                       className={`tramite-input ${formik.touched.inmobiliaria_id &&
-                          formik.errors.inmobiliaria_id
-                          ? "p-invalid"
-                          : ""
+                        formik.errors.inmobiliaria_id
+                        ? "p-invalid"
+                        : ""
                         }`}
                     />
                     <Button
@@ -543,8 +545,8 @@ const ConsultarTramites = () => {
                       placeholder="Buscar Proyecto"
                       disabled
                       className={`tramite-input ${formik.touched.proyecto_id && formik.errors.proyecto_id
-                          ? "p-invalid"
-                          : ""
+                        ? "p-invalid"
+                        : ""
                         }`}
                     />
                     <Button
@@ -589,7 +591,7 @@ const ConsultarTramites = () => {
                             page: 1,
                           });
                         }}
-                
+
                       />
                     )}
                     <Button
@@ -605,6 +607,7 @@ const ConsultarTramites = () => {
               </div>
             </form>
           </div>
+          <h2 className="consultar-title"></h2>
           <div className="table-container">
             <DataTable
               value={tramites}
