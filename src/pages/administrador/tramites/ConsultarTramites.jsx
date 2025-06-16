@@ -84,11 +84,11 @@ const ConsultarTramites = () => {
 
   const toast = useRef(null);
 
-  const loadTramites = async (qs = "") => {
+  const loadTramites = async (qs = "",page = null, row = null) => {
     setLoading(true);
     try {
       const response = await tramiteService.getTramites(
-        `?page=${lazyState.page}&limit=${lazyState.rows}${qs}`
+        `?page=${page || lazyState.page}&limit=${row || lazyState.rows}${qs}`
       );
 
       setTramites(response.data.data);

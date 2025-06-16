@@ -13,16 +13,19 @@ import { Dropdown } from "primereact/dropdown";
 import { Button } from "primereact/button";
 import { useDispatch } from "react-redux";
 import { clearLogout } from "../../../redux/authSlice";
+import ClienteService from "../../../services/ClienteService";
 
 const EditarUsuarios = () => {
   const { id } = useParams();
   const usuarioService = UserService();
+  const clienteService = ClienteService();
   const rolService = RolService();
   const toast = useRef(null);
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
   const [roles, setRoles] = useState([]);
+  const [clientes, setClientes] = useState([]);
   const [usuario, setUsuario] = useState(null);
   const [loading, setLoading] = useState(false);
 
@@ -34,6 +37,15 @@ const EditarUsuarios = () => {
     } catch (err) {
       handleError(err);
       console.error("Error al obtener usuario", err);
+    }
+  };
+
+    const getClientes = async () => {
+    try {
+      const response = await clienteService.getTags();
+      setClientes(response);
+    } catch (error) {
+      handleError(error);
     }
   };
 
@@ -63,12 +75,12 @@ const EditarUsuarios = () => {
       handleError(error);
       console.error("Error al obtener roles", err);
     }
-  }
+  };
 
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
-      await Promise.all([getUsuario(), getRoles()]);
+      await Promise.all([getUsuario(), getRoles(), getClientes()]);
       setLoading(false);
     };
     fetchData();
@@ -79,6 +91,7 @@ const EditarUsuarios = () => {
       name: usuario ? usuario.nombre : "",
       email: usuario ? usuario.email : "",
       rol_id: usuario ? usuario.rol_id : "",
+      cliente_id: usuario ? usuario.cliente_id : null,
     },
     enableReinitialize: true,
     validationSchema: Yup.object({
@@ -87,6 +100,13 @@ const EditarUsuarios = () => {
         .email("Email inválido")
         .required("Por favor, ingrese un email."),
       rol_id: Yup.string().required("Por favor, seleccione un rol."),
+      cliente_id: Yup.mixed().when("rol_id", (rol_id, schema) => {
+        return rol_id == 3
+          ? schema
+              .required("Por favor, seleccione un cliente")
+              .typeError("Selección inválida")
+          : schema.notRequired().nullable();
+      }),
     }),
     onSubmit: async (values) => {
       try {
@@ -95,7 +115,7 @@ const EditarUsuarios = () => {
         setLoading(false);
       } catch (err) {
         console.error("Error al actualizar el usuario", err);
-      }finally{
+      } finally {
         setLoading(false);
       }
     },
@@ -203,6 +223,29 @@ const EditarUsuarios = () => {
               <small className="p-error">{formik.errors.rol_id}</small>
             )}
           </div>
+
+          {formik.values.rol_id === 3 && (
+            <div className="field">
+              <Dropdown
+                id="cliente_id"
+                name="cliente_id"
+                value={formik.values.cliente_id}
+                options={clientes}
+                optionLabel="nombre"
+                optionValue="id"
+                placeholder="Seleccione el Cliente"
+                onChange={formik.handleChange}
+                className={
+                  formik.touched.cliente_id && formik.errors.cliente_id
+                    ? "p-invalid"
+                    : ""
+                }
+              />
+              {formik.touched.cliente_id && formik.errors.cliente_id && (
+                <small className="p-error">{formik.errors.cliente_id}</small>
+              )}
+            </div>
+          )}
 
           <div className="flex justify-content-between gap-3 mt-4">
             <Button
