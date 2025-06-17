@@ -132,6 +132,18 @@ const ClienteService = () => {
     }
   };
 
+  const getClienteIdByUserId = async () =>{
+    try {
+      const headers = { Authorization: `Bearer ${token}` };
+      const url = `${API_URL}/clientes/user`;
+      const response = await secureAxios.get(url, { headers });
+      return response.data;
+    } catch (error) {
+      console.error("Error al obtener cliente por ID:", error.response?.data || error.message);
+      throw error.response?.data || { message: "Error al obtener cliente por ID" };
+    }
+  }
+
   // Exportar todas las funciones del servicio
   return {
     getClientes,
@@ -142,6 +154,7 @@ const ClienteService = () => {
     deleteCliente,
     searchClientes,
     getAllWithFilters,
+    getClienteIdByUserId
   };
 };
 

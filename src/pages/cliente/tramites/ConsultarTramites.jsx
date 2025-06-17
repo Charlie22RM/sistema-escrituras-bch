@@ -1,5 +1,5 @@
-import React, { useEffect, useState, useRef } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useEffect, useState, useRef } from "react";
+import { useDispatch,useSelector } from "react-redux";
 import TramiteService from "../../../services/TramiteService";
 import { Button } from "primereact/button";
 import { Column } from "primereact/column";
@@ -13,18 +13,15 @@ import { clearLogout } from "../../../redux/authSlice";
 import "../administrador.css";
 import InformeService from "../../../services/InformeService";
 import { Tag } from "primereact/tag";
-import { Card } from "primereact/card";
 import { Dropdown } from "primereact/dropdown";
 import { useFormik } from "formik";
-import * as Yup from "yup";
-import ClienteModal from "../../../modals/ClienteModal";
 import InmobiliariaModal from "../../../modals/InmobiliariaModal";
 import CantonService from "../../../services/CantonService";
 import ProyectoModal from "../../../modals/ProyectoModal";
-import ConfiguracionService from "../../../services/ConfiguracionService";
+import ClienteService from "../../../services/ClienteService";
 
 const ConsultarTramites = () => {
-  const { perfilId } = useSelector((state) => state.auth);
+  //const { userId } = useSelector((state) => state.auth);
   const [tramites, setTramites] = useState([]);
   const [lazyState, setLazyState] = useState({
     first: 0,
@@ -40,7 +37,8 @@ const ConsultarTramites = () => {
   const tramiteService = TramiteService();
   const informeService = InformeService();
   const cantonService = CantonService();
-  const configuracionService = ConfiguracionService();
+  const clienteService = ClienteService();
+
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -48,12 +46,10 @@ const ConsultarTramites = () => {
   const [inmobiliaria, setInmobiliaria] = useState(null);
   const [proyecto, setProyecto] = useState(null);
   const [cantones, setCantones] = useState([]);
-  const [modalVisible, setModalVisible] = useState(false);
   const [modalInmobiliariaVisible, setModalInmobiliariaVisible] =
     useState(false);
   const [modalProyectoVisible, setModalProyectoVisible] = useState(false);
 
-  const [operadorCanDeleteTramite, setOperadorCanDeleteTramite] = useState(false);
   const formik = useFormik({
     initialValues: {
       cliente_id: null,
@@ -104,6 +100,17 @@ const ConsultarTramites = () => {
     }
   };
 
+  const getClienteIdByUserId = async () =>{
+    try {
+      const response = await clienteService.getClienteIdByUserId();
+      console.log("Cliente obtenido por ID de usuario:", response.data.cliente_id);
+      setCliente(response.data.cliente_id);
+    } catch (error) {
+      console.error("Error al obtener el cliente por ID de usuario:", error);
+      handleError(error);
+    }
+  }
+
   const handleError = (error) => {
     if (error && error.statusCode === 401) {
       toast.current.show({
@@ -138,13 +145,6 @@ const ConsultarTramites = () => {
     }
   };
 
-  const handleModalHide = () => setModalVisible(false);
-
-  const handleSetCliente = (clienteSeleccionado) => {
-    setCliente(clienteSeleccionado);
-    formik.setFieldValue("cliente_id", clienteSeleccionado.id);
-  };
-
   const handleSetProyecto = (proyectoSeleccionado) => {
     setProyecto(proyectoSeleccionado);
     formik.setFieldValue("proyecto_id", proyectoSeleccionado.id);
@@ -172,13 +172,6 @@ const ConsultarTramites = () => {
     setModalProyectoVisible(true);
   };
 
-  const goToCreateTramite = () => {
-    if (perfilId == 1) {
-      navigate("/administrador/crear-tramite");
-    } else if (perfilId == 2) {
-      navigate("/operador/crear-tramite");
-    }
-  };
   const getTags = async () => {
     try {
       const response = await cantonService.getTags();
@@ -190,21 +183,6 @@ const ConsultarTramites = () => {
     }
   };
 
-  const getConfiguracion = async () => {
-    try {
-      const response = await configuracionService.getAll();
-      const configuraciones = response.data;
-
-      configuraciones.forEach((config) => {
-        if (config.codigo === "PERMITIR_ELIMINAR_TRAMITES") {
-          setOperadorCanDeleteTramite(config.valor === "true");
-        }
-      });
-    } catch (error) {
-      console.error("Error al obtener la configuración:", error);
-      handleError(error);
-    }
-  };
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -267,7 +245,7 @@ const ConsultarTramites = () => {
         qs += `&inmobiliariaId=${inmobiliaria.id}`;
       }
       if (cliente) {
-        qs += `&clienteId=${cliente.id}`;
+        qs += `&clienteId=${cliente}`;
       }
       if (formik.values.canton_id) {
         qs += `&cantonId=${formik.values.canton_id}`;
@@ -280,77 +258,16 @@ const ConsultarTramites = () => {
     }
   };
 
-  const handleEdit = (id) => {
-    const perfil = perfilId === 1 ? "administrador" : "operador";
-    navigate(`/${perfil}/editar-tramite/${id}`);
-  };
-
-  const handleDelete = (id) => {
-    // Verificar si ya hay un diálogo abierto
-    if (document.querySelector(".custom-dialog")) return;
-
-    // Crear elemento de diálogo personalizado
-    const dialog = document.createElement("div");
-    dialog.className = "custom-dialog";
-
-    dialog.innerHTML = `
-    <div class="dialog-overlay"></div>
-    <div class="dialog-container">
-      <div class="dialog-header">
-        <i class="dialog-icon pi pi-exclamation-triangle"></i>
-        <h3>Confirmar eliminación</h3>
-      </div>
-      <div class="dialog-content">
-        <p>¿Estás seguro de que deseas eliminar este trámite?</p>
-      </div>
-      <div class="dialog-footer">
-        <button class="dialog-btn cancel-btn">Cancelar</button>
-        <button class="dialog-btn confirm-btn">Sí, eliminar</button>
-      </div>
-    </div>
-  `;
-
-    // Agregar el diálogo al DOM
-    document.body.appendChild(dialog);
-
-    // Manejar clic en confirmar
-    dialog.querySelector(".confirm-btn").addEventListener("click", async () => {
-      try {
-        await tramiteService.deleteTramite(id);
-        setTramites((prev) => prev.filter((cliente) => cliente.id !== id));
-
-        // Mostrar notificación de éxito
-        toast.current.show({
-          severity: "success",
-          summary: "Éxito",
-          detail: "Trámite eliminado correctamente",
-          life: 3000,
-        });
-      } catch (error) {
-        handleError(error);
-        console.error("Error al eliminar el trámite:", error);
-      } finally {
-        // Cerrar el diálogo
-        dialog.remove();
-      }
-    });
-
-    // Manejar clic en cancelar
-    dialog.querySelector(".cancel-btn").addEventListener("click", () => {
-      dialog.remove();
-    });
-
-    // Cerrar al hacer clic fuera del contenedor del diálogo
-    dialog.querySelector(".dialog-overlay").addEventListener("click", () => {
-      dialog.remove();
-    });
+  const handleConsultar = (id) => {
+    //const perfil = perfilId === 1 ? "administrador" : "operador";
+    console.log("ruta", `/cliente/consultar-documentacion/${id}`);
+    navigate(`/cliente/consultar-documentacion/${id}`);
   };
 
   useEffect(() => {
     //setLoading(true);
     const fetchData = async () => {
-      await getTags();
-      await getConfiguracion();
+      await Promise.all([ getTags(), getClienteIdByUserId()]);
       //setLoading(false);
     };
     fetchData();
@@ -457,16 +374,8 @@ const ConsultarTramites = () => {
               )}
             </div>
           </div>
-
-          <Button
-            label="Agregar Trámite"
-            className="add-button"
-            onClick={goToCreateTramite}
-          />
         </div>
       </div>
-
-      <h2 className="consultar-title">Filtros</h2>
 
       {loading ? (
         <div className="loading-spinner">
@@ -477,31 +386,6 @@ const ConsultarTramites = () => {
           <div className="w-full md:w-14">
             <form className="tramite-form">
               <div className="tramite-form-content2">
-                <div className="tramite-form-group">
-                  <div className="tramite-input-group">
-                    <InputText
-                      value={cliente?.nombre || ""}
-                      placeholder="Buscar Cliente"
-                      disabled
-                      className={`tramite-input ${formik.touched.cliente_id && formik.errors.cliente_id
-                        ? "p-invalid"
-                        : ""
-                        }`}
-                    />
-                    <Button
-                      icon="pi pi-search"
-                      type="button"
-                      onClick={() => setModalVisible(true)}
-                      className="tramite-button tramite-search-button"
-                    />
-                  </div>
-                  {formik.touched.cliente_id && formik.errors.cliente_id && (
-                    <small className="tramite-error">
-                      {formik.errors.cliente_id}
-                    </small>
-                  )}
-                </div>
-
                 {/* Input Inmobiliaria */}
                 <div className="tramite-form-group">
                   <div className="tramite-input-group">
@@ -509,11 +393,12 @@ const ConsultarTramites = () => {
                       value={inmobiliaria?.nombre || ""}
                       placeholder="Buscar Inmobiliaria"
                       disabled
-                      className={`tramite-input ${formik.touched.inmobiliaria_id &&
+                      className={`tramite-input ${
+                        formik.touched.inmobiliaria_id &&
                         formik.errors.inmobiliaria_id
-                        ? "p-invalid"
-                        : ""
-                        }`}
+                          ? "p-invalid"
+                          : ""
+                      }`}
                     />
                     <Button
                       icon="pi pi-search"
@@ -577,10 +462,11 @@ const ConsultarTramites = () => {
                       value={proyecto?.nombre || ""}
                       placeholder="Buscar Proyecto"
                       disabled
-                      className={`tramite-input ${formik.touched.proyecto_id && formik.errors.proyecto_id
-                        ? "p-invalid"
-                        : ""
-                        }`}
+                      className={`tramite-input ${
+                        formik.touched.proyecto_id && formik.errors.proyecto_id
+                          ? "p-invalid"
+                          : ""
+                      }`}
                     />
                     <Button
                       icon="pi pi-search"
@@ -595,52 +481,27 @@ const ConsultarTramites = () => {
                     </small>
                   )}
                 </div>
-                <div className="tramite-form-group">
-                  <div className="tramite-input-group">
-                    <Button
-                      type="button"
-                      icon="pi pi-filter"
-                      className="tramite-button tramite-submit"
-                      onClick={handleClick}
-                    ></Button>
-                    {(cliente || inmobiliaria || formik.values.canton_id || proyecto) && (
-                      <Button
-                        icon="pi pi-times"
-                        className="clear-button"
-                        onClick={() => {
-                          // Limpiar valores de filtros
-                          formik.setFieldValue("cliente_id", "");
-                          formik.setFieldValue("inmobiliaria_id", "");
-                          formik.setFieldValue("canton_id", "");
-                          formik.setFieldValue("proyecto_id", "");
-
-                          setCliente(null);
-                          setInmobiliaria(null);
-                          setProyecto(null);
-
-                          setLazyState({
-                            ...lazyState,
-                            first: 0,
-                            page: 1,
-                          });
-                        }}
-
-                      />
-                    )}
-                    <Button
-                      onClick={donwloadExcel}
-                      className="tramite-button tramite-search-button"
-                      type="button"
-                    >
-                      <i className="pi pi-file-excel mr-2" />
-                      Descargar Informe
-                    </Button>
-                  </div>
+              </div>
+              <div className="tramite-form-group">
+                <div className="tramite-input-group">
+                  <Button
+                    type="button"
+                    icon="pi pi-filter"
+                    className="tramite-button tramite-submit"
+                    onClick={handleClick}
+                  ></Button>
+                  <Button
+                    onClick={donwloadExcel}
+                    className="tramite-button tramite-search-button"
+                    type="button"
+                  >
+                    <i className="pi pi-file-excel" />
+                    Descargar Excel
+                  </Button>
                 </div>
               </div>
             </form>
           </div>
-          <h2 className="consultar-title"></h2>
           <div className="table-container">
             <DataTable
               value={tramites}
@@ -679,13 +540,13 @@ const ConsultarTramites = () => {
                   (rowData) =>
                     rowData.fecha_asignacion
                       ? new Date(rowData.fecha_asignacion).toLocaleDateString(
-                        "es-EC",
-                        {
-                          year: "numeric",
-                          month: "2-digit",
-                          day: "2-digit",
-                        }
-                      )
+                          "es-EC",
+                          {
+                            year: "numeric",
+                            month: "2-digit",
+                            day: "2-digit",
+                          }
+                        )
                       : "" // o puedes poner 'Sin revisar' u otro texto
                 }
               />
@@ -697,12 +558,12 @@ const ConsultarTramites = () => {
                   (rowData) =>
                     rowData.fecha_revision_titulo
                       ? new Date(
-                        rowData.fecha_revision_titulo
-                      ).toLocaleDateString("es-EC", {
-                        year: "numeric",
-                        month: "2-digit",
-                        day: "2-digit",
-                      })
+                          rowData.fecha_revision_titulo
+                        ).toLocaleDateString("es-EC", {
+                          year: "numeric",
+                          month: "2-digit",
+                          day: "2-digit",
+                        })
                       : "" // o puedes poner 'Sin revisar' u otro texto
                 }
               />
@@ -714,12 +575,12 @@ const ConsultarTramites = () => {
                   (rowData) =>
                     rowData.fecha_envio_liquidar_impuesto
                       ? new Date(
-                        rowData.fecha_envio_liquidar_impuesto
-                      ).toLocaleDateString("es-EC", {
-                        year: "numeric",
-                        month: "2-digit",
-                        day: "2-digit",
-                      })
+                          rowData.fecha_envio_liquidar_impuesto
+                        ).toLocaleDateString("es-EC", {
+                          year: "numeric",
+                          month: "2-digit",
+                          day: "2-digit",
+                        })
                       : "" // o puedes poner 'Sin revisar' u otro texto
                 }
               />
@@ -736,12 +597,12 @@ const ConsultarTramites = () => {
                   (rowData) =>
                     rowData.fecha_envio_aprobacion_proforma
                       ? new Date(
-                        rowData.fecha_envio_aprobacion_proforma
-                      ).toLocaleDateString("es-EC", {
-                        year: "numeric",
-                        month: "2-digit",
-                        day: "2-digit",
-                      })
+                          rowData.fecha_envio_aprobacion_proforma
+                        ).toLocaleDateString("es-EC", {
+                          year: "numeric",
+                          month: "2-digit",
+                          day: "2-digit",
+                        })
                       : "" // o puedes poner 'Sin revisar' u otro texto
                 }
               />
@@ -753,12 +614,12 @@ const ConsultarTramites = () => {
                   (rowData) =>
                     rowData.fecha_envio_aprobacion_proforma
                       ? new Date(
-                        rowData.fecha_envio_aprobacion_proforma
-                      ).toLocaleDateString("es-EC", {
-                        year: "numeric",
-                        month: "2-digit",
-                        day: "2-digit",
-                      })
+                          rowData.fecha_envio_aprobacion_proforma
+                        ).toLocaleDateString("es-EC", {
+                          year: "numeric",
+                          month: "2-digit",
+                          day: "2-digit",
+                        })
                       : "" // o puedes poner 'Sin revisar' u otro texto
                 }
               />
@@ -775,12 +636,12 @@ const ConsultarTramites = () => {
                   (rowData) =>
                     rowData.fecha_firma_matriz_cliente
                       ? new Date(
-                        rowData.fecha_firma_matriz_cliente
-                      ).toLocaleDateString("es-EC", {
-                        year: "numeric",
-                        month: "2-digit",
-                        day: "2-digit",
-                      })
+                          rowData.fecha_firma_matriz_cliente
+                        ).toLocaleDateString("es-EC", {
+                          year: "numeric",
+                          month: "2-digit",
+                          day: "2-digit",
+                        })
                       : "" // o puedes poner 'Sin revisar' u otro texto
                 }
               />
@@ -792,12 +653,12 @@ const ConsultarTramites = () => {
                   (rowData) =>
                     rowData.fecha_retorno_matriz_firmada
                       ? new Date(
-                        rowData.fecha_retorno_matriz_firmada
-                      ).toLocaleDateString("es-EC", {
-                        year: "numeric",
-                        month: "2-digit",
-                        day: "2-digit",
-                      })
+                          rowData.fecha_retorno_matriz_firmada
+                        ).toLocaleDateString("es-EC", {
+                          year: "numeric",
+                          month: "2-digit",
+                          day: "2-digit",
+                        })
                       : "" // o puedes poner 'Sin revisar' u otro texto
                 }
               />
@@ -815,12 +676,12 @@ const ConsultarTramites = () => {
                   (rowData) =>
                     rowData.fecha_ingreso_registro
                       ? new Date(
-                        rowData.fecha_ingreso_registro
-                      ).toLocaleDateString("es-EC", {
-                        year: "numeric",
-                        month: "2-digit",
-                        day: "2-digit",
-                      })
+                          rowData.fecha_ingreso_registro
+                        ).toLocaleDateString("es-EC", {
+                          year: "numeric",
+                          month: "2-digit",
+                          day: "2-digit",
+                        })
                       : "" // o puedes poner 'Sin revisar' u otro texto
                 }
               />
@@ -832,12 +693,12 @@ const ConsultarTramites = () => {
                   (rowData) =>
                     rowData.fecha_tentativa_inscripcion
                       ? new Date(
-                        rowData.fecha_tentativa_inscripcion
-                      ).toLocaleDateString("es-EC", {
-                        year: "numeric",
-                        month: "2-digit",
-                        day: "2-digit",
-                      })
+                          rowData.fecha_tentativa_inscripcion
+                        ).toLocaleDateString("es-EC", {
+                          year: "numeric",
+                          month: "2-digit",
+                          day: "2-digit",
+                        })
                       : "" // o puedes poner 'Sin revisar' u otro texto
                 }
               />
@@ -849,13 +710,13 @@ const ConsultarTramites = () => {
                   (rowData) =>
                     rowData.fecha_inscripcion
                       ? new Date(rowData.fecha_inscripcion).toLocaleDateString(
-                        "es-EC",
-                        {
-                          year: "numeric",
-                          month: "2-digit",
-                          day: "2-digit",
-                        }
-                      )
+                          "es-EC",
+                          {
+                            year: "numeric",
+                            month: "2-digit",
+                            day: "2-digit",
+                          }
+                        )
                       : "" // o puedes poner 'Sin revisar' u otro texto
                 }
               />
@@ -867,12 +728,12 @@ const ConsultarTramites = () => {
                   (rowData) =>
                     rowData.fecha_ingreso_catastro
                       ? new Date(
-                        rowData.fecha_ingreso_catastro
-                      ).toLocaleDateString("es-EC", {
-                        year: "numeric",
-                        month: "2-digit",
-                        day: "2-digit",
-                      })
+                          rowData.fecha_ingreso_catastro
+                        ).toLocaleDateString("es-EC", {
+                          year: "numeric",
+                          month: "2-digit",
+                          day: "2-digit",
+                        })
                       : "" // o puedes poner 'Sin revisar' u otro texto
                 }
               />
@@ -884,12 +745,12 @@ const ConsultarTramites = () => {
                   (rowData) =>
                     rowData.fecha_tentativa_catastro
                       ? new Date(
-                        rowData.fecha_tentativa_catastro
-                      ).toLocaleDateString("es-EC", {
-                        year: "numeric",
-                        month: "2-digit",
-                        day: "2-digit",
-                      })
+                          rowData.fecha_tentativa_catastro
+                        ).toLocaleDateString("es-EC", {
+                          year: "numeric",
+                          month: "2-digit",
+                          day: "2-digit",
+                        })
                       : "" // o puedes poner 'Sin revisar' u otro texto
                 }
               />
@@ -901,13 +762,13 @@ const ConsultarTramites = () => {
                   (rowData) =>
                     rowData.fecha_catastro
                       ? new Date(rowData.fecha_catastro).toLocaleDateString(
-                        "es-EC",
-                        {
-                          year: "numeric",
-                          month: "2-digit",
-                          day: "2-digit",
-                        }
-                      )
+                          "es-EC",
+                          {
+                            year: "numeric",
+                            month: "2-digit",
+                            day: "2-digit",
+                          }
+                        )
                       : "" // o puedes poner 'Sin revisar' u otro texto
                 }
               />
@@ -930,33 +791,19 @@ const ConsultarTramites = () => {
                 body={(rowData) => (
                   <div className="actions-cell">
                     <Button
+                    type="button"
                       icon="pi pi-pencil"
                       rounded
                       text
                       className="edit-button"
-                      onClick={() => handleEdit(rowData.id)}
+                      onClick={() => handleConsultar(rowData.id)}
                     />
-                    {operadorCanDeleteTramite && (
-                      <Button
-                        icon="pi pi-trash"
-                        rounded
-                        text
-                        className="delete-button"
-                        onClick={() => handleDelete(rowData.id)}
-                      />
-                    )}
                   </div>
                 )}
                 header="Acciones"
               />
             </DataTable>
           </div>
-
-          <ClienteModal
-            visible={modalVisible}
-            onHide={handleModalHide}
-            setCliente={handleSetCliente}
-          />
 
           <InmobiliariaModal
             visible={modalInmobiliariaVisible}

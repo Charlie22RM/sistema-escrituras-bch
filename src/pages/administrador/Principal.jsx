@@ -35,6 +35,20 @@ const Principal = () => {
     navigate("/");
   };
 
+  const perfilLabel = ()=>{
+    switch (perfilId) {
+      case "1":
+        return "administrador";
+      case "2":
+        return "operador";
+      case "3":
+        return "cliente";
+      default:
+        console.log(perfilId);
+        return "usuario";
+    }
+  }
+
   // Effect para cerrar al hacer clic fuera
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -74,7 +88,7 @@ const Principal = () => {
         <div className="sidebar-menu">
           <div
             className="menu-item"
-            onClick={() => handleNavigation("/administrador")}
+            onClick={() => handleNavigation(`./${perfilLabel()}`)}
           >
             <i className="pi pi-clipboard"></i>
             <span>Trámites</span>
@@ -130,7 +144,7 @@ const Principal = () => {
             />
             <div className="user-details">
               <span className="username">Usuario</span>
-              <span className="user-role">Administrador</span>
+              <span className="user-role"> {perfilLabel()}</span>
             </div>
           </div>
         </div>
@@ -173,15 +187,18 @@ const Principal = () => {
                   </div> */}
 
                   <div className="dropdown-body">
-                    <button
-                      className="dropdown-item"
-                      onClick={() => handleNavigation("./config")}
-                      aria-label="Configuración"
-                    >
-                      <i className="pi pi-cog"></i>
-                      <span>Configuración</span>
-                      <i className="pi pi-chevron-right dropdown-arrow"></i>
-                    </button>
+                    {perfilId == 1 && (
+                      <button
+                        className="dropdown-item"
+                        onClick={() => handleNavigation("./config")}
+                        aria-label="Configuración"
+                      >
+                        <i className="pi pi-cog"></i>
+                        <span>Configuración</span>
+                        <i className="pi pi-chevron-right dropdown-arrow"></i>
+                      </button>
+                    )}
+
                     <button
                       className="dropdown-item"
                       onClick={() => handleNavigation("./cambio-contrasena")}
