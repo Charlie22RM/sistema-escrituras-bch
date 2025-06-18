@@ -1,5 +1,5 @@
 import { useEffect, useState, useRef } from "react";
-import { useDispatch,useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import TramiteService from "../../../services/TramiteService";
 import { Button } from "primereact/button";
 import { Column } from "primereact/column";
@@ -19,6 +19,7 @@ import InmobiliariaModal from "../../../modals/InmobiliariaModal";
 import CantonService from "../../../services/CantonService";
 import ProyectoModal from "../../../modals/ProyectoModal";
 import ClienteService from "../../../services/ClienteService";
+import ConfiguracionService from "../../../services/ConfiguracionService";
 
 const ConsultarTramites = () => {
   //const { userId } = useSelector((state) => state.auth);
@@ -33,11 +34,14 @@ const ConsultarTramites = () => {
 
   const [search, setSearch] = useState(""); // Se ejecuta la búsqueda con este valor
   const [searchInput, setSearchInput] = useState(""); // Input controlado por el usuario
+  const [clienteCanViewDocumentos, setClienteCanViewDocumentos] =
+    useState(false);
 
   const tramiteService = TramiteService();
   const informeService = InformeService();
   const cantonService = CantonService();
   const clienteService = ClienteService();
+  const configuracionService = ConfiguracionService();
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -100,16 +104,35 @@ const ConsultarTramites = () => {
     }
   };
 
-  const getClienteIdByUserId = async () =>{
+  const getConfiguracion = async () => {
+    try {
+      const response = await configuracionService.getAll();
+      const configuraciones = response.data;
+
+      configuraciones.forEach((config) => {
+        if (config.codigo === "PERMITIR_VER_DOCUMENTOS") {
+          setClienteCanViewDocumentos(config.valor === "true");
+        }
+      });
+    } catch (error) {
+      console.error("Error al obtener la configuración:", error);
+      handleError(error);
+    }
+  };
+
+  const getClienteIdByUserId = async () => {
     try {
       const response = await clienteService.getClienteIdByUserId();
-      console.log("Cliente obtenido por ID de usuario:", response.data.cliente_id);
+      console.log(
+        "Cliente obtenido por ID de usuario:",
+        response.data.cliente_id
+      );
       setCliente(response.data.cliente_id);
     } catch (error) {
       console.error("Error al obtener el cliente por ID de usuario:", error);
       handleError(error);
     }
-  }
+  };
 
   const handleError = (error) => {
     if (error && error.statusCode === 401) {
@@ -267,7 +290,11 @@ const ConsultarTramites = () => {
   useEffect(() => {
     //setLoading(true);
     const fetchData = async () => {
-      await Promise.all([ getTags(), getClienteIdByUserId()]);
+      await Promise.all([
+        getTags(),
+        getClienteIdByUserId(),
+        getConfiguracion(),
+      ]);
       //setLoading(false);
     };
     fetchData();
@@ -785,23 +812,25 @@ const ConsultarTramites = () => {
                 frozen
                 alignFrozen="right"
               />
-              <Column
-                frozen
-                alignFrozen="right"
-                body={(rowData) => (
-                  <div className="actions-cell">
-                    <Button
-                    type="button"
-                      icon="pi pi-pencil"
-                      rounded
-                      text
-                      className="edit-button"
-                      onClick={() => handleConsultar(rowData.id)}
-                    />
-                  </div>
-                )}
-                header="Acciones"
-              />
+              {clienteCanViewDocumentos && (
+                <Column
+                  frozen
+                  alignFrozen="right"
+                  body={(rowData) => (
+                    <div className="actions-cell">
+                      <Button
+                        type="button"
+                        icon="pi pi-book"
+                        rounded
+                        text
+                        className="edit-button"
+                        onClick={() => handleConsultar(rowData.id)}
+                      />
+                    </div>
+                  )}
+                  header="Acciones"
+                />
+              )}
             </DataTable>
           </div>
 

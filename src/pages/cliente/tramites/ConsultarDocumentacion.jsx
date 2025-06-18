@@ -13,6 +13,8 @@ const ConsultarDocumentacion = () => {
   const dispatch = useDispatch();
   const tramiteService = TramiteService();
   const pdfService = PdfService();
+  const [pdfCatastroId, setPdfCatastroId] = useState(null);
+  const [pdfTituloId, setPdfTituloId] = useState(null);
   const [pdfFacturasId, setPdfFacturasId] = useState([]);
   const toast = useRef(null);
 
@@ -24,8 +26,14 @@ const ConsultarDocumentacion = () => {
         if (tramite.pdfs) {
           const pdfs = tramite.pdfs;
           setPdfFacturasId([]);
+          setPdfCatastroId(null);
+          setPdfTituloId(null);
           pdfs.forEach((pdf) => {
-            if (pdf.is_factura) {
+            if (pdf.is_catastro) {
+              setPdfCatastroId(pdf.id);
+            } else if (pdf.is_titulo) {
+              setPdfTituloId(pdf.id);
+            } else if (pdf.is_factura) {
               setPdfFacturasId((prev) => [...prev, pdf.id]);
             }
           });
@@ -76,6 +84,26 @@ const ConsultarDocumentacion = () => {
   return (
     <>
       <Toast ref={toast} />
+      {pdfTituloId != null && (
+        <Button
+          type="button"
+          label="Ver PDF del título"
+          icon="pi pi-eye"
+          className="tramite-button tramite-submit"
+          onClick={() => getPdfUrl(pdfTituloId)}
+        />
+      )}
+      {pdfCatastroId != null && (
+        <div className="tramite-form-actions">
+          <Button
+            type="button"
+            label="Ver PDF del catastro"
+            icon="pi pi-eye"
+            className="tramite-button tramite-submit"
+            onClick={() => getPdfUrl(pdfCatastroId)}
+          />
+        </div>
+      )}
       {pdfFacturasId.length > 0 && (
         <div className="invoice-list">
           {pdfFacturasId.map((facturaId, index) => (

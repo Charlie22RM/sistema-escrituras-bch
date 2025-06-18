@@ -11,7 +11,6 @@ import ConfiguracionService from "../../services/ConfiguracionService";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 
-
 const Parametros = () => {
   const toast = useRef(null);
   const dispatch = useDispatch();
@@ -27,6 +26,7 @@ const Parametros = () => {
   const formik = useFormik({
     initialValues: {
       canDeleteTramite: false,
+      canViewDocuments: false,
     },
     validationSchema,
     onSubmit: async (values) => {
@@ -38,6 +38,7 @@ const Parametros = () => {
         // Simulamos un retraso de red
         await configuracionService.update({
           PERMITIR_ELIMINAR_TRAMITES: values.canDeleteTramite,
+          PERMITIR_VER_DOCUMENTOS: values.canViewDocuments,
         });
 
         toast.current.show({
@@ -90,6 +91,9 @@ const Parametros = () => {
           if (config.codigo === "PERMITIR_ELIMINAR_TRAMITES") {
             formik.setFieldValue("canDeleteTramite", config.valor === "true");
           }
+          if (config.codigo === "PERMITIR_VER_DOCUMENTOS") {
+            formik.setFieldValue("canViewDocuments", config.valor === "true");
+          }
         });
       } catch (error) {
         toast.current.show({
@@ -111,44 +115,141 @@ const Parametros = () => {
       <Toast ref={toast} />
       <Card title="Parámetros" className="shadow-2">
         <form onSubmit={formik.handleSubmit}>
-          <div className="field grid align-items-center">
-            <div className="col-12 md:col-6">
-              <label htmlFor="canDeleteTramite" className="block text-lg font-medium text-gray-800 mb-2">
-                ¿Desea permitir que se eliminen trámites del sistema?
-              </label>
-              <div className="flex align-items-center gap-3">
-                <InputSwitch
-                  id="canDeleteTramite"
-                  name="canDeleteTramite"
-                  checked={formik.values.canDeleteTramite}
-                  onChange={(e) => formik.setFieldValue("canDeleteTramite", e.value)}
-                  pt={{
-                    slider: {
-                      style: {
-                        backgroundColor: formik.values.canDeleteTramite ? '#1e3c72' : '',
+          <div>
+            <div className="field grid align-items-center">
+              <div className="col-12 md:col-6">
+                <label
+                  htmlFor="canDeleteTramite"
+                  className="block text-lg font-medium text-gray-800 mb-2"
+                >
+                  ¿Desea permitir que se eliminen trámites del sistema?
+                </label>
+                <div className="flex align-items-center gap-3">
+                  <InputSwitch
+                    id="canDeleteTramite"
+                    name="canDeleteTramite"
+                    checked={formik.values.canDeleteTramite}
+                    onChange={(e) =>
+                      formik.setFieldValue("canDeleteTramite", e.value)
+                    }
+                    pt={{
+                      slider: {
+                        style: {
+                          backgroundColor: formik.values.canDeleteTramite
+                            ? "#1e3c72"
+                            : "",
+                        },
                       },
-                    },
-                    root: {
-                      style: {
-                        border: 'none',
-                        boxShadow: 'none',
+                      root: {
+                        style: {
+                          border: "none",
+                          boxShadow: "none",
+                        },
                       },
-                    },
-                  }}
-                />
-      
-                <i
-                  className="pi pi-info-circle ml-2 cursor-pointer text-primary"
-                  data-pr-tooltip="Esta opción permite a los operadores eliminar trámites del sistema"
-                  data-pr-position="right"
-                />
-                <Tooltip target=".pi-info-circle" />
-              </div>
-              {formik.touched.canDeleteTramite && formik.errors.canDeleteTramite && (
-                <div className="text-red-500 mt-1 text-sm">
-                  {formik.errors.canDeleteTramite}
+                    }}
+                  />
+
+                  <i
+                    className="pi pi-info-circle ml-2 cursor-pointer text-primary"
+                    data-pr-tooltip="Esta opción permite a los operadores eliminar trámites del sistema"
+                    data-pr-position="right"
+                  />
+                  <Tooltip target=".pi-info-circle" />
                 </div>
-              )}
+                {formik.touched.canDeleteTramite &&
+                  formik.errors.canDeleteTramite && (
+                    <div className="text-red-500 mt-1 text-sm">
+                      {formik.errors.canDeleteTramite}
+                    </div>
+                  )}
+              </div>
+            </div>
+
+            <div className="mt-4 surface-100 p-3 border-round">
+              <h3 className="mt-0 text-lg font-semibold">
+                Configuración actual
+              </h3>
+              <p className="text-gray-700">
+                <span className="font-medium">Permitir eliminar trámites:</span>{" "}
+                <strong
+                  className={
+                    formik.values.canDeleteTramite
+                      ? "text-green-600"
+                      : "text-red-600"
+                  }
+                >
+                  {formik.values.canDeleteTramite ? "Activado" : "Desactivado"}
+                </strong>
+              </p>
+            </div>
+          </div>
+
+          <div>
+            <div className="field grid align-items-center">
+              <div className="col-12 md:col-6">
+                <label
+                  htmlFor="canDeleteTramite"
+                  className="block text-lg font-medium text-gray-800 mb-2"
+                >
+                  ¿Desea permitir que el cliente vea los documentos del trámite?
+                </label>
+                <div className="flex align-items-center gap-3">
+                  <InputSwitch
+                    id="canViewDocuments"
+                    name="canViewDocuments"
+                    checked={formik.values.canViewDocuments}
+                    onChange={(e) =>
+                      formik.setFieldValue("canViewDocuments", e.value)
+                    }
+                    pt={{
+                      slider: {
+                        style: {
+                          backgroundColor: formik.values.canViewDocuments
+                            ? "#1e3c72"
+                            : "",
+                        },
+                      },
+                      root: {
+                        style: {
+                          border: "none",
+                          boxShadow: "none",
+                        },
+                      },
+                    }}
+                  />
+
+                  <i
+                    className="pi pi-info-circle ml-2 cursor-pointer text-primary"
+                    data-pr-tooltip="Esta opción permite a los clientes ver los documentos asociados a sus trámites"
+                    data-pr-position="right"
+                  />
+                  <Tooltip target=".pi-info-circle" />
+                </div>
+                {formik.touched.canViewDocuments &&
+                  formik.errors.canViewDocuments && (
+                    <div className="text-red-500 mt-1 text-sm">
+                      {formik.errors.canViewDocuments}
+                    </div>
+                  )}
+              </div>
+            </div>
+
+            <div className="mt-4 surface-100 p-3 border-round">
+              <h3 className="mt-0 text-lg font-semibold">
+                Configuración actual
+              </h3>
+              <p className="text-gray-700">
+                <span className="font-medium">Permitir ver documentos:</span>{" "}
+                <strong
+                  className={
+                    formik.values.canViewDocuments
+                      ? "text-green-600"
+                      : "text-red-600"
+                  }
+                >
+                  {formik.values.canViewDocuments ? "Activado" : "Desactivado"}
+                </strong>
+              </p>
             </div>
           </div>
 
@@ -160,20 +261,9 @@ const Parametros = () => {
             className="tramite-button tramite-submit"
           />
         </form>
-
-        <div className="mt-4 surface-100 p-3 border-round">
-          <h3 className="mt-0 text-lg font-semibold">Configuración actual</h3>
-          <p className="text-gray-700">
-            <span className="font-medium">Permitir eliminar trámites:</span>{' '}
-            <strong className={formik.values.canDeleteTramite ? 'text-green-600' : 'text-red-600'}>
-              {formik.values.canDeleteTramite ? 'Activado' : 'Desactivado'}
-            </strong>
-          </p>
-        </div>
       </Card>
     </div>
   );
-
 };
 
 export default Parametros;
