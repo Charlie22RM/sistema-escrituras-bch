@@ -212,13 +212,13 @@ const ConsultarTramites = () => {
       try {
         let qs = search ? `&search=${search}` : "";
         if (proyecto) {
-          qs += `&proyecto=${proyecto}`;
+          qs += `&proyectoId=${proyecto}`;
         }
         if (inmobiliaria) {
           qs += `&inmobiliaria=${inmobiliaria}`;
         }
         if (cliente) {
-          qs += `&cliente=${cliente}`;
+          qs += `&clienteId=${cliente}`;
         }
         if (formik.values.canton_id != null) {
           qs += `&cantonId=${formik.values.canton_id}`;
