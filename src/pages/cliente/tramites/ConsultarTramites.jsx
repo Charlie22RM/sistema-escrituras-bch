@@ -432,7 +432,7 @@ const ConsultarTramites = () => {
                       icon="pi pi-search"
                       type="button"
                       onClick={() => {
-                        if (!formik.values.cliente_id) {
+                        if (cliente === null) {
                           toast.current.show({
                             severity: "warn",
                             summary: "Advertencia",
@@ -839,7 +839,7 @@ const ConsultarTramites = () => {
             visible={modalInmobiliariaVisible}
             onHide={() => setModalInmobiliariaVisible(false)}
             setInmobiliaria={handleSetInmobiliaria}
-            cliente_id={cliente?.id}
+            cliente_id={cliente}
           />
 
           <ProyectoModal
