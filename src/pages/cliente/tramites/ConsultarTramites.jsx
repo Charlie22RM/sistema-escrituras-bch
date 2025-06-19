@@ -208,6 +208,7 @@ const ConsultarTramites = () => {
 
   useEffect(() => {
     const fetchData = async () => {
+      if (!cliente) return; // Si no hay cliente, no hacer la búsqueda
       try {
         let qs = search ? `&search=${search}` : "";
         if (proyecto) {
@@ -228,7 +229,7 @@ const ConsultarTramites = () => {
       }
     };
     fetchData();
-  }, [lazyState.page, lazyState.rows, search]);
+  }, [lazyState.page, lazyState.rows, search,cliente]);
 
   const onPageChange = (event) => {
     setLazyState({
