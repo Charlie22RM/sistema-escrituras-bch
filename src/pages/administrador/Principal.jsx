@@ -35,19 +35,14 @@ const Principal = () => {
     navigate("/");
   };
 
-  const perfilLabel = ()=>{
-    switch (perfilId) {
-      case "1":
-        return "administrador";
-      case "2":
-        return "operador";
-      case "3":
-        return "cliente";
-      default:
-        console.log(perfilId);
-        return "usuario";
-    }
-  }
+const roles = {
+    1: "Administrador",
+    2: "Operador",
+    3: "Cliente",
+  };
+
+  // Obtener el nombre del rol
+  const rolLabel = roles[Number(perfilId)] || "Cargando...";
 
   // Effect para cerrar al hacer clic fuera
   useEffect(() => {
@@ -144,7 +139,7 @@ const Principal = () => {
             />
             <div className="user-details">
               <span className="username">Usuario</span>
-              <span className="user-role"> {perfilLabel()}</span>
+              <span className="user-role"> {rolLabel}</span>
             </div>
           </div>
         </div>
