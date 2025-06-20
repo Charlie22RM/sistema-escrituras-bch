@@ -556,11 +556,10 @@ const ConsultarTramites = () => {
                     optionLabel="nombre"
                     optionValue="id"
                     placeholder="Seleccione un cantón"
-                    className={`${
-                      formik.touched.canton_id && formik.errors.canton_id
+                    className={`${formik.touched.canton_id && formik.errors.canton_id
                         ? "p-invalid"
                         : ""
-                    }`}
+                      }`}
                     disabled={!cliente || !inmobiliaria}
                   />
                   {formik.touched.canton_id && formik.errors.canton_id && (
@@ -633,7 +632,7 @@ const ConsultarTramites = () => {
                       type="button"
                     >
                       <i className="pi pi-file-excel mr-2" />
-                      Descargar Informe
+                      Descargar Reporte
                     </Button>
                   </div>
                 </div>

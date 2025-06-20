@@ -991,3 +991,10 @@
   background: #1e3c72;
   opacity: 0.9;
 }
+
+.empty-message {
+  color: #999;
+  font-style: italic;
+  font-size: small;
+  padding: 0.5rem;
+}
