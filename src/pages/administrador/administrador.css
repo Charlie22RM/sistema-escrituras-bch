@@ -573,7 +573,7 @@
 
 /* Grupos de campos */
 .tramite-form-group {
-  
+
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
@@ -1020,10 +1020,12 @@
   .tramite-button {
     min-width: auto !important;
     padding: 0.5rem !important;
-    height: 2.5rem; /* Añadido para uniformidad en altura */
+    height: 2.5rem;
+    /* Añadido para uniformidad en altura */
   }
 
-  .tramite-submit { /* Específico para el botón de filtro */
+  .tramite-submit {
+    /* Específico para el botón de filtro */
     height: 2.5rem !important;
     display: flex;
     align-items: center;
@@ -1057,14 +1059,21 @@
   .tramite-button {
     font-size: 0.75rem !important;
     padding: 0.3rem !important;
-    height: 2.3rem; /* Ajuste para pantallas más pequeñas */
+    height: 2.3rem;
+    /* Ajuste para pantallas más pequeñas */
   }
 
-  .tramite-submit { /* Ajuste específico para pantallas pequeñas */
+  .tramite-submit {
+    /* Ajuste específico para pantallas pequeñas */
     height: 2.3rem !important;
   }
 
   .tramite-input {
     font-size: 0.8rem !important;
   }
+}
+
+.p-progress-spinner-circle {
+  stroke: #1e3c72 !important;
+  /* Cambia #007bff por el color que quieras, aquí es azul */
 }
