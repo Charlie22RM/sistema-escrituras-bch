@@ -83,7 +83,7 @@ const roles = {
         <div className="sidebar-menu">
           <div
             className="menu-item"
-            onClick={() => handleNavigation(`./${perfilLabel()}`)}
+            onClick={() => handleNavigation(`./${rolLabel}`)}
           >
             <i className="pi pi-clipboard"></i>
             <span>Trámites</span>
