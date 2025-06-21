@@ -557,8 +557,8 @@ const ConsultarTramites = () => {
                     optionValue="id"
                     placeholder="Seleccione un cantón"
                     className={`${formik.touched.canton_id && formik.errors.canton_id
-                        ? "p-invalid"
-                        : ""
+                      ? "p-invalid"
+                      : ""
                       }`}
                     disabled={!cliente || !inmobiliaria}
                   />
@@ -607,21 +607,13 @@ const ConsultarTramites = () => {
                         icon="pi pi-times"
                         className="clear-button"
                         onClick={() => {
-                          // Limpiar valores de filtros
-                          formik.setFieldValue("cliente_id", "");
-                          formik.setFieldValue("inmobiliaria_id", "");
-                          formik.setFieldValue("canton_id", "");
-                          formik.setFieldValue("proyecto_id", "");
-
-                          setCliente(null);
-                          setInmobiliaria(null);
-                          setProyecto(null);
-
+              
                           setLazyState({
                             ...lazyState,
                             first: 0,
                             page: 1,
                           });
+            
                         }}
 
                       />

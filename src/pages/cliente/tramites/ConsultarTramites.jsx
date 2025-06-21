@@ -10,12 +10,12 @@ import { ProgressSpinner } from "primereact/progressspinner";
 import { Toast } from "primereact/toast";
 import { useNavigate } from "react-router-dom";
 import { clearLogout } from "../../../redux/authSlice";
-import "../administrador.css";
+
 import InformeService from "../../../services/InformeService";
 import { Tag } from "primereact/tag";
 import { Dropdown } from "primereact/dropdown";
 import { useFormik } from "formik";
-import InmobiliariaModal from "../../../modals/InmobiliariaModal";
+import InmobiliariaModal from "../../../modals/InmobiliariaModal"; 
 import CantonService from "../../../services/CantonService";
 import ProyectoModal from "../../../modals/ProyectoModal";
 import ClienteService from "../../../services/ClienteService";
@@ -532,13 +532,7 @@ const ConsultarTramites = () => {
                         onClick={() => {
                           // Limpiar valores de filtros
 
-                          formik.setFieldValue("inmobiliaria_id", "");
-                          formik.setFieldValue("canton_id", "");
-                          formik.setFieldValue("proyecto_id", "");
-
-
-                          setInmobiliaria(null);
-                          setProyecto(null);
+                
                           setLazyState({
                             ...lazyState,
                             first: 0,

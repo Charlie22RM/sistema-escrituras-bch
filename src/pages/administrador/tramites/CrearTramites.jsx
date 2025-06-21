@@ -16,16 +16,10 @@ import { useNavigate } from "react-router-dom";
 import { clearLogout } from "../../../redux/authSlice";
 import ProyectoService from "../../../services/ProyectoService";
 import TramiteService from "../../../services/TramiteService";
-
-// Estilo reutilizable para inputs bloqueados
-const blockedInputStyle = {
-  width: "400px",
-  backgroundColor: "#f5f5f5",
-  borderColor: "#ddd",
-  color: "#666",
-};
+import { ProgressSpinner } from "primereact/progressspinner";
 
 const CrearTramites = () => {
+  const [loading, setLoading] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
   const [modalInmobiliariaVisible, setModalInmobiliariaVisible] =
     useState(false);
@@ -136,10 +130,10 @@ const CrearTramites = () => {
   };
 
   useEffect(() => {
-    //setLoading(true);
+    setLoading(true);
     const fetchData = async () => {
       await getTags();
-      //setLoading(false);
+      setLoading(false);
     };
     fetchData();
   }, []);
@@ -226,175 +220,181 @@ const CrearTramites = () => {
           //className="tramite-form-card"
           className="w-full md:w-6"
         >
-          <form onSubmit={formik.handleSubmit} className="tramite-form">
-            <div className="tramite-form-content">
-              {/* Input Cliente */}
-              <div className="tramite-form-group">
-                <div className="tramite-input-group">
-                  <InputText
-                    value={cliente?.nombre || ""}
-                    placeholder="Cliente"
-                    disabled
-                    className={`tramite-input ${formik.touched.cliente_id && formik.errors.cliente_id ? "p-invalid" : ""}`}
-                  />
-                  <Button
-                  
-                    icon="pi pi-search"
-                    label="Buscar Cliente"
-                    onClick={() => setModalVisible(true)}
-                    className="tramite-button tramite-search-button"
-                  />
-                </div>
-                {formik.touched.cliente_id && formik.errors.cliente_id && (
-                  <small className="tramite-error">{formik.errors.cliente_id}</small>
-                )}
-              </div>
-
-              {/* Input Inmobiliaria */}
-              <div className="tramite-form-group">
-                <div className="tramite-input-group">
-                  <InputText
-                    value={inmobiliaria?.nombre || ""}
-                    placeholder="Inmobiliaria"
-                    disabled
-                    className={`tramite-input ${formik.touched.inmobiliaria_id && formik.errors.inmobiliaria_id ? "p-invalid" : ""}`}
-                  />
-                  <Button
-                    icon="pi pi-search"
-                    label="Buscar Inmobiliaria"
-                    onClick={() => {
-                      if (!formik.values.cliente_id) {
-                        toast.current.show({
-                          severity: "warn",
-                          summary: "Advertencia",
-                          detail: "Primero seleccione un cliente",
-                          life: 3000,
-                        });
-                        return;
-                      }
-                      setModalInmobiliariaVisible(true);
-                    }}
-                    className="tramite-button tramite-search-button"
-                  />
-                </div>
-                {formik.touched.inmobiliaria_id && formik.errors.inmobiliaria_id && (
-                  <small className="tramite-error">{formik.errors.inmobiliaria_id}</small>
-                )}
-              </div>
-
-              {/* Input Cantón */}
-              <div className="tramite-form-group" onClick={showDisabledMessage}>
-                <Dropdown
-                  id="canton_id"
-                  name="canton_id"
-                  value={formik.values.canton_id}
-                  onChange={formik.handleChange}
-                  onBlur={formik.handleBlur}
-                  options={cantones}
-                  optionLabel="nombre"
-                  optionValue="id"
-                  placeholder="Seleccione un cantón"
-                  className={`${formik.touched.canton_id && formik.errors.canton_id ? "p-invalid" : ""}`}
-                  disabled={!cliente || !inmobiliaria}
-                />
-                {formik.touched.canton_id && formik.errors.canton_id && (
-                  <small className="tramite-error">{formik.errors.canton_id}</small>
-                )}
-              </div>
-
-              {/* Input Proyecto */}
-              <div className="tramite-form-group">
-                <div className="tramite-input-group">
-                  <InputText
-                    value={proyecto?.nombre || ""}
-                    placeholder="Proyecto"
-                    disabled
-                    className={`tramite-input ${formik.touched.proyecto_id && formik.errors.proyecto_id ? "p-invalid" : ""}`}
-                  />
-                  <Button
-                    icon="pi pi-search"
-                    label="Buscar Proyecto"
-                    onClick={handleModalProyecto}
-                    className="tramite-button tramite-search-button"
-                  />
-                </div>
-                {formik.touched.proyecto_id && formik.errors.proyecto_id && (
-                  <small className="tramite-error">{formik.errors.proyecto_id}</small>
-                )}
-              </div>
-
-              {/* Input Nombre del Beneficiario */}
-              <div className="tramite-form-group">
-                <InputText
-                  id="nombre_beneficiario"
-                  name="nombre_beneficiario"
-                  value={formik.values.nombre_beneficiario}
-                  onChange={formik.handleChange}
-                  onBlur={formik.handleBlur}
-                  placeholder="Nombre del beneficiario"
-                  className={`tramite-input ${formik.touched.nombre_beneficiario && formik.errors.nombre_beneficiario ? "p-invalid" : ""}`}
-                />
-                {formik.touched.nombre_beneficiario && formik.errors.nombre_beneficiario && (
-                  <small className="tramite-error">{formik.errors.nombre_beneficiario}</small>
-                )}
-              </div>
-
-              {/* Input Cédula del Beneficiario */}
-              <div className="tramite-form-group">
-                <InputText
-                  id="cedula_beneficiario"
-                  name="cedula_beneficiario"
-                  value={formik.values.cedula_beneficiario}
-                  onChange={(e) => {
-                    const value = e.target.value.replace(/[^0-9]/g, "");
-                    formik.setFieldValue("cedula_beneficiario", value);
-                  }}
-                  onBlur={formik.handleBlur}
-                  placeholder="Cédula del beneficiario"
-                  className={`tramite-input ${formik.touched.cedula_beneficiario && formik.errors.cedula_beneficiario ? "p-invalid" : ""}`}
-                  maxLength={10}
-                />
-                {formik.touched.cedula_beneficiario && formik.errors.cedula_beneficiario && (
-                  <small className="tramite-error">{formik.errors.cedula_beneficiario}</small>
-                )}
-              </div>
-
-              {/* Input Fecha del trámite */}
-              <div className="tramite-form-group">
-                <Calendar
-                  id="fecha_asignacion"
-                  name="fecha_asignacion"
-                  value={formik.values.fecha_asignacion}
-                  onChange={(e) => formik.setFieldValue("fecha_asignacion", e.value)}
-                  dateFormat="dd/mm/yy"
-                  showIcon
-                  placeholder="Fecha del trámite"
-                  className={`${formik.submitCount > 0 && formik.errors.fecha_asignacion ? "p-invalid" : ""}`}
-                />
-                {formik.submitCount > 0 && formik.errors.fecha_asignacion && (
-                  <small className="tramite-error">{formik.errors.fecha_asignacion}</small>
-                )}
-              </div>
-
-              <div className="tramite-form-actions">
-                <Button
-                  label="Guardar"
-                  icon="pi pi-save"
-                  type="submit"
-                  className="tramite-button tramite-submit"
-                  loading={formik.isSubmitting}
-                />
-                <Button
-                  label="Cancelar"
-                  icon="pi pi-times"
-                  type="button"
-                  className="tramite-button tramite-cancel"
-                  onClick={() => navigate("/administrador/consultar-tramite")}
-                  disabled={formik.isSubmitting}
-                />
-              </div>
+          {loading ? (
+            <div className="loading-spinner">
+              <ProgressSpinner />
             </div>
-          </form>
+          ) : (
+            <form onSubmit={formik.handleSubmit} className="tramite-form">
+              <div className="tramite-form-content">
+                {/* Input Cliente */}
+                <div className="tramite-form-group">
+                  <div className="tramite-input-group">
+                    <InputText
+                      value={cliente?.nombre || ""}
+                      placeholder="Cliente"
+                      disabled
+                      className={`tramite-input ${formik.touched.cliente_id && formik.errors.cliente_id ? "p-invalid" : ""}`}
+                    />
+                    <Button
+
+                      icon="pi pi-search"
+                      label="Buscar Cliente"
+                      onClick={() => setModalVisible(true)}
+                      className="tramite-button tramite-search-button"
+                    />
+                  </div>
+                  {formik.touched.cliente_id && formik.errors.cliente_id && (
+                    <small className="tramite-error">{formik.errors.cliente_id}</small>
+                  )}
+                </div>
+
+                {/* Input Inmobiliaria */}
+                <div className="tramite-form-group">
+                  <div className="tramite-input-group">
+                    <InputText
+                      value={inmobiliaria?.nombre || ""}
+                      placeholder="Inmobiliaria"
+                      disabled
+                      className={`tramite-input ${formik.touched.inmobiliaria_id && formik.errors.inmobiliaria_id ? "p-invalid" : ""}`}
+                    />
+                    <Button
+                      icon="pi pi-search"
+                      label="Buscar Inmobiliaria"
+                      onClick={() => {
+                        if (!formik.values.cliente_id) {
+                          toast.current.show({
+                            severity: "warn",
+                            summary: "Advertencia",
+                            detail: "Primero seleccione un cliente",
+                            life: 3000,
+                          });
+                          return;
+                        }
+                        setModalInmobiliariaVisible(true);
+                      }}
+                      className="tramite-button tramite-search-button"
+                    />
+                  </div>
+                  {formik.touched.inmobiliaria_id && formik.errors.inmobiliaria_id && (
+                    <small className="tramite-error">{formik.errors.inmobiliaria_id}</small>
+                  )}
+                </div>
+
+                {/* Input Cantón */}
+                <div className="tramite-form-group" onClick={showDisabledMessage}>
+                  <Dropdown
+                    id="canton_id"
+                    name="canton_id"
+                    value={formik.values.canton_id}
+                    onChange={formik.handleChange}
+                    onBlur={formik.handleBlur}
+                    options={cantones}
+                    optionLabel="nombre"
+                    optionValue="id"
+                    placeholder="Seleccione un cantón"
+                    className={`${formik.touched.canton_id && formik.errors.canton_id ? "p-invalid" : ""}`}
+                    disabled={!cliente || !inmobiliaria}
+                  />
+                  {formik.touched.canton_id && formik.errors.canton_id && (
+                    <small className="tramite-error">{formik.errors.canton_id}</small>
+                  )}
+                </div>
+
+                {/* Input Proyecto */}
+                <div className="tramite-form-group">
+                  <div className="tramite-input-group">
+                    <InputText
+                      value={proyecto?.nombre || ""}
+                      placeholder="Proyecto"
+                      disabled
+                      className={`tramite-input ${formik.touched.proyecto_id && formik.errors.proyecto_id ? "p-invalid" : ""}`}
+                    />
+                    <Button
+                      icon="pi pi-search"
+                      label="Buscar Proyecto"
+                      onClick={handleModalProyecto}
+                      className="tramite-button tramite-search-button"
+                    />
+                  </div>
+                  {formik.touched.proyecto_id && formik.errors.proyecto_id && (
+                    <small className="tramite-error">{formik.errors.proyecto_id}</small>
+                  )}
+                </div>
+
+                {/* Input Nombre del Beneficiario */}
+                <div className="tramite-form-group">
+                  <InputText
+                    id="nombre_beneficiario"
+                    name="nombre_beneficiario"
+                    value={formik.values.nombre_beneficiario}
+                    onChange={formik.handleChange}
+                    onBlur={formik.handleBlur}
+                    placeholder="Nombre del beneficiario"
+                    className={`tramite-input ${formik.touched.nombre_beneficiario && formik.errors.nombre_beneficiario ? "p-invalid" : ""}`}
+                  />
+                  {formik.touched.nombre_beneficiario && formik.errors.nombre_beneficiario && (
+                    <small className="tramite-error">{formik.errors.nombre_beneficiario}</small>
+                  )}
+                </div>
+
+                {/* Input Cédula del Beneficiario */}
+                <div className="tramite-form-group">
+                  <InputText
+                    id="cedula_beneficiario"
+                    name="cedula_beneficiario"
+                    value={formik.values.cedula_beneficiario}
+                    onChange={(e) => {
+                      const value = e.target.value.replace(/[^0-9]/g, "");
+                      formik.setFieldValue("cedula_beneficiario", value);
+                    }}
+                    onBlur={formik.handleBlur}
+                    placeholder="Cédula del beneficiario"
+                    className={`tramite-input ${formik.touched.cedula_beneficiario && formik.errors.cedula_beneficiario ? "p-invalid" : ""}`}
+                    maxLength={10}
+                  />
+                  {formik.touched.cedula_beneficiario && formik.errors.cedula_beneficiario && (
+                    <small className="tramite-error">{formik.errors.cedula_beneficiario}</small>
+                  )}
+                </div>
+
+                {/* Input Fecha del trámite */}
+                <div className="tramite-form-group">
+                  <Calendar
+                    id="fecha_asignacion"
+                    name="fecha_asignacion"
+                    value={formik.values.fecha_asignacion}
+                    onChange={(e) => formik.setFieldValue("fecha_asignacion", e.value)}
+                    dateFormat="dd/mm/yy"
+                    showIcon
+                    placeholder="Fecha del trámite"
+                    className={`${formik.submitCount > 0 && formik.errors.fecha_asignacion ? "p-invalid" : ""}`}
+                  />
+                  {formik.submitCount > 0 && formik.errors.fecha_asignacion && (
+                    <small className="tramite-error">{formik.errors.fecha_asignacion}</small>
+                  )}
+                </div>
+
+                <div className="tramite-form-actions">
+                  <Button
+                    label="Guardar"
+                    icon="pi pi-save"
+                    type="submit"
+                    className="tramite-button tramite-submit"
+                    loading={formik.isSubmitting}
+                  />
+                  <Button
+                    label="Cancelar"
+                    icon="pi pi-times"
+                    type="button"
+                    className="tramite-button tramite-cancel"
+                    onClick={() => navigate("/administrador/consultar-tramite")}
+                    disabled={formik.isSubmitting}
+                  />
+                </div>
+              </div>
+            </form>
+          )}
         </Card>
 
         <ClienteModal

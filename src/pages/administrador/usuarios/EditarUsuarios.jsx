@@ -5,7 +5,7 @@ import RolService from "../../../services/RolService";
 import * as Yup from "yup";
 import { useFormik } from "formik";
 import { Toast } from "primereact/toast";
-import { BlockUI } from "primereact/blockui";
+
 import { ProgressSpinner } from "primereact/progressspinner";
 import { Card } from "primereact/card";
 import { InputText } from "primereact/inputtext";
@@ -40,7 +40,7 @@ const EditarUsuarios = () => {
     }
   };
 
-    const getClientes = async () => {
+  const getClientes = async () => {
     try {
       const response = await clienteService.getTags();
       setClientes(response);
@@ -103,8 +103,8 @@ const EditarUsuarios = () => {
       cliente_id: Yup.mixed().when("rol_id", (rol_id, schema) => {
         return rol_id == 3
           ? schema
-              .required("Por favor, seleccione un cliente")
-              .typeError("Selección inválida")
+            .required("Por favor, seleccione un cliente")
+            .typeError("Selección inválida")
           : schema.notRequired().nullable();
       }),
     }),
@@ -168,103 +168,106 @@ const EditarUsuarios = () => {
           </div>
         }
       >
-        <form onSubmit={formik.handleSubmit} className="p-fluid">
-          <div className="field mb-3">
-            <label htmlFor="name">Nombre</label>
-            <InputText
-              id="name"
-              name="name"
-              value={formik.values.name}
-              onChange={formik.handleChange}
-              onBlur={formik.handleBlur}
-              className={`w-full ${
-                formik.errors.name && formik.touched.name ? "p-invalid" : ""
-              }`}
-            />
-            {formik.errors.name && formik.touched.name && (
-              <small className="p-error">{formik.errors.name}</small>
-            )}
+        {loading ? (
+          <div className="loading-spinner">
+            <ProgressSpinner />
           </div>
-
-          <div className="field mb-3">
-            <label htmlFor="email">Correo</label>
-            <InputText
-              id="email"
-              name="email"
-              value={formik.values.email}
-              onChange={formik.handleChange}
-              onBlur={formik.handleBlur}
-              className={`w-full ${
-                formik.errors.email && formik.touched.email ? "p-invalid" : ""
-              }`}
-            />
-            {formik.errors.email && formik.touched.email && (
-              <small className="p-error">{formik.errors.email}</small>
-            )}
-          </div>
-
-          <div className="field mb-3">
-            <label htmlFor="rol_id">Rol</label>
-            <Dropdown
-              id="rol_id"
-              name="rol_id"
-              value={formik.values.rol_id}
-              onChange={formik.handleChange}
-              onBlur={formik.handleBlur}
-              options={roles}
-              optionLabel="nombre"
-              optionValue="id"
-              placeholder="Selecciona un rol"
-              className={`w-full ${
-                formik.errors.rol_id && formik.touched.rol_id ? "p-invalid" : ""
-              }`}
-            />
-            {formik.errors.rol_id && formik.touched.rol_id && (
-              <small className="p-error">{formik.errors.rol_id}</small>
-            )}
-          </div>
-
-          {formik.values.rol_id === 3 && (
-            <div className="field">
-              <Dropdown
-                id="cliente_id"
-                name="cliente_id"
-                value={formik.values.cliente_id}
-                options={clientes}
-                optionLabel="nombre"
-                optionValue="id"
-                placeholder="Seleccione el Cliente"
+        ) : (
+          <form onSubmit={formik.handleSubmit} className="p-fluid">
+            <div className="field mb-3">
+              <label htmlFor="name">Nombre</label>
+              <InputText
+                id="name"
+                name="name"
+                value={formik.values.name}
                 onChange={formik.handleChange}
-                className={
-                  formik.touched.cliente_id && formik.errors.cliente_id
-                    ? "p-invalid"
-                    : ""
-                }
+                onBlur={formik.handleBlur}
+                className={`w-full ${formik.errors.name && formik.touched.name ? "p-invalid" : ""
+                  }`}
               />
-              {formik.touched.cliente_id && formik.errors.cliente_id && (
-                <small className="p-error">{formik.errors.cliente_id}</small>
+              {formik.errors.name && formik.touched.name && (
+                <small className="p-error">{formik.errors.name}</small>
               )}
             </div>
-          )}
 
-          <div className="flex justify-content-between gap-3 mt-4">
-            <Button
-              type="submit"
-              label="Guardar"
-              className="w-full custom-primary-button"
-              icon="pi pi-check"
-              loading={formik.isSubmitting}
-            />
-            <Button
-              type="button"
-              label="Cancelar"
-              className="w-full custom-danger-button"
-              icon="pi pi-times"
-              onClick={() => navigate("/administrador/consultar-usuario")}
-              disabled={formik.isSubmitting}
-            />
-          </div>
-        </form>
+            <div className="field mb-3">
+              <label htmlFor="email">Correo</label>
+              <InputText
+                id="email"
+                name="email"
+                value={formik.values.email}
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+                className={`w-full ${formik.errors.email && formik.touched.email ? "p-invalid" : ""
+                  }`}
+              />
+              {formik.errors.email && formik.touched.email && (
+                <small className="p-error">{formik.errors.email}</small>
+              )}
+            </div>
+
+            <div className="field mb-3">
+              <label htmlFor="rol_id">Rol</label>
+              <Dropdown
+                id="rol_id"
+                name="rol_id"
+                value={formik.values.rol_id}
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+                options={roles}
+                optionLabel="nombre"
+                optionValue="id"
+                placeholder="Selecciona un rol"
+                className={`w-full ${formik.errors.rol_id && formik.touched.rol_id ? "p-invalid" : ""
+                  }`}
+              />
+              {formik.errors.rol_id && formik.touched.rol_id && (
+                <small className="p-error">{formik.errors.rol_id}</small>
+              )}
+            </div>
+
+            {formik.values.rol_id === 3 && (
+              <div className="field">
+                <Dropdown
+                  id="cliente_id"
+                  name="cliente_id"
+                  value={formik.values.cliente_id}
+                  options={clientes}
+                  optionLabel="nombre"
+                  optionValue="id"
+                  placeholder="Seleccione el Cliente"
+                  onChange={formik.handleChange}
+                  className={
+                    formik.touched.cliente_id && formik.errors.cliente_id
+                      ? "p-invalid"
+                      : ""
+                  }
+                />
+                {formik.touched.cliente_id && formik.errors.cliente_id && (
+                  <small className="p-error">{formik.errors.cliente_id}</small>
+                )}
+              </div>
+            )}
+
+            <div className="flex justify-content-between gap-3 mt-4">
+              <Button
+                type="submit"
+                label="Guardar"
+                className="w-full custom-primary-button"
+                icon="pi pi-check"
+                loading={formik.isSubmitting}
+              />
+              <Button
+                type="button"
+                label="Cancelar"
+                className="w-full custom-danger-button"
+                icon="pi pi-times"
+                onClick={() => navigate("/administrador/consultar-usuario")}
+                disabled={formik.isSubmitting}
+              />
+            </div>
+          </form>
+        )}
       </Card>
     </div>
   );

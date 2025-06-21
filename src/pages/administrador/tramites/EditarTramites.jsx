@@ -20,6 +20,7 @@ import { FileUpload } from "primereact/fileupload";
 import PdfService from "../../../services/PdfService";
 import Swal from "sweetalert2";
 import { InputTextarea } from "primereact/inputtextarea";
+import { ProgressSpinner } from "primereact/progressspinner";
 
 // Estilo reutilizable para inputs bloqueados
 const blockedInputStyle = {
@@ -227,6 +228,7 @@ const EditarTramites = () => {
   const [uploadingCatastro, setUploadingCatastro] = useState(false);
   const [uploadingTitulo, setUploadingTitulo] = useState(false);
   const [uploadingFactura, setUploadingFactura] = useState(false);
+  const [loading, setLoading] = useState(false);
 
 
   const [fileKey, setFileKey] = useState(Date.now());
@@ -628,6 +630,7 @@ const EditarTramites = () => {
   return (
     <div>
       <Toast ref={toast} />
+    
 
       {/* Formulario principal que envuelve todos los tabs */}
       <form onSubmit={formik.handleSubmit}>
@@ -1827,7 +1830,9 @@ const EditarTramites = () => {
                     />
                   </div> */}
                 </div>
+                
               </Card>
+              
             </div>
           </TabPanel>
 
@@ -1852,7 +1857,7 @@ const EditarTramites = () => {
           />
         </div> */}
       </form>
-
+ 
       {/* Modales (fuera del formulario) */}
       <ClienteModal
         visible={modalVisible}
@@ -1872,7 +1877,9 @@ const EditarTramites = () => {
         canton_id={formik.values.canton_id}
         inmobiliaria_id={formik.values.inmobiliaria_id} // <-- ¡Nuevo prop!
       />
+      
     </div>
+    
   );
 };
 

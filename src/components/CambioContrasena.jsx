@@ -6,7 +6,6 @@ import * as Yup from "yup";
 import { Password } from "primereact/password";
 import AuthService from "../services/AuthService";
 import { Button } from "primereact/button";
-import { BlockUI } from "primereact/blockui";
 import { ProgressSpinner } from "primereact/progressspinner";
 import { Toast } from "primereact/toast";
 import "../App.css";
@@ -103,14 +102,14 @@ const CambioContrasena = () => {
   return (
     <>
       <Toast ref={toast} />
-      <BlockUI
-        blocked={loading}
-        template={<ProgressSpinner />}
-        pt={{
-          maskClassName: "bg-white",
-        }}
-      >
-        <div className="p-1 flex justify-content-center">
+
+
+      <div className="p-1 flex justify-content-center">
+        {loading ? (
+          <div className="loading-spinner">
+            <ProgressSpinner />
+          </div>
+        ) : (
           <Card
             className="w-full md:w-5"
             title={
@@ -136,8 +135,8 @@ const CambioContrasena = () => {
                   onChange={formik.handleChange}
                   onBlur={formik.handleBlur}
                   className={`w-full ${formik.touched.actual_password && formik.errors.actual_password
-                      ? "p-invalid"
-                      : ""
+                    ? "p-invalid"
+                    : ""
                     }`}
                   toggleMask
                   feedback={false}
@@ -156,8 +155,8 @@ const CambioContrasena = () => {
                   onChange={formik.handleChange}
                   onBlur={formik.handleBlur}
                   className={`w-full ${formik.touched.new_password && formik.errors.new_password
-                      ? "p-invalid"
-                      : ""
+                    ? "p-invalid"
+                    : ""
                     }`}
                   toggleMask
                   feedback={false}
@@ -176,8 +175,8 @@ const CambioContrasena = () => {
                   onChange={formik.handleChange}
                   onBlur={formik.handleBlur}
                   className={`w-full ${formik.touched.confirm_password && formik.errors.confirm_password
-                      ? "p-invalid"
-                      : ""
+                    ? "p-invalid"
+                    : ""
                     }`}
                   toggleMask
                   feedback={false}
@@ -206,8 +205,9 @@ const CambioContrasena = () => {
               </div>
             </form>
           </Card>
-        </div>
-      </BlockUI>
+        )}
+      </div>
+
     </>
   );
 };

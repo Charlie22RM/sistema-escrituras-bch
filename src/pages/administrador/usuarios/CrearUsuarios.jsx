@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { BlockUI } from "primereact/blockui";
+
 import { ProgressSpinner } from "primereact/progressspinner";
 import { Toast } from "primereact/toast";
 import { Card } from "primereact/card";
@@ -126,8 +126,8 @@ const CrearUsuarios = () => {
       cliente_id: Yup.mixed().when("rol_id", (rol_id, schema) => {
         return rol_id == 3
           ? schema
-              .required("Por favor, seleccione un cliente")
-              .typeError("Selección inválida")
+            .required("Por favor, seleccione un cliente")
+            .typeError("Selección inválida")
           : schema.notRequired().nullable();
       }),
     }),
@@ -150,6 +150,7 @@ const CrearUsuarios = () => {
   };
   return (
     <div className="p-1 flex justify-content-center">
+
       <Toast ref={toast} />
       <Card
         style={{ minWidth: "600px", width: "100%" }}
@@ -167,146 +168,152 @@ const CrearUsuarios = () => {
           </div>
         }
       >
-        <form onSubmit={formik.handleSubmit} className="p-fluid">
-          <div className="field">
-            <InputText
-              id="name"
-              name="name"
-              placeholder="Nombre"
-              value={formik.values.name}
-              onChange={formik.handleChange}
-              onBlur={formik.handleBlur}
-              className={
-                formik.touched.name && formik.errors.name ? "p-invalid" : ""
-              }
-            />
-            {formik.touched.name && formik.errors.name && (
-              <small className="p-error">{formik.errors.name}</small>
-            )}
+        {loading ? (
+          <div className="loading-spinner">
+            <ProgressSpinner />
           </div>
-
-          <div className="field">
-            <InputText
-              id="email"
-              name="email"
-              placeholder="Email"
-              value={formik.values.email}
-              onChange={formik.handleChange}
-              onBlur={formik.handleBlur}
-              className={
-                formik.touched.email && formik.errors.email ? "p-invalid" : ""
-              }
-            />
-            {formik.touched.email && formik.errors.email && (
-              <small className="p-error">{formik.errors.email}</small>
-            )}
-          </div>
-
-          <div className="field">
-            <Password
-              id="password"
-              name="password"
-              placeholder="Contraseña"
-              feedback={false}
-              toggleMask
-              value={formik.values.password}
-              onChange={formik.handleChange}
-              onBlur={formik.handleBlur}
-              className={
-                formik.touched.password && formik.errors.password
-                  ? "p-invalid"
-                  : ""
-              }
-            />
-            {formik.touched.password && formik.errors.password && (
-              <small className="p-error">{formik.errors.password}</small>
-            )}
-          </div>
-
-          <div className="field">
-            <Password
-              id="repeat_password"
-              name="repeat_password"
-              placeholder="Repetir Contraseña"
-              feedback={false}
-              toggleMask
-              value={formik.values.repeat_password}
-              onChange={formik.handleChange}
-              onBlur={formik.handleBlur}
-              className={
-                formik.touched.repeat_password && formik.errors.repeat_password
-                  ? "p-invalid"
-                  : ""
-              }
-            />
-            {formik.touched.repeat_password &&
-              formik.errors.repeat_password && (
-                <small className="p-error">
-                  {formik.errors.repeat_password}
-                </small>
-              )}
-          </div>
-
-          <div className="field">
-            <Dropdown
-              id="rol_id"
-              name="rol_id"
-              value={formik.values.rol_id}
-              options={roles}
-              optionLabel="nombre"
-              optionValue="id"
-              placeholder="Rol"
-              onChange={formik.handleChange}
-              className={
-                formik.touched.rol_id && formik.errors.rol_id ? "p-invalid" : ""
-              }
-            />
-            {formik.touched.rol_id && formik.errors.rol_id && (
-              <small className="p-error">{formik.errors.rol_id}</small>
-            )}
-          </div>
-
-          {formik.values.rol_id === 3 && (
+        ) : (
+          <form onSubmit={formik.handleSubmit} className="p-fluid">
             <div className="field">
-              <Dropdown
-                id="cliente_id"
-                name="cliente_id"
-                value={formik.values.cliente_id}
-                options={clientes}
-                optionLabel="nombre"
-                optionValue="id"
-                placeholder="Seleccione el Cliente"
+              <InputText
+                id="name"
+                name="name"
+                placeholder="Nombre"
+                value={formik.values.name}
                 onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
                 className={
-                  formik.touched.cliente_id && formik.errors.cliente_id
+                  formik.touched.name && formik.errors.name ? "p-invalid" : ""
+                }
+              />
+              {formik.touched.name && formik.errors.name && (
+                <small className="p-error">{formik.errors.name}</small>
+              )}
+            </div>
+
+            <div className="field">
+              <InputText
+                id="email"
+                name="email"
+                placeholder="Email"
+                value={formik.values.email}
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+                className={
+                  formik.touched.email && formik.errors.email ? "p-invalid" : ""
+                }
+              />
+              {formik.touched.email && formik.errors.email && (
+                <small className="p-error">{formik.errors.email}</small>
+              )}
+            </div>
+
+            <div className="field">
+              <Password
+                id="password"
+                name="password"
+                placeholder="Contraseña"
+                feedback={false}
+                toggleMask
+                value={formik.values.password}
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+                className={
+                  formik.touched.password && formik.errors.password
                     ? "p-invalid"
                     : ""
                 }
               />
-              {formik.touched.cliente_id && formik.errors.cliente_id && (
-                <small className="p-error">{formik.errors.cliente_id}</small>
+              {formik.touched.password && formik.errors.password && (
+                <small className="p-error">{formik.errors.password}</small>
               )}
             </div>
-          )}
 
-          <div className="flex justify-content-between gap-3 mt-4">
-            <Button
-              type="submit"
-              label="Guardar"
-              icon="pi pi-save"
-              className="w-full custom-primary-button"
-              loading={formik.isSubmitting}
-            />
-            <Button
-              type="button"
-              label="Cancelar"
-              icon="pi pi-times"
-              className="w-full custom-danger-button"
-              onClick={handleCancel}
-              disabled={formik.isSubmitting}
-            />
-          </div>
-        </form>
+            <div className="field">
+              <Password
+                id="repeat_password"
+                name="repeat_password"
+                placeholder="Repetir Contraseña"
+                feedback={false}
+                toggleMask
+                value={formik.values.repeat_password}
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+                className={
+                  formik.touched.repeat_password && formik.errors.repeat_password
+                    ? "p-invalid"
+                    : ""
+                }
+              />
+              {formik.touched.repeat_password &&
+                formik.errors.repeat_password && (
+                  <small className="p-error">
+                    {formik.errors.repeat_password}
+                  </small>
+                )}
+            </div>
+
+            <div className="field">
+              <Dropdown
+                id="rol_id"
+                name="rol_id"
+                value={formik.values.rol_id}
+                options={roles}
+                optionLabel="nombre"
+                optionValue="id"
+                placeholder="Rol"
+                onChange={formik.handleChange}
+                className={
+                  formik.touched.rol_id && formik.errors.rol_id ? "p-invalid" : ""
+                }
+              />
+              {formik.touched.rol_id && formik.errors.rol_id && (
+                <small className="p-error">{formik.errors.rol_id}</small>
+              )}
+            </div>
+
+            {formik.values.rol_id === 3 && (
+              <div className="field">
+                <Dropdown
+                  id="cliente_id"
+                  name="cliente_id"
+                  value={formik.values.cliente_id}
+                  options={clientes}
+                  optionLabel="nombre"
+                  optionValue="id"
+                  placeholder="Seleccione el Cliente"
+                  onChange={formik.handleChange}
+                  className={
+                    formik.touched.cliente_id && formik.errors.cliente_id
+                      ? "p-invalid"
+                      : ""
+                  }
+                />
+                {formik.touched.cliente_id && formik.errors.cliente_id && (
+                  <small className="p-error">{formik.errors.cliente_id}</small>
+                )}
+              </div>
+            )}
+
+            <div className="flex justify-content-between gap-3 mt-4">
+              <Button
+                type="submit"
+                label="Guardar"
+                icon="pi pi-save"
+                className="w-full custom-primary-button"
+                loading={formik.isSubmitting}
+              />
+              <Button
+                type="button"
+                label="Cancelar"
+                icon="pi pi-times"
+                className="w-full custom-danger-button"
+                onClick={handleCancel}
+                disabled={formik.isSubmitting}
+              />
+            </div>
+          </form>
+        )}
       </Card>
     </div>
   );
