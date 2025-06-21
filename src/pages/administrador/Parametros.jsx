@@ -113,7 +113,18 @@ const Parametros = () => {
   return (
     <div className="p-4">
       <Toast ref={toast} />
-      <Card title="Parámetros" className="shadow-2">
+      <Card title={
+        <div className="flex align-items-center">
+          <Button
+            icon="pi pi-arrow-left"
+            className="p-button-text p-button-plain mr-2"
+            onClick={() => navigate("/administrador/consultar-tramite")}
+            tooltip="Volver a página anterior"
+            tooltipOptions={{ position: "top" }}
+          />
+          <span>Parámetros</span>
+        </div>
+      }>
         <form onSubmit={formik.handleSubmit}>
           <div>
             <div className="field grid align-items-center">
