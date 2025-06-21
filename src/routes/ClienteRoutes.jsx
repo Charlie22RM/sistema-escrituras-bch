@@ -4,6 +4,7 @@ import ConsultarTramites from "../pages/cliente/tramites/ConsultarTramites";
 import Principal from "../pages/administrador/Principal";
 import ConsultarDocumentacion from "../pages/cliente/tramites/ConsultarDocumentacion";
 import ConfiguracionService from "../services/ConfiguracionService";
+import CambioContrasena from '../components/CambioContrasena';
 
 const ClienteRoutes = () => {
   const configuracionService = ConfiguracionService();
@@ -44,6 +45,7 @@ const ClienteRoutes = () => {
             element={<ConsultarDocumentacion />}
           />
         )}
+        <Route path="cambio-contrasena" element={<CambioContrasena />} />
         <Route path="*" element={<Navigate to="/cliente/" replace />} />
       </Route>
     </Routes>
